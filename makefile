@@ -1,22 +1,34 @@
-libsprite.a:	image.o spritePlot.o system_variables.o
-		qdos-ar -rc libsprite.a image.o spriteplot.o system_variables.o
+COPTS=-O3 -fomit-frame-pointer -std=gnu9x
 
-spritePlot.o:	spritePlot.c image.h 
-		qcc -O -o spritePlot.o -c spritePlot.c
+#test:	libsprite.a	test.o frames.o
+#	qdos-gcc -o test test.o frames.o -lsprite
 
-image.o:	image.c image.h
-		qcc -O -o image.o -c image.c
-		#qcc -O -S image.c
+libsprite.a:	image.o system_variables.o makefile
+		qdos-ar -rc libsprite.a image.o system_variables.o
 
-system_variables.o:	system_variables.c system_variables.h
-		qcc -O -o system_variables.o -c system_variables.c
+image.o:	image.c image.h makefile
+		qdos-gcc $(COPTS) -o image.o -c image.c
+
+frames.o:	frames.c image.h makefile
+		qdos-gcc $(COPTS) -o frames.o -c frames.c
+
+test.o:	test.c image.h makefile
+		qdos-gcc $(COPTS) -o test.o -c test.c
+
+system_variables.o:	system_variables.c system_variables.h makefile
+		qdos-gcc $(COPTS) -o system_variables.o -c system_variables.c
 
 clean:
-	rm -f image.o libpsprite.a spritePlot.o  system_variables.o
+	rm -f image.o libsprite.a  system_variables.o libsprite.o test.o test frames.o
 
-cleaner:	clean
-	rm -f libsprite.o
-
-git:	cleaner
+git:	clean
 	git add .
 	git commit
+
+deploy:  test
+	cp test /home/simon/emulators/ql/emulators/sQLux/flp1
+	cp BOOT_flp1 /home/simon/emulators/ql/emulators/sQLux/flp1/BOOT
+
+run:    deploy
+	cd /home/simon/emulators/ql/emulators/sQLux && ./sqlux --SPEED=0.70 --RAMSIZE=896 --SOUND 8 -b "LRUN flp1_BOOT"
+
