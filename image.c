@@ -8,8 +8,9 @@
 
 void binPrint(unsigned int i,unsigned char d);
 
-const unsigned short masks[]={32575,57295,63475,65020};
-const unsigned char shifts[]={64,16,4,1};
+const unsigned short masks[]={0x3F3F,0xCFCF,0xF3F3,0xFCFC};
+const unsigned short colours[]={0,1,2,3,512,512+1,512+2,512+3};
+const unsigned char shifts[]={6,4,2,0};
 
 unsigned char *addresses[256];
 unsigned int secondAddress;
@@ -78,22 +79,6 @@ void* myMalloc(unsigned int i)
 		exit(3);
 	}
 
-	#ifdef HIMEM	
-	if((unsigned int)p<262144)
-	{
-		free(p);
-
-		do
-		{
-			p=malloc(1024);
-		}
-		while ((unsigned int)p<262144);
-
-		free(p);
-		p=malloc(i);
-	}
-	#endif
-
 	memset(p,i,0);
 
 	return p;
@@ -144,9 +129,189 @@ void fill(screen screen,unsigned int rowStart,unsigned int rowEnd,unsigned char 
 
 void plot(screen screen,unsigned short x,unsigned short y,unsigned char c)
 {
-	unsigned char *address=(unsigned char *)screen+(y<<7);
+	unsigned short *address=((unsigned short *)screen)+y*64+(x>>2);
 
-	(*address)=((*address)&masks[x&3])|(bits[c]*shifts[x&3]);
+	*address=(*address&masks[x&3])|(colours[c]<<shifts[x&3]);
+}
+
+unsigned int unplot(screen screen,unsigned short x,unsigned short y)
+{
+	unsigned short *address=((unsigned short *)screen)+y*64+(x>>2);
+
+	switch((*address&~masks[x&3])>>shifts[x&3])
+	{
+		case 0: return 0;
+		case 1: return 1;
+		case 2: return 2;
+		case 3: return 3;
+		case 512: return 4;
+		case 512+1: return 5;
+		case 512+2: return 6;
+		case 512+3: return 7;
+		default: return 8;
+	}
+}
+
+void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
+{
+	unsigned int i;
+
+	for(i=x1;i<=x2;i++)
+	{
+		plot(SCREEN,i,y1,c);
+		plot(SCREEN,i,y2,c);
+	}
+
+	for(i=y1;i<=y2;i++)
+	{
+		plot(SCREEN,x1,i,c);
+		plot(SCREEN,x2,i,c);
+	}
+}
+
+// THE EXTREMELY FAST LINE ALGORITHM Variation D (Addition Fixed Point)
+void line(screen screen, int x, int y, int x2, int y2,unsigned int c)
+{
+	register int i;
+	int yLonger=0;
+	int incrementVal, endVal;
+	int shortLen=y2-y;
+	int longLen=x2-x;
+	int decInc,j=0;
+
+	if(abs(shortLen)>abs(longLen))
+	{
+		int swap=shortLen;
+		shortLen=longLen;
+		longLen=swap;
+		yLonger=1;
+	}
+
+	endVal=longLen;
+
+	if (longLen<0)
+	{
+		incrementVal=-1;
+		longLen=-longLen;
+	} else incrementVal=1;
+
+	if (longLen==0) decInc=0;
+	else decInc = (shortLen << 16) / longLen;
+
+	if(yLonger)
+	{	
+		for(i=0;i!=endVal;i+=incrementVal)
+		{
+			plot(screen,x+(j >> 16),y+i,c);	
+			j+=decInc;
+		}
+	}
+	else
+	{
+		for(i=0;i!=endVal;i+=incrementVal)
+		{
+			plot(screen,x+i,y+(j >> 16),c);
+			j+=decInc;
+		}
+	}
+}
+
+struct vertice
+{
+	float x,y;
+};
+
+void fillBottomFlatTriangle(screen screen,struct vertice v1,struct  vertice v2, struct vertice v3,unsigned int c)
+{
+	int scanlineY;
+
+	float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
+	float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
+
+	float curx1 = v1.x;
+	float curx2 = v1.x;
+
+	for(scanlineY = v1.y; scanlineY <= v2.y; scanlineY++)
+	{
+    		line(screen,(int)curx1, scanlineY, (int)curx2, scanlineY,c);
+		curx1 += invslope1;
+		curx2 += invslope2;
+	}
+}
+
+void fillTopFlatTriangle(screen screen,struct vertice v1,struct vertice v2,struct vertice v3,unsigned int c)
+{
+	int scanlineY;
+
+	float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
+	float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
+
+	float curx1 = v3.x;
+	float curx2 = v3.x;
+
+	for(scanlineY = v3.y; scanlineY > v1.y; scanlineY--)
+	{
+		line(screen,(int)curx1, scanlineY, (int)curx2, scanlineY,c);
+		curx1 -= invslope1;
+		curx2 -= invslope2;
+	}
+}
+
+void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c)
+{
+	struct vertice vt1,vt2,vt3,vTmp;
+
+	vt1.x=x1; vt1.y=y1;
+	vt2.x=x2; vt2.y=y2;
+	vt3.x=x3; vt3.y=y3;
+
+	/* at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice */
+
+
+        if (vt1.y > vt2.y)
+        {
+            vTmp = vt1;
+            vt1 = vt2;
+            vt2 = vTmp;
+        }
+        /* here v1.y <= v2.y */
+        if (vt1.y > vt3.y)
+        {
+            vTmp = vt1;
+            vt1 = vt3;
+            vt3 = vTmp;
+        }
+        /* here v1.y <= v2.y and v1.y <= v3.y so test v2 vs. v3 */
+        if (vt2.y > vt3.y)
+        {
+            vTmp = vt2;
+            vt2 = vt3;
+            vt3 = vTmp;
+        }
+
+
+	/* here we know that v1.y <= v2.y <= v3.y */
+	/* check for trivial case of bottom-flat triangle */
+
+	if (vt2.y == vt3.y)
+	{
+		fillBottomFlatTriangle(screen,vt1, vt2, vt3,c);
+	}
+	  /* check for trivial case of top-flat triangle */
+	else if (vt1.y == vt2.y)
+	{ 
+		fillTopFlatTriangle(screen, vt1, vt2, vt3,c);
+	}
+	else
+	{
+		/* general case - split the triangle in a topflat and bottom-flat one */
+		struct vertice v4;
+	
+		v4.x= (int)(vt1.x + ((float)(vt2.y - vt1.y) / (float)(vt3.y - vt1.y)) * (vt3.x - vt1.x));
+		v4.y= vt2.y;
+		fillBottomFlatTriangle(screen, vt1, vt2, v4,c);
+		fillTopFlatTriangle(screen, vt2, v4, vt3,c);
+	}
 }
 
 // Draw an image, erasing old one if needed
@@ -512,6 +677,7 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 				*address=  *address&*maskshifter|(*address2&~*maskshifter); maskshifter++;
 	
 				address+=addressDelta;
+				address2+=addressDelta;
 			}
 
 			break;
@@ -531,6 +697,7 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
 				*address=  *address&*maskshifter|(*address2&~*maskshifter); maskshifter++;
 				address+=addressDelta;
+				address2+=addressDelta;
 			}
 
 			break;
@@ -545,6 +712,7 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 				*address=  *address&*maskshifter|(*address2&~*maskshifter); maskshifter++;
 
 				address+=addressDelta;
+				address2+=addressDelta;
 			}
 
 			break;
@@ -573,6 +741,7 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 					}
 	
 					address+=addressDelta;
+					address2+=addressDelta;
 				}
 	}
 }

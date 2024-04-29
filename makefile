@@ -3,8 +3,8 @@ COPTS=-O3 -fomit-frame-pointer -std=gnu9x
 #test:	libsprite.a	test.o frames.o
 #	qdos-gcc -o test test.o frames.o -lsprite
 
-libsprite.a:	image.o system_variables.o makefile
-		qdos-ar -rc libsprite.a image.o system_variables.o
+libsprite.a:	image.o system_variables.o frames.o makefile
+		qdos-ar -rc libsprite.a image.o system_variables.o frames.o
 
 image.o:	image.c image.h makefile
 		qdos-gcc $(COPTS) -o image.o -c image.c

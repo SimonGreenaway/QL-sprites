@@ -3,9 +3,6 @@
 // undef MAGIC to disable image checking
 #define MAGIC 0xdeadbeef
 
-//#define HIMEM
-//#define HILOCALS
-
 // Enable second screen?
 #undef SECONDSCREEN
 
@@ -32,6 +29,10 @@ void show(screen screen,unsigned int lowy,unsigned int highy);
 
 void fill(screen screen,unsigned int xmin,unsigned int xmax,unsigned char c);
 void plot(screen screen,unsigned short x,unsigned short y,unsigned char c);
+unsigned int unplot(screen screen,unsigned short x,unsigned short y);
+void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);
+void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
+void line(screen screen, int x, int y, int x2, int y2,unsigned int c);
 
 //
 
