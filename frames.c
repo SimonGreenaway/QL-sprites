@@ -2,26 +2,39 @@
 
 #include "image.h"
 
-
 /////////////////////
 // TIME AND short //
 /////////////////////
 
-unsigned int frameCounter=0,lastFrame,tickRate;
+unsigned int frames=0;
+
+void interrupt()
+{
+        frames++;
+}
+
+QL_LINK_t t;
+
+void framesInit()
+{
+	t.l_rtn=interrupt;
+
+	sms_lpol(&t);
+}
+
+void framesClose()
+{
+	sms_rpol(&t);
+}
 
 unsigned int getFrames()
 {
-        unsigned short frames=*SV_RAND;
-
-        if(frames<lastFrame) frameCounter+=0x10000;
-        lastFrame=frames;
-
-        return  frameCounter+frames;
+        return frames;
 }
 
-void msleep(unsigned int frames)
+void msleep(unsigned int delay)
 {
-        unsigned int end=getFrames()+frames;
+        unsigned int end=frames+delay;
 
-        while(getFrames()<end);
+        while(frames<end); // printf("%d %d\n",getFrames(),end);
 }

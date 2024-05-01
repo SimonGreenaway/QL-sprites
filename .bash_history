@@ -1,0 +1,3 @@
+ls
+make
+make

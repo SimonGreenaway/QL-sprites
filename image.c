@@ -169,6 +169,32 @@ void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned 
 	}
 }
 
+void fillBox(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
+{
+	unsigned int i;
+
+	for(i=y1;i<=y2;i++)
+		line(screen,x1,i,x2,i,c);
+}
+
+void copyBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
+{
+	unsigned int x,y;
+
+	for(x=x1;x<=x2;x++)
+		for(y=y1;y<=y2;y++)
+			m[x][y]=unplot(screen,x,y);
+}
+
+void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
+{
+	unsigned int x,y;
+
+	for(x=0;x<=x2;x++)
+		for(y=0;y<=y2;y++)
+			plot(screen,x+x1,y+y1,m[x][y]);
+}
+
 // THE EXTREMELY FAST LINE ALGORITHM Variation D (Addition Fixed Point)
 void line(screen screen, int x, int y, int x2, int y2,unsigned int c)
 {
@@ -312,6 +338,13 @@ void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,
 		fillBottomFlatTriangle(screen, vt1, vt2, v4,c);
 		fillTopFlatTriangle(screen, vt2, v4, vt3,c);
 	}
+}
+
+void triangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c)
+{
+	line(screen,x1,y1,x2,y2,c);
+	line(screen,x2,y2,x3,y3,c);
+	line(screen,x1,y1,x3,y3,c);
 }
 
 // Draw an image, erasing old one if needed
@@ -1100,6 +1133,15 @@ void loadLibrary(library *library,char *filename,int shift)
 // Buffer creation and moving //
 ////////////////////////////////
 
+unsigned short *screenAddress(screen screen,unsigned int y,unsigned int x)
+{
+	unsigned short *address=(unsigned short *)screen;
+	unsigned short data;
+	address+=y*64+(x>>2);
+
+	return address;
+}
+
 unsigned short peek(screen screen,unsigned int y,unsigned int x)
 {
 	unsigned short *address=(unsigned short *)screen;
@@ -1110,10 +1152,10 @@ unsigned short peek(screen screen,unsigned int y,unsigned int x)
 
 	switch(x&3)
 	{
-		case 0: return data&0x0203;
-		case 1: return data&0x080C;
-		case 2: return data&0x2030;
-		default: return data&0x80C0;
+		case 3: return data&0x0203;
+		case 2: return data&0x080C;
+		case 1: return data&0x2030;
+		case 0: return data&0x80C0;
 	}
 }
 

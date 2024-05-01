@@ -31,7 +31,12 @@ void fill(screen screen,unsigned int xmin,unsigned int xmax,unsigned char c);
 void plot(screen screen,unsigned short x,unsigned short y,unsigned char c);
 unsigned int unplot(screen screen,unsigned short x,unsigned short y);
 void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);
+void fillBox(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);
+void copyBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);
+void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);
+
 void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
+void triangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
 void line(screen screen, int x, int y, int x2, int y2,unsigned int c);
 
 //
@@ -101,6 +106,7 @@ void bSaveLibrary(library *library,char *filename);
 void cls(screen screen);
 
 unsigned short peek(screen screen,unsigned int y,unsigned int x);
+unsigned short *screenAddress(screen screen,unsigned int y,unsigned int x);
 
 // Print text
 
@@ -108,3 +114,9 @@ void setFontMasking(unsigned int m);
 void printCharAt(screen screen,library *font,unsigned int x,unsigned int y,char c);
 void printAt(screen screen,library *font,unsigned int x,unsigned y,char *s);
 int loadScreen(unsigned char *scr,char *dir,char *file);
+
+void initFrames();
+unsigned int getFrames();
+void framesClose();
+void msleep(unsigned int delay);
+
