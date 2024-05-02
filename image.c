@@ -115,6 +115,7 @@ void init()
 
 void spriteSetup(sprite *s,char *name)
 {
+	s->moves=0;
 	s->active=0;
 	s->images=0;
 	s->currentImage=0;
@@ -450,14 +451,11 @@ void spritePlot(screen screen,sprite *sprite)
 				{
 					*address++=*address&*maskshifter++|*shifter++; 
 					*address++=*address&*maskshifter++|*shifter++; 
-					//*address=(*address&*maskshifter++|*shifter++);
 					*address++=(*address&*maskshifter++|*shifter++);
 					*address++=*address&*maskshifter++|*shifter++; 
-					//*address=(*address&*maskshifter++|*shifter++);
 					*address++=(*address&*maskshifter++|*shifter++);
 						
 					*address++=*address&*maskshifter++|*shifter++; 
-					//*address=(*address&*maskshifter++|*shifter++);
 					*address++=(*address&*maskshifter++|*shifter++);
 					*address++=*address&*maskshifter++|*shifter++; 
 					*address=  *address&*maskshifter++|*shifter++; 
@@ -471,10 +469,8 @@ void spritePlot(screen screen,sprite *sprite)
 				{
 					*address++=*address&*maskshifter++|*shifter++; 
 					*address++=*address&*maskshifter++|*shifter++; 
-					//*address=(*address&*maskshifter++|*shifter++);
 					*address++=(*address&*maskshifter++|*shifter++);
 					*address++=*address&*maskshifter++|*shifter++; 
-					//*address=(*address&*maskshifter++|*shifter++);
 					*address++=(*address&*maskshifter++|*shifter++);
 					*address++=*address&*maskshifter++|*shifter++; 
 					*address=  *address&*maskshifter++|*shifter++; 
@@ -488,7 +484,6 @@ void spritePlot(screen screen,sprite *sprite)
 				{
 					*address++=*address&*maskshifter++|*shifter++; 
 					*address++=*address&*maskshifter++|*shifter++; 
-					//*address=(*address&*maskshifter++|*shifter++);
 					*address++=(*address&*maskshifter++|*shifter++);
 
 					*address++=*address&*maskshifter++|*shifter++; 

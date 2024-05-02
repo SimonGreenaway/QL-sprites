@@ -63,8 +63,9 @@ typedef struct
         unsigned int value,delta;
 } timer;
 
-typedef struct
+struct sprite
 {
+	unsigned int moves;
 	char name[32];
 	unsigned int active;
 
@@ -74,7 +75,11 @@ typedef struct
 	int x,y,dx,dy,currentImage;
 	unsigned int mask,draw;
 	timer timer,timer2;
-} sprite;
+
+	struct sprite *next;
+};
+
+typedef struct sprite sprite;
 
 typedef struct
 {
