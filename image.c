@@ -113,6 +113,56 @@ void init()
 	SCREEN=(screen)0x20000;
 }
 
+void spriteSetup(sprite *s,char *name)
+{
+	s->active=0;
+	s->images=0;
+	s->currentImage=0;
+	s->x=s->y=s->dx=s->dy=0;
+	s->mask=s->draw=1;
+	s->timer.value=s->timer.delta=s->timer2.value=s->timer2.delta=0;
+	strcpy(s->name,name);
+}
+
+void spriteClearImages(sprite *s)
+{
+	s->images=s->currentImage=0;
+}
+
+void spriteAddImage(sprite *s,library *lib,unsigned int i)
+{
+	if(s->images==8)
+	{
+		printf("Too many images added to sprite '%s'\n",s->name);
+		exit(1);
+	}
+	else if(i>=lib->n)
+	{
+		printf("Adding invalide image %d to sprite '%s'\n",i,s->name);
+		exit(1);
+	}
+	#ifdef MAGIC
+	else if(lib->images[i].magic!=MAGIC)
+	{
+		printf("Adding invalid image to sprites '%s'\n",s->name);
+		exit(1);
+	}
+	#endif
+
+	s->image[s->images++]=&lib->images[i];
+}
+
+void spriteSetImage(sprite *s,unsigned int ci)
+{
+	if(ci>=s->images)
+	{
+		printf("Error: Trying to use image %d/%d on sprite '%s'\n",ci,s->images,s->name);
+		exit(1);
+	}
+
+	s->currentImage=ci;
+}
+
 // Clear the screen to black
 
 void cls(screen screen)
@@ -366,18 +416,19 @@ void spritePlot(screen screen,sprite *sprite)
 	#ifdef MAGIC
 	if(image->magic!=MAGIC)
 	{
-		puts("Invalid sprite being drawn!");
+		puts("Invalid sprite being drawn)!");
+		printf("'%s' ?\n",sprite->name);
 		exit(1);
 	}
 
 	if(sprite->y<0)
 	{
-		printf("image %s <y\n",image->name);
+		printf("image %s <y sprite '%s'\n",image->name,sprite->name);
 		exit(1);
 	}
 	else if(sprite->y+image->y>255)
 	{
-		printf("image %s %d>y\n",image->name,sprite->y+image->y);
+		printf("image %s %d>y sprite '%s'\n",image->name,sprite->y+image->y,sprite->name);
 		exit(1);
 	}
 	
@@ -385,7 +436,7 @@ void spritePlot(screen screen,sprite *sprite)
 
 	if(sprite->y<0)
 	{
-		printf("ERROR: Sprite plot '%s' with y<0",sprite->image[sprite->currentImage]->name);
+		printf("ERROR: Sprite plot '%s' with y<0 sprite '%s'",sprite->image[sprite->currentImage]->name,sprite->name);
 		exit(4);
 	}
 
@@ -663,10 +714,16 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 	address+=sprite->y*64+(sprite->x>>2);
 	address2+=sprite->y*64+(sprite->x>>2);
 
+	if(sprite->currentImage>=sprite->images)
+	{
+		printf("Error: Sprite clear - current sprite image out of range (%d) for '%s'\n",sprite->currentImage,sprite->name);
+		exit(1);
+	}
 	#ifdef MAGIC
 	if(image->magic!=MAGIC)
 	{
-		puts("Invalid sprite being drawn!");
+		printf("Invalid sprite being cleared #%d!\n",sprite->currentImage);
+		printf("'%s' ?\n",sprite->name);
 		exit(1);
 	}
 

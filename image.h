@@ -65,6 +65,7 @@ typedef struct
 
 typedef struct
 {
+	char name[32];
 	unsigned int active;
 
 	int images;
@@ -80,6 +81,11 @@ typedef struct
 	unsigned n;
 	image *images;
 } library;
+
+void spriteSetup(sprite *s,char *name);
+void spriteClearImages(sprite *s);
+void spriteAddImage(sprite *s,library *lib,unsigned int i);
+void spriteSetImage(sprite *s,unsigned int ci);
 
 struct shifter
 {
