@@ -37,7 +37,7 @@ void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,uns
 
 void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
 void triangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
-void line(screen screen, int x, int y, int x2, int y2,unsigned int c);
+void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned int y2,unsigned int c);
 
 //
 
@@ -77,6 +77,9 @@ struct sprite
 	timer timer,timer2;
 
 	struct sprite *next;
+
+	void(*movement)(struct sprite *s);
+	void(*boundsCheck)(struct sprite *s);
 };
 
 typedef struct sprite sprite;

@@ -17,21 +17,31 @@ void interruptRunner()
 	{
 		if(s->active)
 		{
-
-			if((s->timer.value<=frames2)&&((s->dx)||(s->dy)))
+			if(s->timer.value<=frames2)
 			{
-				s->draw=0;
-				spritePlot(SCREEN,s);
-				s->x+=s->dx;
-				s->y+=s->dy;
-				s->draw=1;
+				if(s->movement!=NULL)
+				{
+					s->movement(s);
+				}
+				else if(s->dx||s->dy)
+				{
+					s->draw=0;
+					spritePlot(SCREEN,s);
+					s->x+=s->dx;
+					s->y+=s->dy;
+					s->draw=1;
+
+					if((s->x+s->image[s->currentImage]->x>=255)
+					 ||(s->x<0)||(s->y<0)
+					 ||(s->y+s->image[s->currentImage]->y>=255))
+					{
+						s->active=0;
+					}
+				}
 
 				s->timer.value=frames2+s->timer.delta;
-			}
 	
-			if(s->active)
-			{
-				spritePlot(SCREEN,s);
+				if(s->active) spritePlot(SCREEN,s);
 			}
 		}
 
@@ -111,24 +121,61 @@ void runner()
 	sms_lpol(&t2);
 }
 
+void m(struct sprite *s)
+{
+	if(s->x==0) s->dx=1;
+	else if(s->x>=255-s->image[s->currentImage]->x*4) s->dx=-1;
+
+	if(s->y==0) s->dy=1;
+	else if(s->y>=255-s->image[s->currentImage]->y) s->dy=-1;
+
+	s->draw=0;
+	spritePlot(SCREEN,s);
+	s->x+=s->dx;
+	s->y+=s->dy;
+	s->draw=1;
+}
+
+#define S 32
+sprite s[S];
+
+int sine(int a)
+{
+	return (64*(4*a*(180-a)))/(40500-a*(180-a));
+}
+
 int main(int argc,char *argv[])
 {
+
 	library lib;
-	sprite s;
+	unsigned int i;
+
+	init();
 
 	loadLibrary(&lib,"test_lib",1);
 
-	spriteSetup(&s,"test");
-	spriteAddImage(&s,&lib,0);
+	for(i=0;i<S;i++)
+	{
+		spriteSetup(&s[i],"test");
 
-	s.active=1;
-	s.mask=1;
-	s.draw=1;
-	s.currentImage=0;
-	s.timer.value=0;
-	s.timer.delta=50;
+		spriteAddImage(&s[i],&lib,0);
 
-	addSprite(&s);
+		s[i].active=1;
+		s[i].mask=1;
+		s[i].draw=1;
+		s[i].currentImage=0;
+		s[i].timer.value=0;
+		s[i].timer.delta=1;
+
+		s[i].x=i*8;
+		s[i].y=sine(i*(180/S))+128;
+
+		s[i].dx=0;
+		s[i].dy=1;
+		s[i].movement=m;
+	
+		addSprite(&s[i]);
+	}
 
 	runner();
 	

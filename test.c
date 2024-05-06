@@ -77,78 +77,81 @@ void benchmark()
 	exit(0);
 }
 
+static unsigned int g_seed;
+
+// Used to seed the generator.           
+inline void fastSrand(int seed)
+{
+	g_seed = seed;
+}
+
+// Compute a pseudorandom integer.
+// Output value in range [0, 32767]
+inline int fastRand(void)
+{
+	g_seed = (214013*g_seed+2531011);
+	return (g_seed>>16)&0x7FFF;
+}
+
 void test()
 {
 	library l;
 	sprite s;
 	unsigned int i,j,k,m;
+	WINDOWDEF_t w;
+	chanid_t cid;
 
 	init();
+	framesInit();
 
-	loadLibrary(&l,"test_lib",1); 
+	//loadLibrary(&l,"test_lib",1); 
+	
+	w.width=w.height=512;
+	w.x_origin=w.y_origin=0;
+	w.paper=0; w.ink=7;
 
-	for(i=0;i<4;i++) s.image[i]=&l.images[i];
+	cid=ut_con(&w);
 
-	for(m=1;m<4;m++)
+	cls(SCREEN); fastSrand(0);
+
+	for(i=0;i<120;i++)
 	{
-		s.draw=m&1; 
-		s.mask=(m&2)>1;
-
-		for(j=0;j<4;j++)
-		{
-			for(i=0;i<32768;i++)
-				*((unsigned char *)(0x20000+i))=*((unsigned char*)i);
-
-			printf("M=%d D=%d\n",s.mask,s.draw);
-	
-	
-			s.x=s.y=0;
-			s.currentImage=j;
-		
-			for(i=0;1;i++)
-			{
-				s.x=i; s.y=i*s.image[s.currentImage]->y;
-				if(s.y+s.image[s.currentImage]->y>=255) break;	
-				spritePlot(SCREEN,&s);
-			}
-		
-			while(!keyrow(1));
-			while(keyrow(1));
-
-			if(m==3)
-			{
-				s.draw=0;
-				for(i=0;1;i++)
-				{
-					s.x=i; s.y=i*s.image[s.currentImage]->y;
-					if(s.y+s.image[s.currentImage]->y>=255) break;	
-					spritePlot(SCREEN,&s);
-				}
-				s.draw=1;
-				while(!keyrow(1));
-				while(keyrow(1));
-
-				s.y=0;
-
-				for(i=0;i<255-s.image[s.currentImage]->y;i++)
-				{
-					unsigned int f;
-
-					s.x=i;
-								
-					spritePlot(SCREEN,&s);
-
-					s.draw=0;
-					f=getFrames();		
-					while(f>=getFrames()) ;
-					spritePlot(SCREEN,&s);
-					s.draw=1;
-				}
-			}
-		}
+		fillBox(SCREEN,i+4-1,i*2+4-1,200-i+1,i*2+4+1,7);
+		line(SCREEN,i+4,i*2+4,200-i,i*2+4,(i/4)&7);
 	}
 
-	exit(0);
+	sleep(5);
+	cls(SCREEN); fastSrand(0);
+
+	while(1)
+	{
+		unsigned int pass,count=0;
+
+		for(pass=0;pass<6;pass++)
+		{
+			unsigned int f=getFrames()+10*50;
+
+			count=0;
+
+			while(getFrames()<f)
+			{
+				switch(pass)
+				{
+					case 0: plot(SCREEN,fastRand()&255,fastRand()&255,fastRand()&7); break;
+					case 1: line(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
+					case 2: triangle(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
+					case 3:fillTriangle(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
+					case 4:box(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
+					case 5:fillBox(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
+				}
+
+				count++;
+			}
+
+			cls(SCREEN); fastSrand(0);
+			printf("%d\n",count);
+		}
+	}
 }
 
 //////////

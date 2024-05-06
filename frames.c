@@ -34,7 +34,7 @@ unsigned int getFrames()
 
 void msleep(unsigned int delay)
 {
-        unsigned int end=frames+delay;
+        unsigned int end=getFrames()+delay;
 
-        while(frames<end); // printf("%d %d\n",getFrames(),end);
+        while(getFrames()<end); // printf("%d %d\n",getFrames(),end);
 }
