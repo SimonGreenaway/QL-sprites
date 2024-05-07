@@ -112,13 +112,9 @@ void init()
 
 void spriteSetup(sprite *s,char *name)
 {
-	s->moves=0;
-	s->active=0;
-	s->images=0;
-	s->currentImage=0;
-	s->x=s->y=s->dx=s->dy=0;
+	bzero(s,sizeof(sprite));
+
 	s->mask=s->draw=1;
-	s->timer.value=s->timer.delta=s->timer2.value=s->timer2.delta=0;
 	strcpy(s->name,name);
 
 	s->boundsCheck=s->movement=NULL;

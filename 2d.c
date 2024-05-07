@@ -36,19 +36,25 @@ const unsigned short colours[4][8]={
 const unsigned char shifts[]={6,4,2,0};
 
 // Plot a point in the given colour
+//
+// (1) Find address of the 16bit area containing the require color data
+// (2) Mask out the bit with zeros
+// (3) Set the colour via a pre-shifted 16bit value for each colour
+//
+// Can't see a way to speed this up. We need to read the screen, mask it with an AND,OR in the new colour and then write back to the screen.
 
-void plot(screen screen,unsigned short x,unsigned short y,unsigned char c)
+void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {
-        unsigned short *address=((unsigned short *)screen)+y*64+x/4;
+        register unsigned short *address=ADDRESS(screen,x,y);
 
-        *address=(*address&masks[x&3])|(colours[x&3][c]);
+       	*address=(*address&masks[x&3])|colours[x&3][c];
 }
 
 // Return colour at the given screen location
 
 unsigned int unplot(screen screen,unsigned short x,unsigned short y)
 {
-        unsigned short *address=((unsigned short *)screen)+y*64+(x>>2);
+        unsigned short *address=ADDRESS(screen,x,y);
 
         switch((*address&~masks[x&3])>>shifts[x&3])
         {
@@ -70,17 +76,10 @@ void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned 
 {
         unsigned int i;
 
-        for(i=x1;i<=x2;i++)
-        {
-                plot(SCREEN,i,y1,c);
-                plot(SCREEN,i,y2,c);
-        }
-
-        for(i=y1;i<=y2;i++)
-        {
-                plot(SCREEN,x1,i,c);
-                plot(SCREEN,x2,i,c);
-        }
+	line(SCREEN,x1,y1,x2,y1,c);
+	line(SCREEN,x2,y1,x2,y2,c);
+	line(SCREEN,x2,y2,x1,y2,c);
+	line(SCREEN,x1,y2,x1,y1,c);
 }
 
 void fillBox(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
@@ -134,21 +133,21 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 			x^=x2; x2^=x; x^=x2;
 	        }
 
-		switch(x&3)
+		switch(x&3) // 0-3 bits before word break
 		{
 			case 1: plot(screen,x++,y,c);
 			case 2: plot(screen,x++,y,c);
 			case 3: plot(screen,x++,y,c);
 		}
 
-		switch(x2&3)
+		switch(x2&3) // 0-3 bits after work break
 		{
 			case 2: plot(screen,x2--,y,c);
 			case 1: plot(screen,x2--,y,c);
 			case 0: plot(screen,x2--,y,c);
 		}
 
-                a=(unsigned short *)screen+y*64+(x>>2);
+                a=SCREEN(screen,x,y);
 		col=lineColors[c];
 
                 for(i=0;i<=(x2-x)/4;i++) *a++=col;
@@ -156,13 +155,26 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 	else if(x==x2) // Vertical line?
 	{
 		unsigned short col=colours[x&3][c],m=masks[x&3];
-        	unsigned short *address=((unsigned short *)screen)+y*64+x/4;
 
-		
-		for(;y<=y2;y++)
+		if(y2>y)
 		{
-		        *address=(*address&m)|col;
-			*address+=64;
+			unsigned short *address=((unsigned short *)screen)+y*64+x/4;
+
+			for(y;y<=y2;y++)
+			{
+			        *address=(*address&m)|col;
+				address+=64;
+			}
+		}
+		else 
+		{
+			unsigned short *address=((unsigned short *)screen)+y2*64+x/4;
+
+			for(y2;y2<=y;y2++)
+			{
+			        *address=(*address&m)|col;
+				address+=64;
+			}
 		}
 	}
         else

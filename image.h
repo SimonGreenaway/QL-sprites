@@ -10,6 +10,8 @@
 #define SCREEN2 ((char *)0x28000)
 #endif
 
+#define ADDRESS(screen,x,y) (((unsigned short *)screen)+y*64+x/4)
+
 typedef void * screen;
 
 extern screen SCREEN;
@@ -28,7 +30,7 @@ void show(screen screen,unsigned int lowy,unsigned int highy);
 //
 
 void fill(screen screen,unsigned int xmin,unsigned int xmax,unsigned char c);
-void plot(screen screen,unsigned short x,unsigned short y,unsigned char c);
+void plot(screen screen,unsigned int x,unsigned int y,unsigned char c);
 unsigned int unplot(screen screen,unsigned short x,unsigned short y);
 void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);
 void fillBox(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);

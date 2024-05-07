@@ -116,7 +116,7 @@ void test()
 
 	for(i=0;i<120;i++)
 	{
-		fillBox(SCREEN,i+4-1,i*2+4-1,200-i+1,i*2+4+1,7);
+		box(SCREEN,i+4-1,i*2+4-1,200-i+1,i*2+4+1,7);
 		line(SCREEN,i+4,i*2+4,200-i,i*2+4,(i/4)&7);
 	}
 
