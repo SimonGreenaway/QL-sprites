@@ -28,7 +28,6 @@ void showAll(screen screen);
 void show(screen screen,unsigned int lowy,unsigned int highy);
 
 //
-
 void fill(screen screen,unsigned int xmin,unsigned int xmax,unsigned char c);
 void plot(screen screen,unsigned int x,unsigned int y,unsigned char c);
 unsigned int unplot(screen screen,unsigned short x,unsigned short y);

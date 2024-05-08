@@ -17,6 +17,7 @@ image.o:	image.c image.h makefile
 
 2d.o:	2d.c image.h makefile
 		qdos-gcc $(COPTS) -o 2d.o -c 2d.c
+		qdos-gcc $(COPTS) -S 2d.c
 
 frames.o:	frames.c image.h makefile
 		qdos-gcc $(COPTS) -o frames.o -c frames.c
@@ -28,7 +29,7 @@ system_variables.o:	system_variables.c system_variables.h makefile
 		qdos-gcc $(COPTS) -o system_variables.o -c system_variables.c
 
 clean:
-	rm -f image.o libsprite.a  system_variables.o libsprite.o test.o test frames.o runner.o
+	rm -f image.o libsprite.a  system_variables.o libsprite.o test.o test frames.o runner.o 2d.s runner.s
 
 git:	clean
 	git add .

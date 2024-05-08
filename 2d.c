@@ -27,6 +27,7 @@ unsigned short peek(screen screen,unsigned int y,unsigned int x)
 }
 
 const unsigned short masks[]={0x3F3F,0xCFCF,0xF3F3,0xFCFC};
+
 const unsigned short colours[4][8]={
 				{0,1<<6,2<<6,3<<6,512<<6,513<<6,514<<6,515<<6},
 				{0,1<<4,2<<4,3<<4,512<<4,513<<4,514<<4,515<<4},
@@ -37,17 +38,19 @@ const unsigned char shifts[]={6,4,2,0};
 
 // Plot a point in the given colour
 //
-// (1) Find address of the 16bit area containing the require color data
+// (1) Find address of the 16bit area containing the require colour data
 // (2) Mask out the bit with zeros
 // (3) Set the colour via a pre-shifted 16bit value for each colour
 //
 // Can't see a way to speed this up. We need to read the screen, mask it with an AND,OR in the new colour and then write back to the screen.
 
-void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
-{
-        register unsigned short *address=ADDRESS(screen,x,y);
+unsigned short *yaddress[256];
 
-       	*address=(*address&masks[x&3])|colours[x&3][c];
+inline void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
+{
+	register unsigned short *address=ADDRESS(screen,x,y);
+
+	*address=(*address&masks[x&3])|colours[x&3][c];
 }
 
 // Return colour at the given screen location
@@ -108,8 +111,8 @@ void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,uns
                         plot(screen,x+x1,y+y1,m[x][y]);
 }
 
-const unsigned short lineColors[]={0x0000,0x0055,0x00AA,0x00FF,0xAA00,0xAA55,0xAAAA,0xAAFF};
-const unsigned long lineColors2[]={0x00000000,0x00550055,0x00AA00AA,0x00FF00FF,0xAA00AA00,0xAA55AA55,0xAAAAAAAA,0xAAFFAAFF};
+const unsigned short lineColourw[]={0x0000,0x0055,0x00AA,0x00FF,0xAA00,0xAA55,0xAAAA,0xAAFF};
+const unsigned long lineColourl[]={0x00000000,0x00550055,0x00AA00AA,0x00FF00FF,0xAA00AA00,0xAA55AA55,0xAAAAAAAA,0xAAFFAAFF};
 
 // Draw a line between two points
 //
@@ -153,19 +156,19 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 
                 if((((unsigned long)a)&2)==0)
                 {
-                        *a=lineColors[c];
+                        *a=lineColourw[c];
                         x2-=4;
                 }
 
                 a=ADDRESS(screen,x,y);
 		if(((unsigned long)a)&2)
 		{
-			*a++=lineColors[c]; //printf("S-"); sleep(2);
+			*a++=lineColourw[c]; //printf("S-"); sleep(2);
 			x+=4;
 		}
 		al=(unsigned long *)ADDRESS(screen,x,y);
 
-		coll=lineColors2[c];
+		coll=lineColourl[c];
 
 		if(x2>x)
 		{
@@ -250,17 +253,17 @@ struct vertice
 
 void fillBottomFlatTriangle(screen screen,struct vertice v1,struct  vertice v2, struct vertice v3,unsigned int c)
 {
-        int scanlineY;
+        unsigned int scanlineY;
 
-        float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
-        float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
+        int invslope1 = ((v2.x - v1.x)*128) / (v2.y - v1.y);
+        int invslope2 = ((v3.x - v1.x)*128) / (v3.y - v1.y);
 
-        float curx1 = v1.x;
-        float curx2 = v1.x;
+        int curx1 = v1.x*128;
+        int curx2 = curx1;
 
         for(scanlineY = v1.y; scanlineY <= v2.y; scanlineY++)
         {
-                line(screen,(int)curx1, scanlineY, (int)curx2, scanlineY,c);
+                line(screen,curx1/128, scanlineY,curx2/128, scanlineY,c);
                 curx1 += invslope1;
                 curx2 += invslope2;
         }
@@ -268,21 +271,22 @@ void fillBottomFlatTriangle(screen screen,struct vertice v1,struct  vertice v2, 
 
 void fillTopFlatTriangle(screen screen,struct vertice v1,struct vertice v2,struct vertice v3,unsigned int c)
 {
-        int scanlineY;
+        unsigned int scanlineY;
 
-        float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
-        float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
+        int invslope1 = ((v3.x - v1.x)*128) / (v3.y - v1.y);
+        int invslope2 = ((v3.x - v2.x)*128) / (v3.y - v2.y);
 
-        float curx1 = v3.x;
-        float curx2 = v3.x;
+        int curx1 = v3.x*128;
+        int curx2 = curx1;
 
         for(scanlineY = v3.y; scanlineY > v1.y; scanlineY--)
         {
-                line(screen,(int)curx1, scanlineY, (int)curx2, scanlineY,c);
+                line(screen,curx1/128, scanlineY,curx2/128, scanlineY,c);
                 curx1 -= invslope1;
                 curx2 -= invslope2;
         }
 }
+
 void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c)
 {
         struct vertice vt1,vt2,vt3,vTmp;
@@ -344,4 +348,3 @@ void triangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsi
         line(screen,x2,y2,x3,y3,c);
         line(screen,x1,y1,x3,y3,c);
 }
-
