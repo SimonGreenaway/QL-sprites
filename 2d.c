@@ -109,6 +109,7 @@ void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,uns
 }
 
 const unsigned short lineColors[]={0x0000,0x0055,0x00AA,0x00FF,0xAA00,0xAA55,0xAAAA,0xAAFF};
+const unsigned long lineColors2[]={0x00000000,0x00550055,0x00AA00AA,0x00FF00FF,0xAA00AA00,0xAA55AA55,0xAAAAAAAA,0xAAFFAAFF};
 
 // Draw a line between two points
 //
@@ -126,7 +127,8 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
         if((y==y2)&&(abs(x2-x)>7)) // Horizontal line?
         {
                 unsigned short *a,col;
-                unsigned int pre;
+		unsigned long *al,coll;
+                unsigned int pre,end;
 
 		if(x>x2) // Make sure x2>x
 		{
@@ -147,10 +149,29 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 			case 0: plot(screen,x2--,y,c);
 		}
 
-                a=SCREEN(screen,x,y);
-		col=lineColors[c];
+                a=ADDRESS(screen,x2,y);
 
-                for(i=0;i<=(x2-x)/4;i++) *a++=col;
+                if((((unsigned long)a)&2)==0)
+                {
+                        *a=lineColors[c];
+                        x2-=4;
+                }
+
+                a=ADDRESS(screen,x,y);
+		if(((unsigned long)a)&2)
+		{
+			*a++=lineColors[c]; //printf("S-"); sleep(2);
+			x+=4;
+		}
+		al=(unsigned long *)ADDRESS(screen,x,y);
+
+		coll=lineColors2[c];
+
+		if(x2>x)
+		{
+			end=(x2-x)/8;
+       	        	for(i=0;i<=end;i++) *al++=coll;
+		}
         }
 	else if(x==x2) // Vertical line?
 	{
