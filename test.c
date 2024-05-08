@@ -127,7 +127,7 @@ void test()
 	{
 		unsigned int pass,count=0;
 
-		for(pass=0;pass<6;pass++)
+		for(pass=0;pass<7;pass++)
 		{
 			unsigned int f=getFrames()+10*50;
 
@@ -143,6 +143,7 @@ void test()
 					case 3:fillTriangle(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
 					case 4:box(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
 					case 5:fillBox(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
+					case 6:unplot(SCREEN,fastRand()&255,fastRand()&255); break;
 				}
 
 				count++;

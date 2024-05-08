@@ -1,79 +1,3 @@
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make test
-make deploy
-make deploy
-make deploy
-make deploy
-make
-make
-make runner
-make runner
-make runner
-make runner
-make runner
-make clean
-make runner
-make runner
-make runner
-make runner
-make runner
-make clean
-make
-make runner
-make runner
-make runner
-make runner
-make runner
-qdos-gcc -O3 -fomit-frame-pointer -std=gnu9x -S -c runner.c
-more runner.s
-as runner.s
-as68 runner.s
-vi runner.s
-cp runner.s runner1.s
-make runner
-qdos-gcc -O3 -fomit-frame-pointer -std=gnu9x -S -c runner.c
-ls
-meld runner.s runner1.s
-make runner
-qdos-gcc -O3 -fomit-frame-pointer -std=gnu9x -S -c runner.c
-vi runner.s
-as68 runner.c
-as68 runner.s -o runner.o
-make runner
 vi makefile 
 vi makefile 
 make clean
@@ -498,3 +422,79 @@ make run
 make run
 make run
 make run
+make run
+make test
+make test
+make test
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make
+make test ; make runner
+make
+make
+make
+make
+make
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner

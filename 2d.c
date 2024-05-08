@@ -44,8 +44,6 @@ const unsigned char shifts[]={6,4,2,0};
 //
 // Can't see a way to speed this up. We need to read the screen, mask it with an AND,OR in the new colour and then write back to the screen.
 
-unsigned short *yaddress[256];
-
 inline void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {
 	register unsigned short *address=ADDRESS(screen,x,y);
@@ -57,28 +55,15 @@ inline void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
 
 unsigned int unplot(screen screen,unsigned short x,unsigned short y)
 {
-        unsigned short *address=ADDRESS(screen,x,y);
+	unsigned short d=(*ADDRESS(screen,x,y)&~masks[x&3])>>shifts[x&3];
 
-        switch((*address&~masks[x&3])>>shifts[x&3])
-        {
-                case 0: return 0;
-                case 1: return 1;
-                case 2: return 2;
-                case 3: return 3;
-                case 512: return 4;
-                case 513: return 5;
-                case 514: return 6;
-                case 515: return 7;
-                default: return 8;
-        }
+	return (d&3)+(d>256?4:0);
 }
 
 // Draw a box
 
 void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
 {
-        unsigned int i;
-
 	line(SCREEN,x1,y1,x2,y1,c);
 	line(SCREEN,x2,y1,x2,y2,c);
 	line(SCREEN,x2,y2,x1,y2,c);
@@ -87,10 +72,7 @@ void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned 
 
 void fillBox(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
 {
-        unsigned int i;
-
-        for(i=y1;i<=y2;i++)
-                line(screen,x1,i,x2,i,c);
+        for(;y1<=y2;y1++) line(screen,x1,y1,x2,y1,c);
 }
 
 void copyBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
@@ -205,9 +187,10 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
         {
                 if(abs(shortLen)>abs(longLen))
                 {
-                        int swap=shortLen;
-                        shortLen=longLen;
-                        longLen=swap;
+                        shortLen^=longLen;
+                        longLen^=shortLen;
+                        shortLen^=longLen;
+
                         yLonger=1;
                 }
 

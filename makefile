@@ -45,3 +45,11 @@ run:    deploy
 
 runfast:    deploy
 	cd /home/simon/emulators/ql/emulators/sQLux && ./sqlux --SPEED=0 --RAMSIZE=896 --SOUND 8 -b "LRUN flp1_BOOT"
+
+
+dist:   deploy
+	cp BOOT_flp1 BOOT
+	qltools sprites.img -fdd sprites -W
+	qltools sprites.img -W BOOT test
+	rm -f BOOT
+
