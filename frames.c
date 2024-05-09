@@ -7,10 +7,11 @@
 /////////////////////
 
 unsigned int frames=0;
+unsigned int active=1;
 
 void interrupt()
 {
-        frames++;
+        if(active) frames++;
 }
 
 QL_LINK_t t;
@@ -20,6 +21,11 @@ void framesInit()
 	t.l_rtn=interrupt;
 
 	sms_lpol(&t);
+}
+
+void frameActive(unsigned int a)
+{
+	active=a;
 }
 
 void framesClose()

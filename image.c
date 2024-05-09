@@ -118,6 +118,7 @@ void spriteSetup(sprite *s,char *name)
 	strcpy(s->name,name);
 
 	s->boundsCheck=s->movement=NULL;
+	s->images=0;
 }
 
 void spriteClearImages(sprite *s)
@@ -134,7 +135,7 @@ void spriteAddImage(sprite *s,library *lib,unsigned int i)
 	}
 	else if(i>=lib->n)
 	{
-		printf("Adding invalide image %d to sprite '%s'\n",i,s->name);
+		printf("Adding invalid image %d to sprite '%s'\n",i,s->name);
 		exit(1);
 	}
 	#ifdef MAGIC
@@ -456,7 +457,7 @@ void spritePlot(screen screen,sprite *sprite)
 
 // Erase image, using the background given
 
-void spriteClear(screen scr,screen background,sprite *sprite)
+void spriteClear(screen scr,screen background,sprite *sprite,char m)
 {
 	register int a;
 
@@ -477,25 +478,25 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 
 	if(sprite->currentImage>=sprite->images)
 	{
-		printf("Error: Sprite clear - current sprite image out of range (%d) for '%s'\n",sprite->currentImage,sprite->name);
+		printf("Error: Sprite clear - current sprite image out of range (%d) for '%s'\nAt %c",sprite->currentImage,sprite->name,m);
+
 		exit(1);
 	}
 	#ifdef MAGIC
 	if(image->magic!=MAGIC)
 	{
-		printf("Invalid sprite being cleared #%d!\n",sprite->currentImage);
-		printf("'%s' ?\n",sprite->name);
+		printf("Invalid sprite '%s' image %d being cleared! Magic is %x\nAt %c\n",sprite->name,sprite->currentImage,image->magic,m);
 		exit(1);
 	}
 
 	if(sprite->y<0)
 	{
-		printf("image %s <y\n",image->name);
+		printf("image %s <y\nAt %c\n",image->name,m);
 		exit(1);
 	}
 	else if(sprite->y+image->y>255)
 	{
-		printf("image %s %d>y\n",image->name,sprite->y+image->y);
+		printf("image %s %d>y\nAt %c\n",image->name,sprite->y+image->y,m);
 		exit(1);
 	}
 	
@@ -503,7 +504,7 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 
 	if(sprite->y<0)
 	{
-		printf("ERROR: Sprite plot '%s' with y<0",sprite->image[sprite->currentImage]->name);
+		printf("ERROR: Sprite plot '%s' with y<0\nAt %c",sprite->image[sprite->currentImage]->name,m);
 		exit(4);
 	}
 

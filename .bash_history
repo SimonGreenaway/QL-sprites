@@ -1,64 +1,3 @@
-vi makefile 
-vi makefile 
-make clean
-make
-make runner
-make runner
-make runner
-ls -l
-qdos-gcc -O3 -fomit-frame-pointer -std=gnu9x -S -c runner.c
-mv runner.s runner_O0.s
-vi makefile 
-qdos-gcc -O3 -fomit-frame-pointer -std=gnu9x -S -c runner.c
-mv runner.s runner_O3.s
-qdos-gcc -O0 -fomit-frame-pointer -std=gnu9x -S -c runner.c
-mv runner.s runner_O0.s
-qdos-gcc -O2 -fomit-frame-pointer -std=gnu9x -S -c runner.c
-mv runner.s runner_O2.s
-qdos-gcc -O1 -fomit-frame-pointer -std=gnu9x -S -c runner.c
-mv runner.s runner_O1.s
-vi makefile
-make clean
-make runner
-make runner
-vi makefile
-make clean
-make runner
-vi makefile 
-qdos-gcc -O3 -fomit-frame-pointer -std=gnu9x -S -c runner.c
-make clean
-make runner
-vi runner.s
-as68 runner.s -o runner.o
-make runner
-naje]
-make
-vi makefile 
-make clean
-make
-make
-make run
-vi makefile 
-make run
-make
-make run
-vi makefile 
-make run
-ls -l
-make run
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
 make runner
 make runner
 make runner
@@ -484,6 +423,67 @@ make
 make
 make
 make
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make
+make run
+make run
+make test
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make
+make
+make
+make run;  make runner
+make run;  make runner
+make run;  make runner
+make run;  make runner
+make run;  make runner
+make run;  make runner
+make run;  make runner
+make run;  make runner
+make run;  make runner
+make run ; make runner
+make test ; make runner
+cat makefile
+qdos-gcc $(COPTS) -S plot.c
+qdos-gcc -O3 -fomit-frame-pointer -S plot.c
+qdos-gcc -O3 -fomit-frame-pointer -S plot.c
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
 make test ; make runner
 make test ; make runner
 make test ; make runner

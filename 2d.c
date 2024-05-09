@@ -4,10 +4,10 @@
                 
 void cls(screen screen)
 {
-        memset((unsigned char *)screen,0,32768);
+        bzero((unsigned char *)screen,32768);
 }
 
-// Return the 16 bit pixel data for the 4 pixels containing this pixel
+// Return the 16 bit pixel data for the 4 bits containing this pixel
 
 unsigned short peek(screen screen,unsigned int y,unsigned int x)
 {
@@ -44,9 +44,9 @@ const unsigned char shifts[]={6,4,2,0};
 //
 // Can't see a way to speed this up. We need to read the screen, mask it with an AND,OR in the new colour and then write back to the screen.
 
-inline void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
+void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {
-	register unsigned short *address=ADDRESS(screen,x,y);
+	unsigned short *address=ADDRESS(screen,x,y);
 
 	*address=(*address&masks[x&3])|colours[x&3][c];
 }
@@ -102,17 +102,10 @@ const unsigned long lineColourl[]={0x00000000,0x00550055,0x00AA00AA,0x00FF00FF,0
 
 void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned int y2,unsigned int c)
 {
-        register unsigned int i;
-        int yLonger=0;
-        int incrementVal, endVal;
-        int shortLen=y2-y;
-        int longLen=x2-x;
-        int decInc,j=0;
-
         if((y==y2)&&(abs(x2-x)>7)) // Horizontal line?
         {
-                unsigned short *a,col;
-		unsigned long *al,coll;
+		register unsigned int i;
+		unsigned long *a,col;
                 unsigned int pre,end;
 
 		if(x>x2) // Make sure x2>x
@@ -134,29 +127,28 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 			case 0: plot(screen,x2--,y,c);
 		}
 
-                a=ADDRESS(screen,x2,y);
+		// Write one short at the end if we are not on a 32bit boundary
 
-                if((((unsigned long)a)&2)==0)
+                if(x2&1)
                 {
-                        *a=lineColourw[c];
+                	*ADDRESS(screen,x2,y)=lineColourw[c];
                         x2-=4;
                 }
 
-                a=ADDRESS(screen,x,y);
-		if(((unsigned long)a)&2)
+		a=(unsigned long *)ADDRESS(screen,x,y);
+
+		// Write one short at the start if we are not on a 32bit boundary
+		if(x&1)
 		{
-			*a++=lineColourw[c]; //printf("S-"); sleep(2);
+	                *((unsigned short *)a)=lineColourw[c];
 			x+=4;
-		}
-		al=(unsigned long *)ADDRESS(screen,x,y);
 
-		coll=lineColourl[c];
-
-		if(x2>x)
-		{
-			end=(x2-x)/8;
-       	        	for(i=0;i<=end;i++) *al++=coll;
+			a=(unsigned long *)(2+(unsigned int)a);
 		}
+
+		col=lineColourl[c];
+
+		if(x2>x) for(i=0;i<=(x2-x)/8;i++) *a++=col;
         }
 	else if(x==x2) // Vertical line?
 	{
@@ -185,6 +177,13 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 	}
         else
         {
+		register unsigned int i;
+        	int yLonger=0;
+	        int incrementVal, endVal;
+	        int shortLen=y2-y;
+	        int longLen=x2-x;
+	        int decInc,j=0;
+
                 if(abs(shortLen)>abs(longLen))
                 {
                         shortLen^=longLen;

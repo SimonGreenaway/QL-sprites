@@ -100,6 +100,7 @@ void test()
 	unsigned int i,j,k,m;
 	WINDOWDEF_t w;
 	chanid_t cid;
+	unsigned int counts[7],pass,count=0;
 
 	init();
 	framesInit();
@@ -123,35 +124,34 @@ void test()
 	sleep(5);
 	cls(SCREEN); fastSrand(0);
 
-	while(1)
+
+	for(pass=0;pass<7;pass++)
 	{
-		unsigned int pass,count=0;
+		unsigned int f=getFrames()+10*50;
 
-		for(pass=0;pass<7;pass++)
+		count=0;
+
+		while(getFrames()<f)
 		{
-			unsigned int f=getFrames()+10*50;
-
-			count=0;
-
-			while(getFrames()<f)
+			switch(pass)
 			{
-				switch(pass)
-				{
-					case 0: plot(SCREEN,fastRand()&255,fastRand()&255,fastRand()&7); break;
-					case 1: line(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
-					case 2: triangle(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
-					case 3:fillTriangle(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
-					case 4:box(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
-					case 5:fillBox(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
-					case 6:unplot(SCREEN,fastRand()&255,fastRand()&255); break;
-				}
-
-				count++;
+				case 0: plot(SCREEN,fastRand()&255,fastRand()&255,fastRand()&7); break;
+				case 1: line(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
+				case 2: triangle(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
+				case 3:fillTriangle(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
+				case 4:box(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
+				case 5:fillBox(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
+				case 6:unplot(SCREEN,fastRand()&255,fastRand()&255); break;
 			}
 
-			cls(SCREEN); fastSrand(0);
-			printf("%d\n",count);
+			count++;
 		}
+
+		cls(SCREEN); fastSrand(0);
+
+		counts[pass]=count;
+
+		for(i=0;i<=pass;i++) printf("%d\n",counts[i]);
 	}
 }
 

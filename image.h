@@ -66,11 +66,10 @@ typedef struct
 
 struct sprite
 {
-	unsigned int moves;
 	char name[32];
 	unsigned int active;
 
-	int images;
+	unsigned int images;
 	image *image[8];
 
 	int x,y,dx,dy,currentImage;
@@ -107,7 +106,7 @@ struct shifter
 };
 
 void spritePlot(screen scr,sprite *sprite);
-void spriteClear(screen scr,screen mask,sprite *sprite);
+void spriteClear(screen scr,screen mask,sprite *sprite,char m);
 
 //void tilePlot(unsigned short x,unsigned short y,image *image);
 //void imagePlot(unsigned int x,unsigned int y,image *image);
@@ -130,8 +129,9 @@ void printCharAt(screen screen,library *font,unsigned int x,unsigned int y,char 
 void printAt(screen screen,library *font,unsigned int x,unsigned y,char *s);
 int loadScreen(unsigned char *scr,char *dir,char *file);
 
-void initFrames();
+void framesInit();
 unsigned int getFrames();
 void framesClose();
+void frameActive(unsigned int a);
 void msleep(unsigned int delay);
 
