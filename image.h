@@ -134,4 +134,3 @@ unsigned int getFrames();
 void framesClose();
 void frameActive(unsigned int a);
 void msleep(unsigned int delay);
-
