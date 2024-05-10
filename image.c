@@ -92,10 +92,10 @@ void* myMalloc(unsigned int i)
 
 //long _stack = 500*1024L; /* size of stack */
 
-void init()
+void init(unsigned int c)
 {
 	int i;
-	short colours=8,mode=0;
+	short colours=c,mode=0;
 
 	//background=(unsigned char *)createBuffer(256);
 	//scratch=createBuffer(256);

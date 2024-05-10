@@ -150,7 +150,7 @@ int main(int argc,char *argv[])
 	library lib;
 	unsigned int i;
 
-	init();
+	init(8);
 
 	loadLibrary(&lib,"test_lib",1);
 

@@ -34,6 +34,19 @@ const unsigned short colours[4][8]={
 				{0,1<<2,2<<2,3<<2,512<<2,513<<2,514<<2,515<<2},
 				{0,1,2,3,512,513,514,515}
 				};
+
+const unsigned short masks4[]={0x0101,0x202,0x404,0x808,0x1010,0x2020,0x4040,0x8080};
+const unsigned short colours4[8][4]={
+					{0,0x1<<7,0x100<<7,0x101<<7},
+					{0,0x1<<6,0x100<<6,0x101<<6},
+					{0,0x1<<5,0x100<<5,0x101<<5},
+					{0,0x1<<4,0x100<<4,0x101<<4},
+					{0,0x1<<3,0x100<<3,0x101<<3},
+					{0,0x1<<2,0x100<<2,0x101<<2},
+					{0,0x1<<1,0x100<<1,0x101<<1},
+					{0,0x1,0x100,0x101}
+				   };
+
 const unsigned char shifts[]={6,4,2,0};
 
 // Plot a point in the given colour
@@ -51,6 +64,21 @@ void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
 	*address=(*address&masks[x&3])|colours[x&3][c];
 }
 
+void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c)
+{
+	unsigned short *address=ADDRESS4(screen,x,y);
+
+	if(x>511)	{	puts("X high"); exit(0); }
+	if(y>511)	{	puts("Y high"); exit(0); }
+
+	if(((unsigned int)address<0x20000)||((unsigned int)address>0x28000))
+	{
+		printf("Address OOR %X %d %d\n",(unsigned int)address,x,y);
+		exit(2);
+	}
+
+	*address=(*address&masks4[x&7])|colours4[x&7][c];
+}
 // Return colour at the given screen location
 
 unsigned int unplot(screen screen,unsigned short x,unsigned short y)

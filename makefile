@@ -34,6 +34,7 @@ clean:
 git:	clean
 	git add .
 	git commit
+	git push
 
 deploy:  runner test
 	cp runner test /home/simon/emulators/ql/emulators/sQLux/flp1/

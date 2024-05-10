@@ -15,7 +15,7 @@ void benchmark()
 
 	scratch=background;
 
-	init();
+	init(8);
 
 	loadLibrary(&lib,"test_lib",1);
 	//copyAllScreen(background,SCREEN);
@@ -102,7 +102,7 @@ void test()
 	chanid_t cid;
 	unsigned int counts[7],pass,count=0;
 
-	init();
+	init(4);
 	framesInit();
 
 	//loadLibrary(&l,"test_lib",1); 
@@ -155,6 +155,18 @@ void test()
 	}
 }
 
+void testMode4()
+{
+	unsigned int i;
+
+	init(4);
+
+	while(1)
+	{
+		plot4(SCREEN,fastRand()&511,fastRand()&255,fastRand()&3);
+	}
+}
+
 //////////
 // main //
 //////////
@@ -166,6 +178,8 @@ int main(int argc, char *argv[])
 	// Parse the args
 
 	setSysBase((unsigned char *)0x28000);
+
+	//testMode4();
 
 	for(s=1;s<argc;s++)
 	{

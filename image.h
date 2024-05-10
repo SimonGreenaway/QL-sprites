@@ -11,11 +11,12 @@
 #endif
 
 #define ADDRESS(screen,x,y) (((unsigned short *)screen)+y*64+x/4)
+#define ADDRESS4(screen,x,y) (((unsigned short *)screen)+y*64+x/8)
 
 typedef void * screen;
 
 extern screen SCREEN;
-void init();
+void init(unsigned int colours);
 void* myMalloc(unsigned int i);
 
 // Screens
@@ -30,6 +31,7 @@ void show(screen screen,unsigned int lowy,unsigned int highy);
 //
 void fill(screen screen,unsigned int xmin,unsigned int xmax,unsigned char c);
 void plot(screen screen,unsigned int x,unsigned int y,unsigned char c);
+void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c);
 unsigned int unplot(screen screen,unsigned short x,unsigned short y);
 void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);
 void fillBox(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);
