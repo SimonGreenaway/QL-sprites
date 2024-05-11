@@ -1,7 +1,7 @@
 COPTS=-O3 -fomit-frame-pointer -std=gnu9x
 
-libsprite.a:	image.o 2d.o system_variables.o frames.o makefile
-		qdos-ar -rc libsprite.a image.o 2d.o system_variables.o frames.o
+libsprite.a:	image.o 2d.o system_variables.o frames.o keyboard.o makefile
+		qdos-ar -rc libsprite.a image.o 2d.o system_variables.o frames.o keyboard.o
 
 test:	libsprite.a	test.o frames.o
 	qdos-gcc -o test test.o frames.o -lsprite
@@ -11,6 +11,9 @@ runner:	libsprite.a	runner.o frames.o
 
 runner.o:	runner.c image.h makefile
 		qdos-gcc $(COPTS) -o runner.o -c runner.c
+
+keyboard.o:	keyboard.c image.h makefile
+		qdos-gcc $(COPTS) -o keyboard.o -c keyboard.c
 
 image.o:	image.c image.h makefile
 		qdos-gcc $(COPTS) -o image.o -c image.c

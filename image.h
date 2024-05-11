@@ -19,6 +19,10 @@ extern screen SCREEN;
 void init(unsigned int colours);
 void* myMalloc(unsigned int i);
 
+// Keyboard
+
+unsigned char scanKey();
+
 // Screens
 
 screen createScreen();

@@ -1,79 +1,3 @@
-make
-make deploy
-make deploy
-make deploy
-make deploy
-make deploy
-make deploy
-make deploy
-make deploy
-ls -l /home/simon/emulators/ql/emulators/sQLux/flp1/
-ls -l /home/simon/emulators/ql/emulators/sQLux/flp1
-pwd
-make test
-make runner
-make runner
-make test
-make test
-make runner
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make runner ; make test
-make
-make
-make
-make
-make
-make
-make
-make
-make runner
-make runner
-make tesrt
 make test
 make test ; make runner
 make test ; make runner
@@ -498,3 +422,79 @@ make test ; make runner
 make test ; make runner
 make test ; make runner
 make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make
+make
+make
+make
+make clean
+make
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test
+make runner ; make test

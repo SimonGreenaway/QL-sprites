@@ -173,6 +173,18 @@ void testMode4()
 	}
 }
 
+void testKey()
+{
+	while(1)
+	{
+		unsigned char c=scanKey();
+
+		if(c!=0) putchar(c);
+
+		while(scanKey()==c);
+	}
+}
+
 //////////
 // main //
 //////////
@@ -185,7 +197,8 @@ int main(int argc, char *argv[])
 
 	setSysBase((unsigned char *)0x28000);
 
-	testMode4();
+	//testMode4();
+	testKey();
 
 	for(s=1;s<argc;s++)
 	{
