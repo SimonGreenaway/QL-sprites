@@ -1,37 +1,3 @@
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-vi makefile 
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make runner
-make
-make test
 make
 make deploy
 make deploy
@@ -474,6 +440,40 @@ cat makefile
 qdos-gcc $(COPTS) -S plot.c
 qdos-gcc -O3 -fomit-frame-pointer -S plot.c
 qdos-gcc -O3 -fomit-frame-pointer -S plot.c
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make
+make test
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
+make test ; make runner
 make test ; make runner
 make test ; make runner
 make test ; make runner

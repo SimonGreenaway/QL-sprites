@@ -163,7 +163,13 @@ void testMode4()
 
 	while(1)
 	{
-		plot4(SCREEN,fastRand()&511,fastRand()&255,fastRand()&3);
+		for(i=0;i<8;i++)
+		{
+			plot4(SCREEN,i,0,3);
+			plot4(SCREEN,i,i,3); sleep(1);
+		}
+
+		while(1);
 	}
 }
 
@@ -179,7 +185,7 @@ int main(int argc, char *argv[])
 
 	setSysBase((unsigned char *)0x28000);
 
-	//testMode4();
+	testMode4();
 
 	for(s=1;s<argc;s++)
 	{
