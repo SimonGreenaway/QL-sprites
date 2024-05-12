@@ -102,7 +102,7 @@ void test()
 	chanid_t cid;
 	unsigned int counts[7],pass,count=0;
 
-	init(4);
+	init(8);
 	framesInit();
 
 	//loadLibrary(&l,"test_lib",1); 
@@ -125,7 +125,7 @@ void test()
 	cls(SCREEN); fastSrand(0);
 
 
-	for(pass=0;pass<7;pass++)
+	for(pass=3;pass<7;pass++)
 	{
 		unsigned int f=getFrames()+10*50;
 
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 	setSysBase((unsigned char *)0x28000);
 
 	//testMode4();
-	testKey();
+	//testKey();
 
 	for(s=1;s<argc;s++)
 	{

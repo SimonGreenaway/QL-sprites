@@ -12,6 +12,7 @@
 
 #define ADDRESS(screen,x,y) (((unsigned short *)screen)+y*64+x/4)
 #define ADDRESS4(screen,x,y) (((unsigned short *)screen)+y*64+x/8)
+#define SWAP(a,b) a^=b; b^=a; a^=b; 
 
 typedef void * screen;
 
@@ -113,9 +114,6 @@ struct shifter
 
 void spritePlot(screen scr,sprite *sprite);
 void spriteClear(screen scr,screen mask,sprite *sprite,char m);
-
-//void tilePlot(unsigned short x,unsigned short y,image *image);
-//void imagePlot(unsigned int x,unsigned int y,image *image);
 
 // Image library handling
 

@@ -9,10 +9,6 @@
 
 void binPrint(unsigned int i,unsigned char d);
 
-unsigned char *addresses[256];
-unsigned int secondAddress;
-unsigned short bits[8];
-
 screen SCREEN;
 
 // Print a number in binary to a set number of places...
@@ -82,33 +78,18 @@ void* myMalloc(unsigned int i)
 }
 
 // Initialise the sprite system
-
-//long _stack = 4L*1024L; /* size of stack */
- //long _mneed = 4L*1024L; /* minimum requirement */
-//long _mneed = 256L*1024L; /* minimum requirement */
- //long _memmax = 9999L * 1024L; /* maximum allowed */
- //long _memincr = 1L * 1024L; /* increment size */
- //long _memqdos = 20L * 1024L; /* minimum for QDOS */
-
-//long _stack = 500*1024L; /* size of stack */
+//     Set the screen mode and other stuff used by this library
 
 void init(unsigned int c)
 {
-	int i;
 	short colours=c,mode=0;
 
-	//background=(unsigned char *)createBuffer(256);
-	//scratch=createBuffer(256);
-	//secondAddress=(int)(background)-0x20000;
+	mt_dmode(&colours,&mode);	// Set the mode (4 or 8)
 
-	mt_dmode(&colours,&mode);
-
-	for(i=0;i<256;i++) addresses[i]=(unsigned char *)(i<<7);
-
-	for(i=0;i<8;i++) bits[i]=(i&3)+(i&4)<<7;
-
-	SCREEN=(screen)0x20000;
+	SCREEN=(screen)0x20000; // Set default screen location
 }
+
+// Initiate a sprite
 
 void spriteSetup(sprite *s,char *name)
 {
@@ -121,10 +102,14 @@ void spriteSetup(sprite *s,char *name)
 	s->images=0;
 }
 
+// Clear sprite's image list
+//
 void spriteClearImages(sprite *s)
 {
 	s->images=s->currentImage=0;
 }
+
+// Add an image to the sprite
 
 void spriteAddImage(sprite *s,library *lib,unsigned int i)
 {
@@ -598,89 +583,6 @@ void spriteClear(screen scr,screen background,sprite *sprite,char m)
 	}
 }
 
-// Draw an image, erasing old one if needed
-
-void imagePlot(unsigned int x,unsigned int y,image *image)
-{
-	unsigned short *pmask=image->mask,*data=image->data;
-	const int shifts=2*(x&3);
-	unsigned char *address=addresses[y]+2*(x>>2);
-	unsigned int addressRow=128-2*image->x;
-
-	unsigned int yloop;
-
-	for(yloop=0;yloop<image->y;yloop++)
-	{
-		int xloop;
-
-		for(xloop=0;xloop<image->x;xloop+=2)
-		{
-			struct shifter shifterHigh,shifterLow,mask;
-
-			shifterHigh.z.l=shifterLow.z.l=mask.z.l=0;
-
-			shifterHigh.z.w[0]=*data++;
-			shifterLow.z.w[0]=*data++;
-			mask.z.w[0]=*pmask;
-
-			shifterHigh.z.l>>=shifts;
-			shifterLow.z.l>>=shifts;
-			mask.z.l>>=shifts;
-
-			mask.z.l=~mask.z.l;
-
-			*address++=((*address)&mask.z.b[0])|shifterLow.z.b[0]; 
-			*address++=((*address)&mask.z.b[0])|shifterHigh.z.b[0]; 
-			*address++=((*address)&mask.z.b[1])|shifterLow.z.b[1];
-			*address++=((*address)&mask.z.b[1])|shifterHigh.z.b[1];
-			*address++=((*address)&mask.z.b[2])|shifterLow.z.b[2];
-			*address--=((*address)&mask.z.b[2])|shifterHigh.z.b[2];
-		}
-
-		address+=addressRow;
-	}
-}
-
-void tilePlot(unsigned short x,unsigned short y,image *image)
-{
-	unsigned short *mask=(unsigned short *)image->mask;
-	unsigned short *data=(unsigned short *)image->data;
-	int a;
-
-	for(a=0;a<image->y;a++)
-	{
-		int b;
-
-		for(b=0;b<image->x;b++)
-		{
-			unsigned char *address=addresses[a+y]+(x>>2)+b;
-
-			//(*address)=((*address)&*mask)|(*data);
-			*address=*data;
-
-			mask++;
-			data++;
-		}
-	}
-}
-
-char *readLine(FILE *in,char *buffer)
-{
-	do
-	{
-		if(feof(in))
-		{
-			puts("Error reading library!\n");
-			exit(1);
-		}
-
-		fgets(buffer,80,in);
-	}
-	while(buffer[0]=='#');
-
-	return buffer;
-}
-
 void preShift(image *image)
 {
         int a,b,x,i,n=image->y*image->x/2*8;
@@ -752,6 +654,23 @@ void preShift(image *image)
 			exit(1);
 		}
         }
+}
+
+char *readLine(FILE *in,char *buffer)
+{
+        do
+        {
+                if(feof(in))
+                {
+                        puts("Error reading library!\n");
+                        exit(1);
+                }
+
+                fgets(buffer,80,in);
+        }
+        while(buffer[0]=='#');
+
+        return buffer;
 }
 
 void bLoadLibrary(library *library,char *filename,int shift)

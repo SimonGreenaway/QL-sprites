@@ -90,6 +90,8 @@ void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned 
 	line(SCREEN,x1,y2,x1,y1,c);
 }
 
+// Fill a box with colour. Could be optimised by writing all the y pixels at once....
+
 void fillBox(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
 {
         for(;y1<=y2;y1++) line(screen,x1,y1,x2,y1,c);
@@ -119,6 +121,8 @@ const unsigned long lineColourl[]={0x00000000,0x00550055,0x00AA00AA,0x00FF00FF,0
 // Draw a line between two points
 //
 // THE EXTREMELY FAST LINE ALGORITHM Variation D (Addition Fixed Point)
+// 
+// Additionally optimised for horizontal and vertical lines
 
 void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned int y2,unsigned int c)
 {
@@ -250,20 +254,20 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 
 struct vertice
 {
-        float x,y;
+        int x,y;
 };
 
-void fillBottomFlatTriangle(screen screen,struct vertice v1,struct  vertice v2, struct vertice v3,unsigned int c)
+void fillBottomFlatTriangle(screen screen,int x1,int y1,int x2,int y2,int x3,int y3,unsigned int c)
 {
         unsigned int scanlineY;
 
-        int invslope1 = ((v2.x - v1.x)*128) / (v2.y - v1.y);
-        int invslope2 = ((v3.x - v1.x)*128) / (v3.y - v1.y);
+        unsigned int invslope1 = ((x2 - x1)*128) / (y2 - y1);
+        int invslope2 = ((x3 - x1)*128) / (y3 - y1);
 
-        int curx1 = v1.x*128;
-        int curx2 = curx1;
+        unsigned int curx1 = x1*128;
+        unsigned int curx2 = curx1;
 
-        for(scanlineY = v1.y; scanlineY <= v2.y; scanlineY++)
+        for(scanlineY = y1; scanlineY <= y2; scanlineY++)
         {
                 line(screen,curx1/128, scanlineY,curx2/128, scanlineY,c);
                 curx1 += invslope1;
@@ -271,17 +275,17 @@ void fillBottomFlatTriangle(screen screen,struct vertice v1,struct  vertice v2, 
         }
 }
 
-void fillTopFlatTriangle(screen screen,struct vertice v1,struct vertice v2,struct vertice v3,unsigned int c)
+void fillTopFlatTriangle(screen screen,int x1,int y1,int x2,int y2,int x3,int y3,unsigned int c)
 {
         unsigned int scanlineY;
 
-        int invslope1 = ((v3.x - v1.x)*128) / (v3.y - v1.y);
-        int invslope2 = ((v3.x - v2.x)*128) / (v3.y - v2.y);
+        int invslope1 = ((x3 - x1)*128) / (y3 - y1);
+        int invslope2 = ((x3 - x2)*128) / (y3 - y2);
 
-        int curx1 = v3.x*128;
+        int curx1 = x3*128;
         int curx2 = curx1;
 
-        for(scanlineY = v3.y; scanlineY > v1.y; scanlineY--)
+        for(scanlineY = y3; scanlineY > y1; scanlineY--)
         {
                 line(screen,curx1/128, scanlineY,curx2/128, scanlineY,c);
                 curx1 -= invslope1;
@@ -291,7 +295,7 @@ void fillTopFlatTriangle(screen screen,struct vertice v1,struct vertice v2,struc
 
 void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c)
 {
-        struct vertice vt1,vt2,vt3,vTmp;
+        struct vertice vt1,vt2,vt3;
 
         vt1.x=x1; vt1.y=y1;
         vt2.x=x2; vt2.y=y2;
@@ -300,47 +304,38 @@ void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,
         /* at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice */
 
 
-        if (vt1.y > vt2.y)
+        if (vt1.y > vt2.y) 
         {
-            vTmp = vt1;
-            vt1 = vt2;
-            vt2 = vTmp;
+		SWAP(vt1.x,vt2.x); SWAP(vt1.y,vt2.y);
         }
-        /* here v1.y <= v2.y */
-        if (vt1.y > vt3.y)
+
+        if (vt1.y > vt3.y) /* here v1.y <= v2.y */
         {
-            vTmp = vt1;
-            vt1 = vt3;
-            vt3 = vTmp;
+		SWAP(vt1.x,vt3.x); SWAP(vt1.y,vt3.y);
         }
-        /* here v1.y <= v2.y and v1.y <= v3.y so test v2 vs. v3 */
-        if (vt2.y > vt3.y)
+
+        if (vt2.y > vt3.y) /* here v1.y <= v2.y and v1.y <= v3.y so test v2 vs. v3 */
         {
-            vTmp = vt2;
-            vt2 = vt3;
-            vt3 = vTmp;
+		SWAP(vt2.x,vt3.x); SWAP(vt2.y,vt3.y);
         }
-       /* here we know that v1.y <= v2.y <= v3.y */
-        /* check for trivial case of bottom-flat triangle */
+
+	/* here we know that v1.y <= v2.y <= v3.y */
+	/* check for trivial case of bottom-flat triangle */
 
         if (vt2.y == vt3.y)
         {
-                fillBottomFlatTriangle(screen,vt1, vt2, vt3,c);
+                fillBottomFlatTriangle(screen,vt1.x,vt1.y,vt2.x,vt2.y,vt3.x,vt3.y,c);
         }
-          /* check for trivial case of top-flat triangle */
-        else if (vt1.y == vt2.y)
+        else if (vt1.y == vt2.y) /* check for trivial case of top-flat triangle */
         {
-                fillTopFlatTriangle(screen, vt1, vt2, vt3,c);
+                fillTopFlatTriangle(screen,vt1.x,vt1.y, vt2.x,vt2.y, vt3.x,vt3.y,c);
         }
-        else
+        else /* general case - split the triangle in a topflat and bottom-flat one */
         {
-                /* general case - split the triangle in a topflat and bottom-flat one */
-                struct vertice v4;
+                int x4= (int)(vt1.x + ((float)(vt2.y - vt1.y) / (float)(vt3.y - vt1.y)) * (vt3.x - vt1.x));
 
-                v4.x= (int)(vt1.x + ((float)(vt2.y - vt1.y) / (float)(vt3.y - vt1.y)) * (vt3.x - vt1.x));
-                v4.y= vt2.y;
-                fillBottomFlatTriangle(screen, vt1, vt2, v4,c);
-                fillTopFlatTriangle(screen, vt2, v4, vt3,c);
+                fillBottomFlatTriangle(screen,vt1.x,vt1.y,vt2.x,vt2.y,x4,vt2.y,c);
+                fillTopFlatTriangle(screen, vt2.x,vt2.y, x4,vt2.y, vt3.x,vt3.y,c);
         }
 }
 

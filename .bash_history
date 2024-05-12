@@ -1,14 +1,3 @@
-make test
-make test ; make runner
-make test ; make runner
-make test ; make runner
-make
-make run
-make clean
-make test 
-make
-make
-make test 
 make runner
 make test 
 make clean
@@ -498,3 +487,14 @@ make runner ; make test
 make runner ; make test
 make runner ; make test
 make runner ; make test
+make run  ; make runner
+make run  ; make runner
+make run  ; make runner
+make run  ; make runner
+make run  ; make runner
+make run  ; make runner
+make run  ; make runner
+make run  ; make runner
+make run  ; make runner
+make run  ; make runner
+make run  ; make runner
