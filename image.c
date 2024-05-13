@@ -673,7 +673,7 @@ char *readLine(FILE *in,char *buffer)
         return buffer;
 }
 
-void bLoadLibrary(library *library,char *filename,int shift)
+int bLoadLibrary(library *library,char *filename,int shift)
 {
 	unsigned int i,n,b,a;
 	char buffer[80];
@@ -685,7 +685,7 @@ void bLoadLibrary(library *library,char *filename,int shift)
 	if(in==NULL)
 	{
 		printf("Error: Cannot open '%s' to read\n",filename);
-		exit(2);
+		return 0;
 	}
 
 	fread(&library->n,sizeof(unsigned int),1,in);
@@ -729,6 +729,8 @@ void bLoadLibrary(library *library,char *filename,int shift)
                         free(library->images[i].mask);
                 }
 	}
+
+	return 1;
 }
 
 void bSaveLibrary(library *library,char *filename)
@@ -917,19 +919,31 @@ int loadScreen(unsigned char *scr,char *dir,char *file)
 	char file2[128];
         FILE *in;
 
+	puts("loadScreen: creating filename"); sleep(1);
+
 	sprintf(file2,"%s%s",dir,file);
 
-        in=fopen(file2,"rb");
+	printf("loadScreen: opening '%s'\n",file2); sleep(1);
+
+        in=fopen(file2,"r");
 
         if(in!=NULL)
         {
+		printf("loadScreen: Loading file into memory %X\n",(unsigned int)scr); sleep(1);
+
                 fread(scr,1,32768,in);
 
+
+	puts("loadScreen: closing file"); sleep(1);
                 fclose(in);
+
+	
+	puts("loadScreen: returning 1 (=success)"); sleep(1);
 
                 return 1;
         }
 
+	puts("loadScreen: returning 0 (=failure)"); sleep(1);
         return 0;
 }
 

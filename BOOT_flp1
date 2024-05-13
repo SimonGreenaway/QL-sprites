@@ -1,5 +1,7 @@
 10 OPEN #8,con_512x256a0x0_0
 20 INK #8,4
 30 CLS #8
+40 LRESPR flp1_env_bin
+50 SETENV "DRIVE=FLP1_"
 60 EXEC_W flp1_test,#8;'-t'
 120 CLOSE #8

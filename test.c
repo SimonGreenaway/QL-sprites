@@ -179,9 +179,8 @@ void testKey()
 	{
 		unsigned char c=scanKey();
 
-		if(c!=0) putchar(c);
-
-		while(scanKey()==c);
+		if(c==8) printf("DEL");
+		else if(c!=0) putchar(c);
 	}
 }
 
@@ -189,16 +188,27 @@ void testKey()
 // main //
 //////////
 
-int main(int argc, char *argv[])
+char *drive="MDV1_";
+
+int main(int argc, char *argv[],char *argp[])
 {
 	unsigned int s;
+
+	if(getenv("DRIVE")!=NULL) strcpy(drive,getenv("DRIVE"));
+
+	printf("Default drive is '%s'\n",drive);
+
+	exit(0);
 
 	// Parse the args
 
 	setSysBase((unsigned char *)0x28000);
 
+	
+
 	//testMode4();
 	//testKey();
+	testVars();
 
 	for(s=1;s<argc;s++)
 	{

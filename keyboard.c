@@ -27,21 +27,35 @@ char keyMatrix[2][8][8]={
 
 unsigned char scanKey()
 {
-	unsigned int i;
-	int k;
+	unsigned char k=scanRawKey();
 
-	unsigned int shift=keyrow(7)&1;
+	if(k)
+	{
+		while(scanRawKey()==k);
+	}
+
+	return k;
+}
+
+unsigned char scanRawKey()
+{
+	unsigned int i;
+	int k=keyrow(7);
+	unsigned int shift=k&1;
+	unsigned int control=k&2;
 
 	for(i=0;i<10;i++)
 	{
 		int key=keyrow(i);
 		char k2;
 
-		if(i==7) key&=0xFF; // Zap the shift key
+		if(i==7) key&=0xFF; // Zap the shift and control key
 
 		if(key)
 		{
 			for(k=7;k>=0;k--) if(key&(1<<k)) break;
+
+			if(control&&(i==1)&&(k==1)) return 8;
 
 			k2=keyMatrix[shift][i][k];
 

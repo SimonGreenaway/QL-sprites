@@ -23,6 +23,7 @@ void* myMalloc(unsigned int i);
 // Keyboard
 
 unsigned char scanKey();
+unsigned char scanRawKey();
 
 // Screens
 
@@ -118,7 +119,7 @@ void spriteClear(screen scr,screen mask,sprite *sprite,char m);
 // Image library handling
 
 void loadLibrary(library *library,char *filename,int shift);
-void bLoadLibrary(library *library,char *filename,int shift);
+int bLoadLibrary(library *library,char *filename,int shift);
 void bSaveLibrary(library *library,char *filename);
 
 void cls(screen screen);
