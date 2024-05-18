@@ -1,35 +1,35 @@
 COPTS=-O3 -fomit-frame-pointer -std=gnu9x
 
 libsprite.a:	image.o 2d.o system_variables.o frames.o keyboard.o makefile
-		qdos-ar -rc libsprite.a image.o 2d.o system_variables.o frames.o keyboard.o
+		qgcc qdos-ar -rc libsprite.a image.o 2d.o system_variables.o frames.o keyboard.o
 
 test:	libsprite.a	test.o frames.o
-	qdos-gcc -o test test.o frames.o -lsprite
+	qgcc qdos-gcc -o test test.o frames.o -lsprite
 
 runner:	libsprite.a	runner.o frames.o
-	qdos-gcc -o runner runner.o frames.o -lsprite
+	qgcc qdos-gcc -o runner runner.o frames.o -lsprite
 
 runner.o:	runner.c image.h makefile
-		qdos-gcc $(COPTS) -o runner.o -c runner.c
+		qgcc qdos-gcc $(COPTS) -o runner.o -c runner.c
 
 keyboard.o:	keyboard.c image.h makefile
-		qdos-gcc $(COPTS) -o keyboard.o -c keyboard.c
+		qgcc qdos-gcc $(COPTS) -o keyboard.o -c keyboard.c
 
 image.o:	image.c image.h makefile
-		qdos-gcc $(COPTS) -o image.o -c image.c
+		qgcc qdos-gcc $(COPTS) -o image.o -c image.c
 
 2d.o:	2d.c image.h makefile
-		qdos-gcc $(COPTS) -o 2d.o -c 2d.c
-		qdos-gcc $(COPTS) -S 2d.c
+		qgcc qdos-gcc $(COPTS) -o 2d.o -c 2d.c
+		qgcc qdos-gcc $(COPTS) -S 2d.c
 
 frames.o:	frames.c image.h makefile
-		qdos-gcc $(COPTS) -o frames.o -c frames.c
+		qgcc qdos-gcc $(COPTS) -o frames.o -c frames.c
 
 test.o:	test.c image.h makefile
-		qdos-gcc $(COPTS) -o test.o -c test.c
+		qgcc qdos-gcc $(COPTS) -o test.o -c test.c
 
 system_variables.o:	system_variables.c system_variables.h makefile
-		qdos-gcc $(COPTS) -o system_variables.o -c system_variables.c
+		qgcc qdos-gcc $(COPTS) -o system_variables.o -c system_variables.c
 
 clean:
 	rm -f image.o libsprite.a  system_variables.o libsprite.o test.o test frames.o runner.o 2d.s runner.s

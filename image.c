@@ -193,13 +193,13 @@ void spritePlot(screen screen,sprite *sprite)
 		exit(4);
 	}
 
-	if(sprite->mask&&sprite->draw)
+	if(sprite->mask&&sprite->draw) // Draw sprite masking background out
 	{
 		register unsigned int a;
 
 		switch(xlim) // Welcome to loop unroll City....
 		{
-			case 4:	for(a=0;a<image->y;a++)
+			case 4:	for(a=0;a<image->y;a++) // x32
 				{
 					*address++=*address&*maskshifter++|*shifter++; 
 					*address++=*address&*maskshifter++|*shifter++; 
@@ -217,7 +217,7 @@ void spritePlot(screen screen,sprite *sprite)
 	
 				break;
 	
-			case 3:	for(a=0;a<image->y;a++)
+			case 3:	for(a=0;a<image->y;a++) // x24
 				{
 					*address++=*address&*maskshifter++|*shifter++; 
 					*address++=*address&*maskshifter++|*shifter++; 
@@ -232,7 +232,7 @@ void spritePlot(screen screen,sprite *sprite)
 	
 				break;
 		
-			case 2:	for(a=0;a<image->y;a++)
+			case 2: for(a=0;a<image->y;a++) // x16
 				{
 					*address++=*address&*maskshifter++|*shifter++; 
 					*address++=*address&*maskshifter++|*shifter++; 
@@ -625,7 +625,6 @@ void preShift(image *image)
 				{
 					tmp.z.b[1]=shifter1.z.b[i];
 					tmp.z.b[0]=shifter2.z.b[i];
-
 				
 					if((b>0)&&(i==0))
 					{

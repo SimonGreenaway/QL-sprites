@@ -6,7 +6,7 @@
 // TIME AND short //
 /////////////////////
 
-unsigned int frames=0;
+unsigned int frames=INT_MAX;
 unsigned int active=1;
 
 void interrupt()
@@ -21,6 +21,8 @@ void framesInit()
 	t.l_rtn=interrupt;
 
 	sms_lpol(&t);
+
+	frames=0;
 }
 
 void frameActive(unsigned int a)
@@ -35,7 +37,9 @@ void framesClose()
 
 unsigned int getFrames()
 {
-        return frames;
+	if(frames==INT_MAX) framesInit();
+        
+	return frames;
 }
 
 void msleep(unsigned int delay)

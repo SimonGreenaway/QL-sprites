@@ -7,18 +7,24 @@
 
 #include "image.h"
 
+void binPrint2(short i)
+{
+	int z;
+
+	for(z=15;z>=0;z--)
+		putchar(i&(1<<z)?'1':'0');
+}
+
 void benchmark()
 {
-	unsigned int s;
-	screen scratch,background=createScreen();
+	unsigned int s,t;
+	screen scratch=SCREEN,background=createScreen();
 	library lib;
-
-	scratch=background;
 
 	init(8);
 
 	loadLibrary(&lib,"test_lib",1);
-	//copyAllScreen(background,SCREEN);
+	copyAllScreen(background,SCREEN);
 
 	for(s=0;s<4;s++)
 	{
@@ -30,7 +36,8 @@ void benchmark()
 
 		for(c=0;c<8;c++)
 		{
-			sprite[c].image[0]=&lib.images[s];
+			spriteSetup(&sprite[c],"");
+			spriteAddImage(&sprite[c],&lib,s);
 			sprite[c].currentImage=0;
 			sprite[c].x=x++;
 
@@ -38,7 +45,11 @@ void benchmark()
 			sprite[c].draw=1;
 
 			y+=sprite[c].image[0]->y;
-			if(y+sprite[c].image[0]->y>255) y=0;
+			if(y+sprite[c].image[0]->y>255)
+			{
+				y=0;
+				x+=sprite[c].image[0]->x<<2;
+			}
 		}
 
 		for(pass=0;pass<2;pass++)
@@ -49,27 +60,19 @@ void benchmark()
 	
 			while(t>getFrames())
 			{
-				unsigned int i,y=0,x=0;
+				unsigned int i;
 
-				copyAllScreen(scratch,background);
-
-				for(i=0;i<8;i++)
-				{
-					spritePlot(scratch,&sprite[i]);
-				}
+				for(i=0;i<8;i++) spritePlot(SCREEN,&sprite[i]);
 
 				c+=8;
-
-				#ifdef DOUBLEBUFFER
-				showAll(scratch);
-				#endif
 			}
 
-			#ifdef DOUBLEBUFFER
-			showAll(scratch);
-			#endif
+			copyAllScreen(SCREEN,background);
 
-			printf("%c %d x %d -> %d\n",pass==1?'M':' ',lib.images[s].x<<4,lib.images[s].y,c);
+			if(pass==0)
+				printf("%d x %d\t-> %d",lib.images[s].x<<2,lib.images[s].y,c);
+			else printf("\tMasked %d\n",c);
+
 			copyAllScreen(background,SCREEN);
 		}
 	}
@@ -198,17 +201,13 @@ int main(int argc, char *argv[],char *argp[])
 
 	printf("Default drive is '%s'\n",drive);
 
-	exit(0);
-
 	// Parse the args
 
 	setSysBase((unsigned char *)0x28000);
 
-	
-
 	//testMode4();
 	//testKey();
-	testVars();
+	//testVars();
 
 	for(s=1;s<argc;s++)
 	{
