@@ -1,13 +1,16 @@
 COPTS=-O3 -fomit-frame-pointer -std=gnu9x
 
-libsprite.a:	image.o 2d.o system_variables.o frames.o keyboard.o makefile
-		qgcc qdos-ar -rc libsprite.a image.o 2d.o system_variables.o frames.o keyboard.o
+libsprite.a:	image.o 2d.o system_variables.o frames.o keyboard.o sprite.o makefile 
+		qgcc qdos-ar -rc libsprite.a image.o 2d.o sprite.o system_variables.o frames.o keyboard.o sprite.o
 
 test:	libsprite.a	test.o frames.o
 	qgcc qdos-gcc -o test test.o frames.o -lsprite
 
 runner:	libsprite.a	runner.o frames.o
 	qgcc qdos-gcc -o runner runner.o frames.o -lsprite
+
+sprite.o:	sprite.c image.h makefile
+		qgcc qdos-gcc $(COPTS) -o sprite.o -c sprite.c
 
 runner.o:	runner.c image.h makefile
 		qgcc qdos-gcc $(COPTS) -o runner.o -c runner.c
@@ -32,7 +35,7 @@ system_variables.o:	system_variables.c system_variables.h makefile
 		qgcc qdos-gcc $(COPTS) -o system_variables.o -c system_variables.c
 
 clean:
-	rm -f image.o libsprite.a  system_variables.o libsprite.o test.o test frames.o runner.o 2d.s runner.s
+	rm -f image.o libsprite.a  system_variables.o libsprite.o test.o test frames.o runner.o 2d.s runner.s sprite.o
 
 git:	clean
 	git add .
