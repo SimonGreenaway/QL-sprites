@@ -72,7 +72,7 @@ void* myMalloc(unsigned int i)
 		exit(3);
 	}
 
-	memset(p,i,0);
+	bzero(p,i);
 
 	return p;
 }
@@ -127,7 +127,9 @@ int bLoadLibrary(library *library,char *filename,int shift)
 
 	for(i=0;i<library->n;i++)
 	{
+		#ifdef MAGIC
 		library->images[i].magic=MAGIC;
+		#endif
 	
         	readLine(in,buffer);
                 buffer[strcspn(buffer, "\r\n")] = 0;
@@ -235,7 +237,10 @@ void loadLibrary(library *library,char *filename,int shift)
 
 		//printf("%d\n",n);
 
+		#ifdef MAGIC
 		library->images[i].magic=MAGIC;
+		#endif
+
 		readLine(in,buffer); printf("  %d %s",i,buffer);
 		buffer[strcspn(buffer, "\r\n")] = 0;
 
@@ -352,30 +357,30 @@ int loadScreen(unsigned char *scr,char *dir,char *file)
 	char file2[128];
         FILE *in;
 
-	puts("loadScreen: creating filename"); sleep(1);
+	//puts("loadScreen: creating filename"); sleep(1);
 
 	sprintf(file2,"%s%s",dir,file);
 
-	printf("loadScreen: opening '%s'\n",file2); sleep(1);
+	//printf("loadScreen: opening '%s'\n",file2); sleep(1);
 
         in=fopen(file2,"r");
 
         if(in!=NULL)
         {
-		printf("loadScreen: Loading file into memory %X\n",(unsigned int)scr); sleep(1);
+		//printf("loadScreen: Loading file into memory %X\n",(unsigned int)scr); sleep(1);
 
                 fread(scr,1,32768,in);
 
 
-	puts("loadScreen: closing file"); sleep(1);
+	//puts("loadScreen: closing file"); sleep(1);
                 fclose(in);
 
 	
-	puts("loadScreen: returning 1 (=success)"); sleep(1);
+	//puts("loadScreen: returning 1 (=success)"); sleep(1);
 
                 return 1;
         }
 
-	puts("loadScreen: returning 0 (=failure)"); sleep(1);
+	//puts("loadScreen: returning 0 (=failure)"); sleep(1);
         return 0;
 }

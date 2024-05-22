@@ -78,7 +78,7 @@ struct sprite
 	unsigned int active;
 
 	unsigned int images;
-	image *image[8];
+	image *image[10];
 
 	int x,y,dx,dy,currentImage;
 	unsigned int mask,draw;
@@ -114,7 +114,7 @@ struct shifter
 };
 
 void spritePlot(screen scr,sprite *sprite);
-void spriteClear(screen scr,screen mask,sprite *sprite,char m);
+void spriteClear(screen scr,screen mask,sprite *sprite);
 
 // Image library handling
 

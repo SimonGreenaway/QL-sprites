@@ -7,6 +7,11 @@ void cls(screen screen)
         bzero((unsigned char *)screen,32768);
 }
 
+void fill(screen screen,unsigned int rowStart,unsigned int rowEnd,unsigned char c)
+{
+        memset((char *)screen+(rowStart<<7),c,(rowEnd-rowStart)<<7);
+}
+
 // Return the 16 bit pixel data for the 4 bits containing this pixel
 
 unsigned short peek(screen screen,unsigned int y,unsigned int x)

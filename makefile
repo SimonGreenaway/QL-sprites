@@ -1,4 +1,4 @@
-COPTS=-O3 -fomit-frame-pointer -std=gnu9x
+COPTS=-O3 -fomit-frame-pointer -std=gnu9x -ansi
 
 libsprite.a:	image.o 2d.o system_variables.o frames.o keyboard.o sprite.o makefile 
 		qgcc qdos-ar -rc libsprite.a image.o 2d.o sprite.o system_variables.o frames.o keyboard.o sprite.o
