@@ -57,6 +57,9 @@ void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,
 void triangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
 void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned int y2,unsigned int c);
 
+void circle(screen screen,unsigned int x,unsigned int y,int radius,unsigned int colour);
+void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int colour);
+
 //
 
 typedef struct
@@ -149,3 +152,5 @@ unsigned int getFrames();
 void framesClose();
 void frameActive(unsigned int a);
 void msleep(unsigned int delay);
+
+void multiDraw(screen screen,unsigned char *data);

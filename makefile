@@ -4,7 +4,7 @@ libsprite.a:	image.o 2d.o system_variables.o frames.o keyboard.o sprite.o makefi
 		qgcc qdos-ar -rc libsprite.a image.o 2d.o sprite.o system_variables.o frames.o keyboard.o sprite.o 
 
 test:	libsprite.a	test.o frames.o
-	qgcc qdos-gcc -o test test.o frames.o -lsprite
+	qgcc qdos-gcc -o test test.o frames.o -L/usr/local/share/qdos/lib -lsprite -lm
 
 runner:	libsprite.a	runner.o frames.o
 	qgcc qdos-gcc -o runner runner.o frames.o -lsprite
@@ -23,7 +23,7 @@ image.o:	image.c image.h makefile
 
 2d.o:	2d.c image.h makefile
 		qgcc qdos-gcc $(COPTS) -o 2d.o -c 2d.c
-		qgcc qdos-gcc $(COPTS) -S 2d.c
+		#qgcc qdos-gcc $(COPTS) -S 2d.c
 
 frames.o:	frames.c image.h makefile
 		qgcc qdos-gcc $(COPTS) -o frames.o -c frames.c
@@ -48,7 +48,7 @@ deploy:  runner test
 	cp BOOT_flp1 /home/simon/emulators/ql/emulators/sQLux/flp1/BOOT
 
 run:    deploy
-	cd /home/simon/emulators/ql/emulators/sQLux && ./sqlux --SPEED=0.75 --RAMSIZE=896 --SOUND 8 -b "LRUN flp1_BOOT"
+	cd /home/simon/emulators/ql/emulators/sQLux && ./sqlux --SPEED=0.75 --RAMSIZE=896 --SOUND 8 --WIN_SIZE 1x -b "LRUN flp1_BOOT"
 
 runfast:    deploy
 	cd /home/simon/emulators/ql/emulators/sQLux && ./sqlux --SPEED=0 --RAMSIZE=896 --SOUND 8 -b "LRUN flp1_BOOT"

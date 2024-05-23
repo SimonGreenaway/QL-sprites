@@ -60,8 +60,6 @@ make test ; make runner
 make test ; make runner
 make test ; make runner
 make test ; make runner
-make test ; make runner
-make test ; make runner
 make
 make
 make
@@ -498,3 +496,5 @@ make run  ; make runner
 make run  ; make runner
 make
 make
+cd /
+find . -print | grep libm.a

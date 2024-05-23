@@ -68,7 +68,7 @@ const unsigned char shifts[]={6,4,2,0};
 //
 // Can't see a way to speed this up. We need to read the screen, mask it with an AND,OR in the new colour and then write back to the screen.
 
-void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
+inline void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {
 	unsigned short *address=ADDRESS(screen,x,y);
 
@@ -362,4 +362,107 @@ void triangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsi
         line(screen,x1,y1,x2,y2,c);
         line(screen,x2,y2,x3,y3,c);
         line(screen,x1,y1,x3,y3,c);
+}
+
+// Square root of integer
+unsigned int isqrt(unsigned int s)
+{
+	// Zero yields zero
+	// One yields one
+	if (s <= 1) return s;
+	else
+	{
+    		// Initial estimate (must be too high)
+		unsigned int x0 = s / 2;
+
+		// Update
+		unsigned int x1 = (x0 + s / x0) / 2;
+
+		while (x1 < x0)	// Bound check
+		{
+			x0 = x1;
+			x1 = (x0 + s / x0) / 2;
+		}		
+		return x0;
+	}
+}
+
+inline void drawCircle(screen screen,int xc,int yc,int x,int y,unsigned int colour)
+{
+	plot(screen,xc+x, yc+y,colour);
+	plot(screen,xc-x, yc+y,colour);
+	plot(screen,xc+x, yc-y,colour);
+	plot(screen,xc-x, yc-y,colour);
+	plot(screen,xc+y, yc+x,colour);
+	plot(screen,xc-y, yc+x,colour);
+	plot(screen,xc+y, yc-x,colour);
+	plot(screen,xc-y, yc-x,colour);
+}
+
+void circle(screen screen,unsigned int xc,unsigned int yc,int r,unsigned int colour)
+{
+    int x = 0, y = r;
+    int d = 3 - 2 * r;
+
+    drawCircle(screen,xc, yc, x, y,colour);
+
+    while (y >= x)
+    {
+        // for each pixel we will
+        // draw all eight pixels
+        
+        x++;
+
+        // check for decision parameter
+        // and correspondingly 
+        // update d, x, y
+        if (d > 0)
+        {
+            y--; 
+            d = d + 4 * (x - y) + 10;
+        }
+        else
+            d = d + 4 * x + 6;
+
+        drawCircle(screen,xc, yc, x, y,colour);
+    }
+}
+
+
+void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int colour)
+{
+        int y,height;
+
+        for(y=-r;y<r;y++)
+        {       
+                height=isqrt(r*r-y*y);
+
+		line(screen,ox-height,y+oy,ox+height,y+oy,colour);
+        }
+}
+
+
+#define MDRAW_STOP           0
+#define MDRAW_PLOT           1 // xpos, xpos, col
+#define MDRAW_LINE           2 // x1, y1, x2, y2, col
+#define MDRAW_BOX            3 // x1, y1, x2, y2, col
+#define MDRAW_FILLEDBOX      4 // x1, y1, x2, y2, col
+#define MDRAW_TRIANGLE	     5 // x1, y1, x2, y2, x3, y3, col
+#define MDRAW_FILLEDTRIANGLE 6 // x1, y1, x2, y2, x3, y3, col
+
+void multiDraw(screen screen,unsigned char *data)
+{
+	while(1)
+	{
+		switch(*data++)
+		{
+			case MDRAW_STOP: return;
+			case MDRAW_PLOT: plot(screen,*data++,*data++,*data++); break;
+			case MDRAW_LINE: line(screen,*data++,*data++,*data++,*data++,*data++); break;
+			case MDRAW_BOX: box(screen,*data++,*data++,*data++,*data++,*data++); break;
+			case MDRAW_FILLEDBOX: fillBox(screen,*data++,*data++,*data++,*data++,*data++); break;
+			case MDRAW_TRIANGLE: triangle(screen,*data++,*data++,*data++,*data++,*data++,*data++,*data++); break;
+			case MDRAW_FILLEDTRIANGLE: triangle(screen,*data++,*data++,*data++,*data++,*data++,*data++,*data++); break;
+		}
+	}
 }

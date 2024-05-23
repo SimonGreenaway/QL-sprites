@@ -98,12 +98,17 @@ inline unsigned int fastRand(void)
         return (g_seed>>16);
 }
 
+#define SECONDS 5
+
 void test()
 {
+	const char *tests[9]={"plot","line","triangle","filled triangle","box","filled box","circle","filled circle","unplot"};
 	unsigned int i;
 	WINDOWDEF_t w;
 	chanid_t cid;
 	unsigned int counts[7],pass,count=0;
+
+	sleep(10);
 
 	init(8);
 	framesInit();
@@ -128,9 +133,9 @@ void test()
 	cls(SCREEN); fastSrand(0);
 
 
-	for(pass=0;pass<7;pass++)
+	for(pass=0;pass<9;pass++)
 	{
-		unsigned int f=getFrames()+10*50;
+		unsigned int f=getFrames()+SECONDS*50;
 
 		count=0;
 
@@ -144,7 +149,9 @@ void test()
 				case 3:fillTriangle(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
 				case 4:box(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
 				case 5:fillBox(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
-				case 6:unplot(SCREEN,fastRand()&255,fastRand()&255); break;
+				case 6:circle(SCREEN,128,128,fastRand()&127,fastRand()&7); break;
+				case 7:fillCircle(SCREEN,128,128,fastRand()&127,fastRand()&7); break;
+				case 8:unplot(SCREEN,fastRand()&255,fastRand()&255); break;
 			}
 
 			count++;
@@ -153,9 +160,11 @@ void test()
 		cls(SCREEN); fastSrand(0);
 
 		counts[pass]=count;
-
-		for(i=0;i<=pass;i++) printf("%d\n",counts[i]);
 	}
+
+	for(i=0;i<=pass;i++) printf("%16s %8.1f per/second\n",tests[i],counts[i]/(double)SECONDS);
+
+	while(1);
 }
 
 void testMode4()
