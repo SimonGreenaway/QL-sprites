@@ -2,7 +2,7 @@
 
 #include "image.h"
 
-char keyMatrix[2][8][8]={
+unsigned char keyMatrix[2][8][8]={
 		{
 			{4,1,'5',2,3,5,'4','7'},
 			{'\n',192,208,27,200,'\\',' ',216},

@@ -12,13 +12,22 @@
 
 #define ADDRESS(screen,x,y) (((unsigned short *)screen)+y*64+x/4)
 #define ADDRESS4(screen,x,y) (((unsigned short *)screen)+y*64+x/8)
-#define SWAP(a,b) a^=b; b^=a; a^=b; 
+#define SWAP(a,b) (a)^=(b); (b)^=(a); (a)^=(b); 
 
 typedef void * screen;
 
 extern screen SCREEN;
 void init(unsigned int colours);
 void* myMalloc(unsigned int i);
+
+#define BLACK 0
+#define BLUE 1
+#define RED  2
+#define MAGENTA 3
+#define GREEN 4
+#define CYAN 5
+#define YELLOW 6
+#define WHITE 7
 
 // Keyboard
 
@@ -122,7 +131,8 @@ void loadLibrary(library *library,char *filename,int shift);
 int bLoadLibrary(library *library,char *filename,int shift);
 void bSaveLibrary(library *library,char *filename);
 
-void cls(screen screen);
+void cls(screen screen);	// Clear screen to black
+void clsColour(screen screen,unsigned int colour); // Clear to screen to colour
 
 unsigned short peek(screen screen,unsigned int y,unsigned int x);
 unsigned short *screenAddress(screen screen,unsigned int y,unsigned int x);

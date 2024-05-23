@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <memory.h>
 #include <unistd.h>
 #include <qdos.h>
 #include <math.h>
@@ -11,7 +12,7 @@
 
 void spriteSetup(sprite *s,char *name)
 {
-	bzero(s,sizeof(sprite));
+	bzero((unsigned char *)s,sizeof(sprite));
 
 	s->mask=s->draw=1;
 	if(name!=NULL) strcpy(s->name,name);
@@ -87,7 +88,7 @@ void spritePlot(screen screen,sprite *sprite)
 	#ifdef MAGIC
 	if(image->magic!=MAGIC)
 	{
-		printf("Invalid sprite '%d' being drawn! (%x)",sprite->name,image->magic);
+		printf("Invalid sprite '%s' being drawn! (%x)",sprite->name,image->magic);
 		exit(1);
 	}
 
@@ -118,11 +119,11 @@ void spritePlot(screen screen,sprite *sprite)
 		{
 			case 4:	for(y=image->y;y;y--) // x32
 				{
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts++; 
 		
 					address+=addressDelta;
 				}
@@ -131,10 +132,10 @@ void spritePlot(screen screen,sprite *sprite)
 	
 			case 3:	for(y=image->y;y;y--) // x24
 				{
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts++; 
 		
 					address+=addressDelta;
 				}
@@ -143,9 +144,9 @@ void spritePlot(screen screen,sprite *sprite)
 		
 			case 2: for(y=image->y;y;y--) // x16
 				{
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts++; 
 		
 					address+=addressDelta;
 				}
@@ -154,41 +155,41 @@ void spritePlot(screen screen,sprite *sprite)
 	
 			case 1:	if(image->y==8)
 				{
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts++; 
 					address+=addressDelta;
 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts++; 
 					address+=addressDelta;
 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts++; 
 					address+=addressDelta;
 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts++; 
 					address+=addressDelta;
 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts++; 
 					address+=addressDelta;
 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts++; 
 					address+=addressDelta;
 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts++; 
 					address+=addressDelta;
 
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts; 
 				}
 				else for(y=image->y;y;y--)
 				{
-					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
-					*address=  *address&*masks++|*shifts++; 
+					*L(address)++=(*L(address)&*L(masks)++)|*L(shifts)++; 
+					*address=  (*address&*masks++)|*shifts++; 
 		
 					address+=addressDelta;
 				}
@@ -201,9 +202,9 @@ void spritePlot(screen screen,sprite *sprite)
 		
 						for(x=0;x<image->x>>1;x++)
 						{
-							*address++=*address&*masks++|*shifts++; 
-							*address++=*address&*masks++|*shifts++; 
-							*address=*address&*masks++|*shifts++; 
+							*address++=(*address&*masks++)|*shifts++; 
+							*address++=(*address&*masks++)|*shifts++; 
+							*address=(*address&*masks++)|*shifts++; 
 						}
 		
 						address+=addressDelta;
@@ -393,7 +394,6 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 
 	unsigned int addressDelta=64-image->x;
 
-	unsigned short *shifter=image->datashifter[sprite->x&3];
 	unsigned short *maskshifter=image->maskshifter[sprite->x&3];
 
 	unsigned xlim=image->x>>1;
@@ -437,18 +437,18 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 	{
 		case 4:	for(a=0;a<image->y;a++) // x32
 			{
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
 
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
 
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
 
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address=  *address&*maskshifter|(*address2&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address=  (*address&*maskshifter)|(*address2&~*maskshifter); maskshifter++;
 	
 				address+=addressDelta;
 				address2+=addressDelta;
@@ -459,15 +459,15 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 		case 3:	for(a=0;a<image->y;a++) // x24
 			{
 	
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
 
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
 
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address=  *address&*maskshifter|(*address2&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address=  (*address&*maskshifter)|(*address2&~*maskshifter); maskshifter++;
 				address+=addressDelta;
 				address2+=addressDelta;
 			}
@@ -476,11 +476,11 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 	
 		case 2:	for(a=0;a<image->y;a++) // x16
 			{
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address++=  *address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address=  *address&*maskshifter|(*address2&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address++=  (*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address=  (*address&*maskshifter)|(*address2&~*maskshifter); maskshifter++;
 
 				address+=addressDelta;
 				address2+=addressDelta;
@@ -490,9 +490,9 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 
 		case 1:	for(a=0;a<image->y;a++) // x8
 			{
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter); maskshifter++;
-				*address++=*address&*maskshifter|(*address2++&~*maskshifter);  maskshifter++;
-				*address=  *address&*maskshifter|(*address2&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter); maskshifter++;
+				*address++=(*address&*maskshifter)|(*address2++&~*maskshifter);  maskshifter++;
+				*address=  (*address&*maskshifter)|(*address2&~*maskshifter); maskshifter++;
 
 
 				address+=addressDelta;
@@ -507,8 +507,8 @@ void spriteClear(screen scr,screen background,sprite *sprite)
 	
 					for(b=0;b<xlim;b++)
 					{
-						*address++=*address&*maskshifter|(*address2++&~*maskshifter);  maskshifter++;
-						*address++=*address&*maskshifter|(*address2++&~*maskshifter);  maskshifter++;
+						*address++=(*address&*maskshifter)|(*address2++&~*maskshifter);  maskshifter++;
+						*address++=(*address&*maskshifter)|(*address2++&~*maskshifter);  maskshifter++;
 					}
 	
 					address+=addressDelta;
@@ -583,7 +583,7 @@ void preShift(image *image)
 
 					if((ss-ss0>bytes)||(mm-mm0>bytes))
 					{
-						printf("loadLibrary allocation error: [%d:%d/%d]",bytes,ss-ss0,mm-mm0);
+						printf("loadLibrary allocation error: [%d:%ld/%ld]",bytes,ss-ss0,mm-mm0);
 
 						exit(1);
 					}

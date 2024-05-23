@@ -1,10 +1,26 @@
+#include <memory.h>
+
 #include "image.h"
+
+const unsigned short lineColourw[]={0x0000,0x0055,0x00AA,0x00FF,0xAA00,0xAA55,0xAAAA,0xAAFF};
+const unsigned long lineColourl[]={0x00000000,0x00550055,0x00AA00AA,0x00FF00FF,0xAA00AA00,0xAA55AA55,0xAAAAAAAA,0xAAFFAAFF};
 
 // Clear the screen to black
                 
 void cls(screen screen)
 {
         bzero((unsigned char *)screen,32768);
+}
+
+// Clear screen to a colour
+
+void clsColour(screen screen,unsigned int colour)
+{
+	unsigned int short *s;
+
+	if(colour==0) cls(screen);
+	else for(s=screen;s<(unsigned short *)(screen+16384);s++)
+			*s++=lineColourw[colour];
 }
 
 void fill(screen screen,unsigned int rowStart,unsigned int rowEnd,unsigned char c)
@@ -29,6 +45,8 @@ unsigned short peek(screen screen,unsigned int y,unsigned int x)
                 case 1: return data&0x2030;
                 case 0: return data&0x80C0;
         }
+
+	return 0; // IMPOSSIBLE!
 }
 
 const unsigned short masks[]={0x3F3F,0xCFCF,0xF3F3,0xFCFC};
@@ -39,19 +57,6 @@ const unsigned short colours[4][8]={
 				{0,1<<2,2<<2,3<<2,512<<2,513<<2,514<<2,515<<2},
 				{0,1,2,3,512,513,514,515}
 				};
-
-const unsigned short masks4[]={0x7F7F,0xBFBF,0xDFDF,0xEFEF,0xF7F7,0xFBFB,0xFDFD,0xFEFE};
-
-const unsigned short colours4[8][4]={
-					{0,0x80,0x8000,0x8080},
-					{0,0x40,0x4000,0x4040},
-					{0,0x20,0x2000,0x2020},
-					{0,0x10,0x1000,0x1010},
-					{0,0x8,0x800,0x808},
-					{0,0x4,0x400,0x404},
-					{0,0x2,0x200,0x202},
-					{0,0x1,0x100,0x101}
-				   };
 
 const unsigned char shifts[]={6,4,2,0};
 
@@ -72,9 +77,22 @@ void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
 
 void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {
+	const unsigned short masks[]={0x7F7F,0xBFBF,0xDFDF,0xEFEF,0xF7F7,0xFBFB,0xFDFD,0xFEFE};
+	const unsigned short colours[8][4]={
+                                        {0,0x80,0x8000,0x8080},
+                                        {0,0x40,0x4000,0x4040},
+                                        {0,0x20,0x2000,0x2020},
+                                        {0,0x10,0x1000,0x1010},
+                                        {0,0x8,0x800,0x808},
+                                        {0,0x4,0x400,0x404},
+                                        {0,0x2,0x200,0x202},
+                                        {0,0x1,0x100,0x101}
+        	                           };
+
+
 	unsigned short *address=ADDRESS4(screen,x,y);
 
-	*address=(*address&masks4[x&7])|colours4[x&7][c];
+	*address=(*address&masks[x&7])|colours[x&7][c];
 }
 // Return colour at the given screen location
 
@@ -120,8 +138,6 @@ void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,uns
                         plot(screen,x+x1,y+y1,m[x][y]);
 }
 
-const unsigned short lineColourw[]={0x0000,0x0055,0x00AA,0x00FF,0xAA00,0xAA55,0xAAAA,0xAAFF};
-const unsigned long lineColourl[]={0x00000000,0x00550055,0x00AA00AA,0x00FF00FF,0xAA00AA00,0xAA55AA55,0xAAAAAAAA,0xAAFFAAFF};
 
 // Draw a line between two points
 //
@@ -133,9 +149,7 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 {
         if((y==y2)&&(abs(x2-x)>7)) // Horizontal line?
         {
-		register unsigned int i;
-		unsigned long *a,col;
-                unsigned int pre,end;
+		unsigned long *a;
 
 		if(x>x2) // Make sure x2>x
 		{
@@ -175,9 +189,12 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 			a=(unsigned long *)(2+(unsigned int)a);
 		}
 
-		col=lineColourl[c];
+		if(x2>x)
+		{
+			unsigned int i;
 
-		if(x2>x) for(i=0;i<=(x2-x)/8;i++) *a++=col;
+			for(i=(x2-x)/8+1;i;i--) *a++=lineColourl[c];
+		}
         }
 	else if(x==x2) // Vertical line?
 	{
@@ -187,7 +204,7 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 		{
 			unsigned short *address=((unsigned short *)screen)+y*64+x/4;
 
-			for(y;y<=y2;y++)
+			for(y2-=y;y2;y2--)
 			{
 			        *address=(*address&m)|col;
 				address+=64;
@@ -197,7 +214,7 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 		{
 			unsigned short *address=((unsigned short *)screen)+y2*64+x/4;
 
-			for(y2;y2<=y;y2++)
+			for(y-=y2;y;y--)
 			{
 			        *address=(*address&m)|col;
 				address+=64;
@@ -264,17 +281,15 @@ struct vertice
 
 void fillBottomFlatTriangle(screen screen,int x1,int y1,int x2,int y2,int x3,int y3,unsigned int c)
 {
-        unsigned int scanlineY;
-
         unsigned int invslope1 = ((x2 - x1)*128) / (y2 - y1);
         int invslope2 = ((x3 - x1)*128) / (y3 - y1);
 
         unsigned int curx1 = x1*128;
         unsigned int curx2 = curx1;
 
-        for(scanlineY = y1; scanlineY <= y2; scanlineY++)
+        for(;y1<=y2;y1++)
         {
-                line(screen,curx1/128, scanlineY,curx2/128, scanlineY,c);
+                line(screen,curx1/128, y1,curx2/128, y1,c);
                 curx1 += invslope1;
                 curx2 += invslope2;
         }
@@ -282,17 +297,15 @@ void fillBottomFlatTriangle(screen screen,int x1,int y1,int x2,int y2,int x3,int
 
 void fillTopFlatTriangle(screen screen,int x1,int y1,int x2,int y2,int x3,int y3,unsigned int c)
 {
-        unsigned int scanlineY;
-
         int invslope1 = ((x3 - x1)*128) / (y3 - y1);
         int invslope2 = ((x3 - x2)*128) / (y3 - y2);
 
         int curx1 = x3*128;
         int curx2 = curx1;
 
-        for(scanlineY = y3; scanlineY > y1; scanlineY--)
+        for(;y3>y1;y3--)
         {
-                line(screen,curx1/128, scanlineY,curx2/128, scanlineY,c);
+                line(screen,curx1/128, y3,curx2/128, y3,c);
                 curx1 -= invslope1;
                 curx2 -= invslope2;
         }

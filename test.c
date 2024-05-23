@@ -17,8 +17,8 @@ void binPrint2(short i)
 
 void benchmark()
 {
-	unsigned int s,t;
-	screen scratch=SCREEN,background=createScreen();
+	unsigned int s;
+	screen background=createScreen();
 	library lib;
 
 	init(8);
@@ -70,8 +70,8 @@ void benchmark()
 			copyAllScreen(SCREEN,background);
 
 			if(pass==0)
-				printf("%d x %d\t-> %d",lib.images[s].x<<2,lib.images[s].y,c);
-			else printf("\tMasked %d\n",c);
+				printf("%d x %d\t-> %ld",lib.images[s].x<<2,lib.images[s].y,c);
+			else printf("\tMasked %ld\n",c);
 
 			copyAllScreen(background,SCREEN);
 		}
@@ -83,24 +83,24 @@ void benchmark()
 static unsigned int g_seed;
 
 // Used to seed the generator.           
-inline void fastSrand(int seed)
+
+void fastSrand(int seed)
 {
-	g_seed = seed;
+        g_seed = seed;
 }
 
 // Compute a pseudorandom integer.
 // Output value in range [0, 32767]
-inline int fastRand(void)
+
+inline unsigned int fastRand(void)
 {
-	g_seed = (214013*g_seed+2531011);
-	return (g_seed>>16)&0x7FFF;
+        g_seed = (214013*g_seed+2531011);
+        return (g_seed>>16);
 }
 
 void test()
 {
-	library l;
-	sprite s;
-	unsigned int i,j,k,m;
+	unsigned int i;
 	WINDOWDEF_t w;
 	chanid_t cid;
 	unsigned int counts[7],pass,count=0;
@@ -128,7 +128,7 @@ void test()
 	cls(SCREEN); fastSrand(0);
 
 
-	for(pass=3;pass<7;pass++)
+	for(pass=0;pass<7;pass++)
 	{
 		unsigned int f=getFrames()+10*50;
 

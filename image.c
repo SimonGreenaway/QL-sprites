@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <memory.h>
 #include <unistd.h>
 #include <qdos.h>
 #include <math.h>
@@ -106,9 +107,11 @@ char *readLine(FILE *in,char *buffer)
         return buffer;
 }
 
+void preShift(image *image);
+
 int bLoadLibrary(library *library,char *filename,int shift)
 {
-	unsigned int i,n,b,a;
+	unsigned int i,n,b;
 	char buffer[80];
 	unsigned short *d,*m;
 	FILE *in;
@@ -314,7 +317,7 @@ void loadLibrary(library *library,char *filename,int shift)
 unsigned short *screenAddress(screen screen,unsigned int y,unsigned int x)
 {
 	unsigned short *address=(unsigned short *)screen;
-	unsigned short data;
+
 	address+=y*64+(x>>2);
 
 	return address;
