@@ -63,20 +63,27 @@ void spriteSetImage(sprite *s,unsigned int ci)
 	s->currentImage=ci;
 }
 
-// Draw an image, erasing old one if needed
-
+// Macro to convert a pointer to an unsigned long pointer...
 #define L(a) ((unsigned long *)(a))
+
+// Draw an sprite's current image, erasing old one if needed.
+//
+// Can be in 3 modes: mask+data - maskout screen data and write pixels
+//                    data - just write the pixels (if we know the screen is empty)
+//                    mask - blank out the sprite (also see spriteClear)
 
 void spritePlot(screen screen,sprite *sprite)
 {
-	image *image=sprite->image[sprite->currentImage];
+	image *image=sprite->image[sprite->currentImage];	// Short cut to the image being drawn
 
-	unsigned short *address=ADDRESS(screen,sprite->x,sprite->y);
-	unsigned int addressDelta=64-image->x;
+	register unsigned short *address=ADDRESS(screen,sprite->x,sprite->y); // Screen address containing first pixel
+	unsigned int addressDelta=64-image->x;		// Delta to add to get to next screen row
 
-	unsigned short *shifts=image->datashifter[sprite->x&3];
-	unsigned short *masks=image->maskshifter[sprite->x&3];
+	unsigned short *shifts=image->datashifter[sprite->x&3];	// Pre-shifted sprite pixels
+	unsigned short *masks=image->maskshifter[sprite->x&3];	// Pre-shifted sprite mask 
 
+	// Sanity checks - best to leave in!
+	//
 	#ifdef MAGIC
 	if(image->magic!=MAGIC)
 	{
@@ -105,11 +112,11 @@ void spritePlot(screen screen,sprite *sprite)
 
 	if(sprite->mask&&sprite->draw) // Draw sprite masking background out
 	{
-		register unsigned int a;
+		register unsigned int y;
 
 		switch(image->x>>1) // Welcome to loop unroll City....
 		{
-			case 4:	for(a=0;a<image->y;a++) // x32
+			case 4:	for(y=image->y;y;y--) // x32
 				{
 					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
 					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
@@ -122,7 +129,7 @@ void spritePlot(screen screen,sprite *sprite)
 	
 				break;
 	
-			case 3:	for(a=0;a<image->y;a++) // x24
+			case 3:	for(y=image->y;y;y--) // x24
 				{
 					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
 					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
@@ -134,7 +141,7 @@ void spritePlot(screen screen,sprite *sprite)
 	
 				break;
 		
-			case 2: for(a=0;a<image->y;a++) // x16
+			case 2: for(y=image->y;y;y--) // x16
 				{
 					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
 					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
@@ -178,7 +185,7 @@ void spritePlot(screen screen,sprite *sprite)
 					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
 					*address=  *address&*masks++|*shifts; 
 				}
-				else for(a=0;a<image->y;a++) // 8x8
+				else for(y=image->y;y;y--)
 				{
 					*L(address)++=*L(address)&*L(masks)++|*L(shifts)++; 
 					*address=  *address&*masks++|*shifts++; 
@@ -188,11 +195,11 @@ void spritePlot(screen screen,sprite *sprite)
 	
 				break;
 	
-			default:	for(a=0;a<image->y;a++)
+			default:	for(y=image->y;y;y--)
 					{
-						unsigned int b;
+						unsigned int x;
 		
-						for(b=0;b<image->x>>1;b++)
+						for(x=0;x<image->x>>1;x++)
 						{
 							*address++=*address&*masks++|*shifts++; 
 							*address++=*address&*masks++|*shifts++; 
@@ -203,13 +210,13 @@ void spritePlot(screen screen,sprite *sprite)
 					}
 		}
 	}
-	else if(sprite->draw)
+	else if(sprite->draw) // Draw with no mask
 	{
-		register unsigned int a;
+		register unsigned int y;
 
 		switch(image->x>>1) // Welcome to loop unroll City....
 		{
-			case 4:	for(a=0;a<image->y;a++) // x=32 pixels
+			case 4:	for(y=image->y;y;y--) // x=32 pixels
 				{
 					*L(address)++|=*L(shifts)++;
 					*L(address)++|=*L(shifts)++;
@@ -222,7 +229,7 @@ void spritePlot(screen screen,sprite *sprite)
 	
 				break;
 	
-			case 3:	for(a=0;a<image->y;a++) // x=24 pixels
+			case 3:	for(y=image->y;y;y--) // x=24 pixels
 				{
 					*L(address)++|=*L(shifts)++;
 					*L(address)++|=*L(shifts)++;
@@ -234,7 +241,7 @@ void spritePlot(screen screen,sprite *sprite)
 	
 				break;
 		
-			case 2:	for(a=0;a<image->y;a++) // x=16 pixels
+			case 2:	for(y=image->y;y;y--) // x=16 pixels
 				{
 					*L(address)++|=*L(shifts)++;
 					*L(address)++|=*L(shifts)++;
@@ -245,7 +252,7 @@ void spritePlot(screen screen,sprite *sprite)
 	
 				break;
 	
-			case 1:	if(image->y==8)
+			case 1:	if(image->y==8) // x=8 pixels
 				{
 					*L(address)++|=*L(shifts)++;
 					*address  |=*shifts++; 
@@ -278,7 +285,7 @@ void spritePlot(screen screen,sprite *sprite)
 					*L(address)++|=*L(shifts)++;
 					*address  |=*shifts; 
 				}
-				else for(a=0;a<image->y;a++) // x=8 pixels
+				else for(y=image->y;y;y--)
 				{
 					*L(address)++|=*L(shifts)++;
 					*address  |=*shifts++; 
@@ -289,11 +296,11 @@ void spritePlot(screen screen,sprite *sprite)
 				break;
 	
 			default:
-				for(a=0;a<image->y;a++)
+				for(y=image->y;y;y--)
 				{
-					unsigned int b;
+					unsigned int x;
 		
-					for(b=0;b<image->x>>1;b++)
+					for(x=image->x>>1;x;x--)
 					{
 						*address++|=*shifts++; 
 						*address++|=*shifts++; 
@@ -306,11 +313,11 @@ void spritePlot(screen screen,sprite *sprite)
 	}
 	else //if(sprite->mask)
 	{
-		register unsigned int a;
+		register unsigned int y;
 
 		switch(image->x>>1) // Welcome to loop unroll City....
 		{
-			case 4:	for(a=0;a<image->y;a++)
+			case 4:	for(y=image->y;y;y--)
 				{
 					*L(address)++&=*L(masks)++;
 					*L(address)++&=*L(masks)++;
@@ -323,7 +330,7 @@ void spritePlot(screen screen,sprite *sprite)
 	
 				break;
 	
-			case 3:	for(a=0;a<image->y;a++)
+			case 3:	for(y=image->y;y;y--)
 				{
 					*L(address)++&=*L(masks)++;
 					*L(address)++&=*L(masks)++;
@@ -335,7 +342,7 @@ void spritePlot(screen screen,sprite *sprite)
 	
 				break;
 		
-			case 2:	for(a=0;a<image->y;a++)
+			case 2:	for(y=image->y;y;y--)
 				{
 					*L(address)++&=*L(masks)++;
 					*L(address)++&=*L(masks)++;
@@ -346,7 +353,7 @@ void spritePlot(screen screen,sprite *sprite)
 	
 				break;
 	
-			case 1:	for(a=0;a<image->y;a++)
+			case 1:	for(y=image->y;y;y--)
 				{
 					*L(address)++&=*L(masks)++;
 					*address=  *address&*masks++; 
@@ -356,11 +363,11 @@ void spritePlot(screen screen,sprite *sprite)
 
 				break;
 	
-			default:	for(a=0;a<image->y;a++)
+			default:	for(y=image->y;y;y--)
 					{
-						unsigned int b;
+						unsigned int x;
 		
-						for(b=0;b<image->x>>1;b++)
+						for(x=image->x>>1;x;x--)
 						{
 							*address++=*address&*masks++; 
 							*address++=*address&*masks++; 
