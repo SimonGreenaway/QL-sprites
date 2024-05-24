@@ -78,6 +78,15 @@ void* myMalloc(unsigned int i)
 	return p;
 }
 
+void *makeHigh(void *p,unsigned int size)
+{
+	char *p2=myMalloc(size);
+
+	memcpy(p2,p,size);
+
+	return p2;
+}
+
 // Initialise the sprite system
 //     Set the screen mode and other stuff used by this library
 

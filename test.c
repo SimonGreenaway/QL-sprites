@@ -99,7 +99,7 @@ inline unsigned int fastRand(void)
 }
 
 #define SECONDS 10
-#define RANDS (13107*SECONDS)
+#define RANDS (20000*SECONDS)
 #define TESTS 9
 
 void test()
@@ -144,11 +144,29 @@ void test()
 		counts[pass]=0;
 		ri=0;
 
-		while(getFrames()<f)
+		if(pass==0)
+		{
+			while(getFrames()<f)
+			{
+				plot(SCREEN,r[ri]   ,r[ri+1], r[ri+2] &7);
+				plot(SCREEN,r[ri+3] ,r[ri+4], r[ri+5] &7);
+				plot(SCREEN,r[ri+6] ,r[ri+7], r[ri+8] &7);
+				plot(SCREEN,r[ri+9] ,r[ri+10],r[ri+11]&7);
+				plot(SCREEN,r[ri+12],r[ri+13],r[ri+14]&7);
+				plot(SCREEN,r[ri+15],r[ri+16],r[ri+17]&7);
+				plot(SCREEN,r[ri+18],r[ri+19],r[ri+20]&7);
+				plot(SCREEN,r[ri+21],r[ri+22],r[ri+23]&7);
+				plot(SCREEN,r[ri+24],r[ri+25],r[ri+26]&7);
+				plot(SCREEN,r[ri+27],r[ri+28],r[ri+29]&7);
+
+				ri+=30;
+				counts[0]+=10;
+			}
+		}
+		else while(getFrames()<f)
 		{
 			switch(pass)
 			{
-				case 0: plot(SCREEN,r[ri++],r[ri++],r[ri++]&7); break;
 				case 1: line(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++]&7); break;
 				case 2: triangle(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++]&7); break;
 				case 3:fillTriangle(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++]&7); break;
@@ -167,7 +185,7 @@ void test()
 		if(ri>=RANDS)
 		{
 			printf("Random overflow! NEED MORE!!! %d\n",ri);
-			exit(0);
+			//exit(0);
 		}
 	}
 

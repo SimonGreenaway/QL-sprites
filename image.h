@@ -19,6 +19,7 @@ typedef void * screen;
 extern screen SCREEN;
 void init(unsigned int colours);
 void* myMalloc(unsigned int i);
+void *makeHigh(void *p,unsigned int size);
 
 #define BLACK 0
 #define BLUE 1
@@ -44,6 +45,12 @@ void showAll(screen screen);
 void show(screen screen,unsigned int lowy,unsigned int highy);
 
 //
+
+extern const unsigned short colours[4][9];
+
+#define PLOT(screen,x,y,c) { unsigned short *address=ADDRESS((screen),(x),(y)); *address=(*address&masks[(x)&3])|colours[(x)&3][c]; }
+
+
 void fill(screen screen,unsigned int xmin,unsigned int xmax,unsigned char c);
 void plot(screen screen,unsigned int x,unsigned int y,unsigned char c);
 void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c);
@@ -154,3 +161,9 @@ void frameActive(unsigned int a);
 void msleep(unsigned int delay);
 
 void multiDraw(screen screen,unsigned char *data);
+
+//extern const unsigned short colours[4][8];
+//extern const unsigned short masks[];
+
+//#define PLOT(screen,x,y,c) { unsigned short *address=ADDRESS((screen),(x),(y)); *address=(*address&masks[(x)&3])|colours[(x)&3][(c)]; }
+

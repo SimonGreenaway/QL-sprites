@@ -51,12 +51,13 @@ unsigned short peek(screen screen,unsigned int y,unsigned int x)
 
 const unsigned short masks[]={0x3F3F,0xCFCF,0xF3F3,0xFCFC};
 
-const unsigned short colours[4][8]={
-				{0,1<<6,2<<6,3<<6,512<<6,513<<6,514<<6,515<<6},
-				{0,1<<4,2<<4,3<<4,512<<4,513<<4,514<<4,515<<4},
-				{0,1<<2,2<<2,3<<2,512<<2,513<<2,514<<2,515<<2},
-				{0,1,2,3,512,513,514,515}
-				};
+const unsigned short colours[4][9]=
+		{
+			{0,1<<6,2<<6,3<<6,512<<6,513<<6,514<<6,515<<6,0x3F3F},
+			{0,1<<4,2<<4,3<<4,512<<4,513<<4,514<<4,515<<4,0xCFCF},
+			{0,1<<2,2<<2,3<<2,512<<2,513<<2,514<<2,515<<2,0xF3F3},
+			{0,1,   2,   3,   512,   513,   514,   515,0xFCFC}
+		};
 
 const unsigned char shifts[]={6,4,2,0};
 
@@ -71,8 +72,9 @@ const unsigned char shifts[]={6,4,2,0};
 inline void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {
 	unsigned short *address=ADDRESS(screen,x,y);
-
-	*address=(*address&masks[x&3])|colours[x&3][c];
+	unsigned short *bitCache=colours[x&3];
+		
+	*address=(*address&bitCache[8])|bitCache[c];
 }
 
 void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c)
@@ -94,6 +96,7 @@ void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c)
 
 	*address=(*address&masks[x&7])|colours[x&7][c];
 }
+
 // Return colour at the given screen location
 
 unsigned int unplot(screen screen,unsigned short x,unsigned short y)
@@ -223,46 +226,45 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 	}
         else
         {
-		register unsigned int i;
         	int yLonger=0;
-	        int incrementVal, endVal;
+	        int incrementVal=1,endVal;
 	        int shortLen=y2-y;
 	        int longLen=x2-x;
 	        int decInc,j=0;
 
                 if(abs(shortLen)>abs(longLen))
                 {
-                        shortLen^=longLen;
-                        longLen^=shortLen;
-                        shortLen^=longLen;
-
+                        shortLen^=longLen; longLen^=shortLen; shortLen^=longLen;
                         yLonger=1;
                 }
 
                 endVal=longLen;
 
-                if (longLen<0)
+                if(longLen<0)
                 {
                         incrementVal=-1;
                         longLen=-longLen;
-                } else incrementVal=1;
+                }
 
-                if (longLen==0) decInc=0;
-                else decInc = (shortLen << 16) / longLen;
+		decInc=(longLen==0)?0:((shortLen<<16)/longLen);
 
                 if(yLonger)
                 {
+	                register unsigned int i;
+
                         for(i=0;i!=endVal;i+=incrementVal)
                         {
-                                plot(screen,x+(j >> 16),y+i,c);
+                                plot(screen,x+(j>>16),y+i,c);
                                 j+=decInc;
                         }
                 }
                 else
                 {
+	                register unsigned int i;
+
                         for(i=0;i!=endVal;i+=incrementVal)
                         {
-                                plot(screen,x+i,y+(j >> 16),c);
+                                plot(screen,x+i,y+(j>>16),c);
                                 j+=decInc;
                         }
                 }

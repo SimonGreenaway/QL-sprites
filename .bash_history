@@ -56,10 +56,6 @@ make test ; make runner
 make test ; make runner
 make test ; make runner
 make test ; make runner
-make test ; make runner
-make test ; make runner
-make test ; make runner
-make test ; make runner
 make
 make
 make
@@ -498,3 +494,7 @@ make
 make
 cd /
 find . -print | grep libm.a
+which qdos-gcc
+cd /usr/local/bin
+lsd
+ls

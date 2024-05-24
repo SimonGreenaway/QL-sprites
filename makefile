@@ -30,6 +30,7 @@ frames.o:	frames.c image.h makefile
 
 test.o:	test.c image.h makefile
 		qgcc qdos-gcc $(COPTS) -o test.o -c test.c
+		#qgcc qdos-cpp -o test.cpp test.c
 
 system_variables.o:	system_variables.c system_variables.h makefile
 		qgcc qdos-gcc $(COPTS) -o system_variables.o -c system_variables.c
