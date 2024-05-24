@@ -35,7 +35,7 @@ system_variables.o:	system_variables.c system_variables.h makefile
 		qgcc qdos-gcc $(COPTS) -o system_variables.o -c system_variables.c
 
 clean:
-	rm -f image.o libsprite.a  system_variables.o libsprite.o test.o test frames.o runner.o 2d.s runner.s sprite.o 
+	rm -f image.o libsprite.a  system_variables.o libsprite.o test.o test frames.o runner.o 2d.s runner.s sprite.o  2d.o keyboard.o
 
 git:	clean
 	git add .
@@ -48,7 +48,7 @@ deploy:  runner test
 	cp BOOT_flp1 /home/simon/emulators/ql/emulators/sQLux/flp1/BOOT
 
 run:    deploy
-	cd /home/simon/emulators/ql/emulators/sQLux && ./sqlux --SPEED=0.75 --RAMSIZE=896 --SOUND 8 --WIN_SIZE 1x -b "LRUN flp1_BOOT"
+	cd /home/simon/emulators/ql/emulators/sQLux && ./sqlux --SPEED=0.75 --RAMSIZE=896 --SOUND 8 -b "LRUN flp1_BOOT"
 
 runfast:    deploy
 	cd /home/simon/emulators/ql/emulators/sQLux && ./sqlux --SPEED=0 --RAMSIZE=896 --SOUND 8 -b "LRUN flp1_BOOT"

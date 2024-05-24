@@ -98,18 +98,21 @@ inline unsigned int fastRand(void)
         return (g_seed>>16);
 }
 
-#define SECONDS 5
+#define SECONDS 10
+#define RANDS (13107*SECONDS)
+#define TESTS 9
 
 void test()
 {
-	const char *tests[9]={"plot","line","triangle","filled triangle","box","filled box","circle","filled circle","unplot"};
+	const char *tests[TESTS+1]={"plot","line","tri","fil tri","box","fill box","circle","fill cir","unplot","mean"};
+
 	unsigned int i;
 	WINDOWDEF_t w;
 	chanid_t cid;
-	unsigned int counts[7],pass,count=0;
-
-	sleep(10);
-
+	unsigned int counts[TESTS],pass;
+	unsigned char *r=myMalloc(RANDS);
+	unsigned int ri=0;
+	
 	init(8);
 	framesInit();
 
@@ -129,42 +132,54 @@ void test()
 		line(SCREEN,i+4,i*2+4,200-i,i*2+4,(i/4)&7);
 	}
 
-	sleep(5);
-	cls(SCREEN); fastSrand(0);
+	puts("Creating random numbers...");
+	for(ri=0;ri<RANDS;ri++) r[ri]=fastRand()&255;
 
+	cls(SCREEN);
 
-	for(pass=0;pass<9;pass++)
+	for(pass=0;pass<TESTS;pass++)
 	{
 		unsigned int f=getFrames()+SECONDS*50;
 
-		count=0;
+		counts[pass]=0;
+		ri=0;
 
 		while(getFrames()<f)
 		{
 			switch(pass)
 			{
-				case 0: plot(SCREEN,fastRand()&255,fastRand()&255,fastRand()&7); break;
-				case 1: line(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
-				case 2: triangle(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
-				case 3:fillTriangle(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
-				case 4:box(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
-				case 5:fillBox(SCREEN,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&255,fastRand()&7); break;
-				case 6:circle(SCREEN,128,128,fastRand()&127,fastRand()&7); break;
-				case 7:fillCircle(SCREEN,128,128,fastRand()&127,fastRand()&7); break;
-				case 8:unplot(SCREEN,fastRand()&255,fastRand()&255); break;
+				case 0: plot(SCREEN,r[ri++],r[ri++],r[ri++]&7); break;
+				case 1: line(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++]&7); break;
+				case 2: triangle(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++]&7); break;
+				case 3:fillTriangle(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++]&7); break;
+				case 4:box(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++]&7); break;
+				case 5:fillBox(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++]&7); break;
+				case 6:circle(SCREEN,128,128,r[ri++]&127,r[ri++]&7); break;
+				case 7:fillCircle(SCREEN,128,128,r[ri++]&127,r[ri++]&7); break;
+				case 8:unplot(SCREEN,r[ri++],r[ri++]); break;
 			}
 
-			count++;
+			counts[pass]++;
 		}
 
-		cls(SCREEN); fastSrand(0);
+		if(pass!=7) cls(SCREEN);
 
-		counts[pass]=count;
+		if(ri>=RANDS)
+		{
+			printf("Random overflow! NEED MORE!!! %d\n",ri);
+			exit(0);
+		}
 	}
 
-	for(i=0;i<=pass;i++) printf("%16s %8.1f per/second\n",tests[i],counts[i]/(double)SECONDS);
+	for(i=0;i<TESTS;i++)
+		printf("%8s %8.1f p/s\n",tests[i],counts[i]/(double)SECONDS);
 
-	while(1);
+	while(1)
+	{
+		fillTriangle(SCREEN,128+(fastRand()&127),fastRand()&127,128+(fastRand()&127),fastRand()&127,128+(fastRand()&127),fastRand()&127,fastRand()&7);
+		line(SCREEN,128+(fastRand()&127),128+(fastRand()&127),128+(fastRand()&127),128+(fastRand()&127),fastRand()&7);
+		circle(SCREEN,64,128+64,fastRand()&63,fastRand()&7);
+	}
 }
 
 void testMode4()
@@ -228,4 +243,6 @@ int main(int argc, char *argv[],char *argp[])
 			exit(4);	
 		}
 	}
+
+	return 0;
 }

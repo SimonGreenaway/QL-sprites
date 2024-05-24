@@ -401,33 +401,22 @@ inline void drawCircle(screen screen,int xc,int yc,int x,int y,unsigned int colo
 
 void circle(screen screen,unsigned int xc,unsigned int yc,int r,unsigned int colour)
 {
-    int x = 0, y = r;
-    int d = 3 - 2 * r;
+	int x=0,y=r;
+	int d=3-2*r;
 
-    drawCircle(screen,xc, yc, x, y,colour);
+	drawCircle(screen,xc, yc, x, y,colour);
 
-    while (y >= x)
-    {
-        // for each pixel we will
-        // draw all eight pixels
-        
-        x++;
+	while(y>=x++)
+	{
+		// for each pixel we will draw all eight pixels
+		// check for decision parameter and correspondingly update d, x, y
 
-        // check for decision parameter
-        // and correspondingly 
-        // update d, x, y
-        if (d > 0)
-        {
-            y--; 
-            d = d + 4 * (x - y) + 10;
-        }
-        else
-            d = d + 4 * x + 6;
+		if(d>0) d+=4*(x-(--y))+10;
+		else d+=4*x+6;
 
-        drawCircle(screen,xc, yc, x, y,colour);
-    }
+		drawCircle(screen,xc, yc, x, y,colour);
+	}
 }
-
 
 void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int colour)
 {
