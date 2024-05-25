@@ -57,7 +57,8 @@ runfast:    deploy
 
 dist:   deploy
 	cp BOOT_flp1 BOOT
+	cp env.bin env_bin
 	qltools sprites.img -fdd sprites -W
-	qltools sprites.img -W BOOT test
-	rm -f BOOT
+	qltools sprites.img -W BOOT test env_bin
+	rm -f BOOT env_bin
 

@@ -12,7 +12,7 @@
 
 #define ADDRESS(screen,x,y) (((unsigned short *)screen)+y*64+x/4)
 #define ADDRESS4(screen,x,y) (((unsigned short *)screen)+y*64+x/8)
-#define SWAP(a,b) (a)^=(b); (b)^=(a); (a)^=(b); 
+#define SWAP(a,b) { (a)^=(b); (b)^=(a); (a)^=(b);  }
 
 typedef void * screen;
 
@@ -63,6 +63,8 @@ void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,uns
 void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
 void triangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
 void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned int y2,unsigned int c);
+void hline(screen screen,unsigned int x,unsigned int x2,unsigned int y,unsigned int c);
+void vline(screen screen,unsigned int x,unsigned int y,unsigned int y2,unsigned int c);
 
 void circle(screen screen,unsigned int x,unsigned int y,int radius,unsigned int colour);
 void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int colour);

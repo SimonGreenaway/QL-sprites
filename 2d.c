@@ -121,6 +121,8 @@ void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned 
 void fillBox(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
 {
         for(;y1<=y2;y1++) line(screen,x1,y1,x2,y1,c);
+
+
 }
 
 void copyBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
@@ -141,6 +143,79 @@ void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,uns
                         plot(screen,x+x1,y+y1,m[x][y]);
 }
 
+inline void hline(screen screen,unsigned int x,unsigned int x2,unsigned int y,unsigned int c)
+{
+	unsigned long *a;
+
+	// Make sure x2>x
+	if(x>x2) SWAP(x,x2);
+
+	switch(x&3) // 0-3 bits before word break
+	{
+		case 1: plot(screen,x++,y,c);
+		case 2: plot(screen,x++,y,c);
+		case 3: plot(screen,x++,y,c);
+	}
+
+	switch(x2&3) // 0-3 bits after work break
+	{
+		case 2: plot(screen,x2--,y,c);
+		case 1: plot(screen,x2--,y,c);
+		case 0: plot(screen,x2--,y,c);
+	}
+
+	// Write one short at the end if we are not on a 32bit boundary
+
+	if(x2&1)
+	{
+		*ADDRESS(screen,x2,y)=lineColourw[c];
+		x2-=4;
+	}
+
+	a=(unsigned long *)ADDRESS(screen,x,y);
+
+	// Write one short at the start if we are not on a 32bit boundary
+	if(x&1)
+	{
+		*((unsigned short *)a)=lineColourw[c];
+		x+=4;
+
+		a=(unsigned long *)(2+(unsigned int)a);
+	}	
+
+	if(x2>x)
+	{
+		unsigned int i;
+
+		for(i=(x2-x)/8+1;i;i--) *a++=lineColourl[c];
+	}
+}
+
+inline void vline(screen screen,unsigned int x,unsigned int y,unsigned int y2,unsigned int c)
+{
+	unsigned short col=colours[x&3][c],m=masks[x&3];
+
+	if(y2>y)
+	{
+		unsigned short *address=((unsigned short *)screen)+y*64+x/4;
+
+		for(y2-=y;y2;y2--)
+		{
+		        *address=(*address&m)|col;
+			address+=64;
+		}
+	}
+	else 
+	{
+		unsigned short *address=((unsigned short *)screen)+y2*64+x/4;
+
+		for(y-=y2;y;y--)
+		{
+		        *address=(*address&m)|col;
+			address+=64;
+		}
+	}
+}
 
 // Draw a line between two points
 //
@@ -152,77 +227,11 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 {
         if((y==y2)&&(abs(x2-x)>7)) // Horizontal line?
         {
-		unsigned long *a;
-
-		if(x>x2) // Make sure x2>x
-		{
-			x^=x2; x2^=x; x^=x2;
-	        }
-
-		switch(x&3) // 0-3 bits before word break
-		{
-			case 1: plot(screen,x++,y,c);
-			case 2: plot(screen,x++,y,c);
-			case 3: plot(screen,x++,y,c);
-		}
-
-		switch(x2&3) // 0-3 bits after work break
-		{
-			case 2: plot(screen,x2--,y,c);
-			case 1: plot(screen,x2--,y,c);
-			case 0: plot(screen,x2--,y,c);
-		}
-
-		// Write one short at the end if we are not on a 32bit boundary
-
-                if(x2&1)
-                {
-                	*ADDRESS(screen,x2,y)=lineColourw[c];
-                        x2-=4;
-                }
-
-		a=(unsigned long *)ADDRESS(screen,x,y);
-
-		// Write one short at the start if we are not on a 32bit boundary
-		if(x&1)
-		{
-	                *((unsigned short *)a)=lineColourw[c];
-			x+=4;
-
-			a=(unsigned long *)(2+(unsigned int)a);
-		}
-
-		if(x2>x)
-		{
-			unsigned int i;
-
-			for(i=(x2-x)/8+1;i;i--) *a++=lineColourl[c];
-		}
+		hline(screen,x,x2,y,c);
         }
 	else if(x==x2) // Vertical line?
 	{
-		unsigned short col=colours[x&3][c],m=masks[x&3];
-
-		if(y2>y)
-		{
-			unsigned short *address=((unsigned short *)screen)+y*64+x/4;
-
-			for(y2-=y;y2;y2--)
-			{
-			        *address=(*address&m)|col;
-				address+=64;
-			}
-		}
-		else 
-		{
-			unsigned short *address=((unsigned short *)screen)+y2*64+x/4;
-
-			for(y-=y2;y;y--)
-			{
-			        *address=(*address&m)|col;
-				address+=64;
-			}
-		}
+		vline(screen,x,y,y2,c);
 	}
         else
         {
@@ -234,7 +243,7 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 
                 if(abs(shortLen)>abs(longLen))
                 {
-                        shortLen^=longLen; longLen^=shortLen; shortLen^=longLen;
+			SWAP(shortLen,longLen);
                         yLonger=1;
                 }
 
