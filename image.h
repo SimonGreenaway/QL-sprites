@@ -68,6 +68,7 @@ void vline(screen screen,unsigned int x,unsigned int y,unsigned int y2,unsigned 
 
 void circle(screen screen,unsigned int x,unsigned int y,int radius,unsigned int colour);
 void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int colour);
+void floodFill(screen screen,unsigned int x,unsigned int y,unsigned int c);
 
 //
 

@@ -100,11 +100,11 @@ inline unsigned int fastRand(void)
 
 #define SECONDS 10
 #define RANDS (20000*SECONDS)
-#define TESTS 9
+#define TESTS 9 
 
 void test()
 {
-	const char *tests[TESTS+1]={"plot","line","tri","fil tri","box","fill box","circle","fill cir","unplot","mean"};
+	const char *tests[TESTS]={"plot","line","tri","fil tri","box","fill box","circle","fill cir","unplot","fill"};
 
 	unsigned int i;
 	WINDOWDEF_t w;
@@ -137,7 +137,7 @@ void test()
 
 	cls(SCREEN);
 
-	for(pass=0;pass<TESTS;pass++)
+	for(pass=9;pass<TESTS;pass++)
 	{
 		unsigned int f=getFrames()+SECONDS*50;
 
@@ -165,6 +165,8 @@ void test()
 		}
 		else while(getFrames()<f)
 		{
+			unsigned int c;
+
 			switch(pass)
 			{
 				case 1: line(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++]&7); break;
@@ -175,6 +177,12 @@ void test()
 				case 6:circle(SCREEN,128,128,r[ri++]&127,r[ri++]&7); break;
 				case 7:fillCircle(SCREEN,128,128,r[ri++]&127,r[ri++]&7); break;
 				case 8:unplot(SCREEN,r[ri++],r[ri++]); break;
+				case 9:	c=r[ri++]&7;
+					triangle(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],c);
+					triangle(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],c);
+					triangle(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],c);
+				        floodFill(SCREEN,r[ri++],r[ri++],c);
+					break;
 			}
 
 			counts[pass]++;

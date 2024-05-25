@@ -1,4 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <memory.h>
+#include <qdos.h>
 
 #include "image.h"
 
@@ -72,7 +75,7 @@ const unsigned char shifts[]={6,4,2,0};
 inline void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {
 	unsigned short *address=ADDRESS(screen,x,y);
-	unsigned short *bitCache=colours[x&3];
+	const unsigned short *bitCache=colours[x&3];
 		
 	*address=(*address&bitCache[8])|bitCache[c];
 }
@@ -441,6 +444,50 @@ void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int
         }
 }
 
+long _stack = 8L*1024L; /* size of stack */
+
+void floodFill(screen screen,unsigned int x0,unsigned int y0,unsigned int c)
+{
+	int size=8192;
+	int *todo=myMalloc(sizeof(unsigned int)*size);
+	int bottom=0,top=0;
+
+	todo[top++]=x0;
+	todo[top++]=y0;
+
+	while(top!=bottom)
+	{
+		unsigned int x=todo[bottom++];
+		unsigned int y=todo[bottom++];
+
+
+		if((y>0)&&(unplot(screen,x,y-1)!=c))
+		{
+			plot(screen,x,y-1,c);
+			todo[top++]=x; todo[top++]=y-1;
+		}
+
+		if((y<254)&&(unplot(screen,x,y+1)!=c))
+		{
+			plot(screen,x,y+1,c);
+			todo[top++]=x; todo[top++]=y+1;
+		}
+
+		if((x>0)&&(unplot(screen,x-1,y)!=c))
+		{
+			plot(screen,x-1,y,c); 
+			todo[top++]=x-1; todo[top++]=y;
+		}
+
+		if((x<254)&&(unplot(screen,x+1,y)!=c))
+		{
+			plot(screen,x+1,y,c);
+			todo[top++]=x+1; todo[top++]=y;
+		}
+	}
+
+	free(todo);
+}
 
 #define MDRAW_STOP           0
 #define MDRAW_PLOT           1 // xpos, xpos, col
@@ -449,6 +496,8 @@ void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int
 #define MDRAW_FILLEDBOX      4 // x1, y1, x2, y2, col
 #define MDRAW_TRIANGLE	     5 // x1, y1, x2, y2, x3, y3, col
 #define MDRAW_FILLEDTRIANGLE 6 // x1, y1, x2, y2, x3, y3, col
+#define MDRAW_CIRCLE	     7 // x, y, r, col
+#define MDRAW_FILLEDCIRCLE   8 // x, y, r, col
 
 void multiDraw(screen screen,unsigned char *data)
 {
@@ -462,7 +511,9 @@ void multiDraw(screen screen,unsigned char *data)
 			case MDRAW_BOX: box(screen,*data++,*data++,*data++,*data++,*data++); break;
 			case MDRAW_FILLEDBOX: fillBox(screen,*data++,*data++,*data++,*data++,*data++); break;
 			case MDRAW_TRIANGLE: triangle(screen,*data++,*data++,*data++,*data++,*data++,*data++,*data++); break;
-			case MDRAW_FILLEDTRIANGLE: triangle(screen,*data++,*data++,*data++,*data++,*data++,*data++,*data++); break;
+			case MDRAW_FILLEDTRIANGLE: fillTriangle(screen,*data++,*data++,*data++,*data++,*data++,*data++,*data++); break;
+			case MDRAW_CIRCLE: circle(screen,*data++,*data++,*data++,*data++); break;
+			case MDRAW_FILLEDCIRCLE: fillCircle(screen,*data++,*data++,*data++,*data++); break;
 		}
 	}
 }
