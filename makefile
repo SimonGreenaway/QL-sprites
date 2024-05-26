@@ -49,7 +49,7 @@ deploy:  runner test
 	cp BOOT_flp1 /home/simon/emulators/ql/emulators/sQLux/flp1/BOOT
 
 run:    deploy
-	cd /home/simon/emulators/ql/emulators/sQLux && ./sqlux --SPEED=0.75 --RAMSIZE=896 --SOUND 8 --WIN_SIZE 1x -b "LRUN flp1_BOOT"
+	cd /home/simon/emulators/ql/emulators/sQLux && ./sqlux --SPEED=0.75 --RAMSIZE=896 --SOUND 8 --WIN_SIZE 3x -b "LRUN flp1_BOOT"
 
 runfast:    deploy
 	cd /home/simon/emulators/ql/emulators/sQLux && ./sqlux --SPEED=0 --RAMSIZE=896 --SOUND 8 -b "LRUN flp1_BOOT"

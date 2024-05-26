@@ -293,33 +293,40 @@ struct vertice
         int x,y;
 };
 
+#define TRI 256
+
 void fillBottomFlatTriangle(screen screen,int x1,int y1,int x2,int y2,int x3,int y3,unsigned int c)
 {
-        unsigned int invslope1 = ((x2 - x1)*128) / (y2 - y1);
-        int invslope2 = ((x3 - x1)*128) / (y3 - y1);
-
-        unsigned int curx1 = x1*128;
-        unsigned int curx2 = curx1;
-
-        for(;y1<=y2;y1++)
-        {
-                line(screen,curx1/128, y1,curx2/128, y1,c);
-                curx1 += invslope1;
-                curx2 += invslope2;
-        }
+	if(y2==y1) return;
+	
+	if(1)
+	{
+	        unsigned int invslope1 = ((x2 - x1)*TRI) / (y2 - y1);
+	        int invslope2 = ((x3 - x1)*TRI) / (y3 - y1);
+	
+	        unsigned int curx1 = x1*TRI;
+	        unsigned int curx2 = curx1;
+	
+	        for(;y1<=y2;y1++)
+	        {
+	                line(screen,curx1/TRI, y1,curx2/TRI, y1,c);
+	                curx1 += invslope1;
+	                curx2 += invslope2;
+	        }
+	}
 }
 
 void fillTopFlatTriangle(screen screen,int x1,int y1,int x2,int y2,int x3,int y3,unsigned int c)
 {
-        int invslope1 = ((x3 - x1)*128) / (y3 - y1);
-        int invslope2 = ((x3 - x2)*128) / (y3 - y2);
+        int invslope1 = ((x3 - x1)*TRI) / (y3 - y1);
+        int invslope2 = ((x3 - x2)*TRI) / (y3 - y2);
 
-        int curx1 = x3*128;
+        int curx1 = x3*TRI;
         int curx2 = curx1;
 
         for(;y3>y1;y3--)
         {
-                line(screen,curx1/128, y3,curx2/128, y3,c);
+                line(screen,curx1/TRI, y3,curx2/TRI, y3,c);
                 curx1 -= invslope1;
                 curx2 -= invslope2;
         }
@@ -448,45 +455,56 @@ long _stack = 8L*1024L; /* size of stack */
 
 void floodFill(screen screen,unsigned int x0,unsigned int y0,unsigned int c)
 {
-	int size=8192;
-	int *todo=myMalloc(sizeof(unsigned int)*size);
-	int bottom=0,top=0;
+	// Set up the ring buffer
+	const int size=4096;
+	unsigned int *todo=myMalloc(sizeof(unsigned int)*size);
+	unsigned int bottom=0,top=0;
 
-	todo[top++]=x0;
-	todo[top++]=y0;
+	// First point
+	plot(screen,x0,y0,c);
+	todo[top++]=x0; todo[top++]=y0;
 
 	while(top!=bottom)
 	{
 		unsigned int x=todo[bottom++];
 		unsigned int y=todo[bottom++];
 
+		if(bottom==size) bottom=0;
 
 		if((y>0)&&(unplot(screen,x,y-1)!=c))
 		{
 			plot(screen,x,y-1,c);
 			todo[top++]=x; todo[top++]=y-1;
+
+			if(top==size) top=0;
 		}
 
 		if((y<254)&&(unplot(screen,x,y+1)!=c))
 		{
 			plot(screen,x,y+1,c);
 			todo[top++]=x; todo[top++]=y+1;
+
+			if(top==size) top=0;
 		}
 
 		if((x>0)&&(unplot(screen,x-1,y)!=c))
 		{
 			plot(screen,x-1,y,c); 
 			todo[top++]=x-1; todo[top++]=y;
+
+			if(top==size) top=0;
 		}
 
 		if((x<254)&&(unplot(screen,x+1,y)!=c))
 		{
 			plot(screen,x+1,y,c);
 			todo[top++]=x+1; todo[top++]=y;
+
+			if(top==size) top=0;
 		}
 	}
 
-	free(todo);
+	free(todo); // Release the ring buffer
 }
 
 #define MDRAW_STOP           0

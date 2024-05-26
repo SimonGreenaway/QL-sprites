@@ -99,14 +99,14 @@ inline unsigned int fastRand(void)
 }
 
 #define SECONDS 10
-#define RANDS (20000*SECONDS)
+#define RANDS 32768
 #define TESTS 9 
 
 void test()
 {
-	const char *tests[TESTS]={"plot","line","tri","fil tri","box","fill box","circle","fill cir","unplot","fill"};
+	const char *tests[TESTS]={"plot","line","tri","fil tri","box","fill box","circle","fill cir","unplot"};
 
-	unsigned int i;
+	unsigned int i,j;
 	WINDOWDEF_t w;
 	chanid_t cid;
 	unsigned int counts[TESTS],pass;
@@ -133,11 +133,11 @@ void test()
 	}
 
 	puts("Creating random numbers...");
-	for(ri=0;ri<RANDS;ri++) r[ri]=fastRand()&255;
+	for(ri=0;ri<RANDS/2;ri++) r[ri]=fastRand()&255;
 
 	cls(SCREEN);
 
-	for(pass=9;pass<TESTS;pass++)
+	for(pass=0;pass<TESTS;pass++)
 	{
 		unsigned int f=getFrames()+SECONDS*50;
 
@@ -160,6 +160,7 @@ void test()
 				plot(SCREEN,r[ri+27],r[ri+28],r[ri+29]&7);
 
 				ri+=30;
+				if(ri>=RANDS) ri=0;
 				counts[0]+=10;
 			}
 		}
@@ -186,15 +187,10 @@ void test()
 			}
 
 			counts[pass]++;
+			if(ri>=RANDS) ri=0;
 		}
 
 		if(pass!=7) cls(SCREEN);
-
-		if(ri>=RANDS)
-		{
-			printf("Random overflow! NEED MORE!!! %d\n",ri);
-			//exit(0);
-		}
 	}
 
 	for(i=0;i<TESTS;i++)
