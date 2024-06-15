@@ -219,7 +219,7 @@ void bSaveLibrary(library *library,char *filename)
 	fclose(out);
 }
 
-void loadLibrary(library *library,char *filename,int shift)
+void loadLibrary(library *library,char *filename,int shift,int verbose)
 {
 	int i,a,b;
 	unsigned short *d,*m;
@@ -227,7 +227,7 @@ void loadLibrary(library *library,char *filename,int shift)
 	FILE *in;
 	char buffer[80];
 
-	puts("Loading library...");
+	if(verbose) puts("Loading library...");
 
 	in=fopen(filename,"r");
 
@@ -239,7 +239,7 @@ void loadLibrary(library *library,char *filename,int shift)
 
 	readLine(in,buffer); library->n=atoi(buffer);
 
-	printf(" images: %d\n",library->n);
+	if(verbose) printf(" images: %d\n",library->n);
 	
 	library->images=(image *)(myMalloc(sizeof(image)*library->n));
 
@@ -253,7 +253,8 @@ void loadLibrary(library *library,char *filename,int shift)
 		library->images[i].magic=MAGIC;
 		#endif
 
-		readLine(in,buffer); printf("  %d %s",i,buffer);
+		readLine(in,buffer);
+		if(verbose)  printf("  %d %s",i,buffer);
 		buffer[strcspn(buffer, "\r\n")] = 0;
 
 		library->images[i].name=(char *)myMalloc(strlen(buffer)+1);
@@ -316,7 +317,7 @@ void loadLibrary(library *library,char *filename,int shift)
 
 	fclose(in);
 
-	printf("Loaded %d sprites.\n",library->n);
+	if(verbose) printf("Loaded %d sprites.\n",library->n);
 }
 
 ////////////////////////////////

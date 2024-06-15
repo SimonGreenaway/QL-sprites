@@ -1,0 +1,8 @@
+dockerrunning=`systemctl status docker | grep "active (running)" | wc -l`
+
+if [ $dockerrunning == 0 ]; then
+	echo Starting docker daemon...
+	sudo systemctl start docker
+fi
+
+sudo docker run --rm -e LOCAL_USER_ID=`id -u $USER` -v .:/home/user xora/qdos-devel bash -c "$*"

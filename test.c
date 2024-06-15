@@ -37,7 +37,7 @@ void benchmark()
 		for(c=0;c<8;c++)
 		{
 			spriteSetup(&sprite[c],"");
-			spriteAddImage(&sprite[c],&lib,s);
+			spriteAddImageFromLibrary(&sprite[c],&lib,s);
 			sprite[c].currentImage=0;
 			sprite[c].x=x++;
 
@@ -100,13 +100,13 @@ inline unsigned int fastRand(void)
 
 #define SECONDS 10
 #define RANDS 32768
-#define TESTS 9 
+#define TESTS 10
 
 void test()
 {
-	const char *tests[TESTS]={"plot","line","tri","fil tri","box","fill box","circle","fill cir","unplot"};
+	const char *tests[TESTS]={"plot","line","tri","fil tri","box","fill box","circle","fill cir","unplot","flood"};
 
-	unsigned int i,j;
+	unsigned int i;
 	WINDOWDEF_t w;
 	chanid_t cid;
 	unsigned int counts[TESTS],pass;
@@ -137,7 +137,7 @@ void test()
 
 	cls(SCREEN);
 
-	for(pass=0;pass<TESTS;pass++)
+	for(pass=9;pass<TESTS;pass++)
 	{
 		unsigned int f=getFrames()+SECONDS*50;
 
@@ -183,6 +183,8 @@ void test()
 					triangle(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],c);
 					triangle(SCREEN,r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],r[ri++],c);
 				        floodFill(SCREEN,r[ri++],r[ri++],c);
+
+					counts[pass]=getFrames()-f-1;
 					break;
 			}
 
@@ -194,7 +196,11 @@ void test()
 	}
 
 	for(i=0;i<TESTS;i++)
-		printf("%8s %8.1f p/s\n",tests[i],counts[i]/(double)SECONDS);
+	{
+		if(i==9)
+			printf("%8s %8.1f p/s\n",tests[i],counts[i]/(double)50);
+		else printf("%8s %8.1f p/s\n",tests[i],counts[i]/(double)SECONDS);
+	}
 
 	while(1)
 	{

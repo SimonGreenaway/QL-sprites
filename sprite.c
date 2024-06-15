@@ -12,13 +12,20 @@
 
 void spriteSetup(sprite *s,char *name)
 {
+	spriteSetupFull(s,name,1,1,1);
+}
+
+void spriteSetupFull(sprite *s,char *name,unsigned int active,unsigned int mask,unsigned int draw)
+{
 	bzero((unsigned char *)s,sizeof(sprite));
 
-	s->mask=s->draw=1;
+	s->mask=mask;
+	s->draw=draw;
 	if(name!=NULL) strcpy(s->name,name);
 
 	s->boundsCheck=s->movement=NULL;
 	s->images=s->currentImage=0;
+	s->active=active;
 }
 
 // Clear sprite's image list
@@ -30,9 +37,14 @@ void spriteClearImages(sprite *s)
 
 // Add an image to the sprite
 
-void spriteAddImage(sprite *s,library *lib,unsigned int i)
+void spriteAddImage(sprite *s,image *i)
 {
-	if(s->images==10)
+        s->image[s->images++]=i;
+}
+
+void spriteAddImageFromLibrary(sprite *s,library *lib,unsigned int i)
+{
+	if(s->images==16)
 	{
 		printf("Too many images added to sprite '%s'\n",s->name);
 		exit(1);
@@ -50,7 +62,7 @@ void spriteAddImage(sprite *s,library *lib,unsigned int i)
 	}
 	#endif
 
-	s->image[s->images++]=&lib->images[i];
+	spriteAddImage(s,&lib->images[i]);
 }
 
 void spriteSetImage(sprite *s,unsigned int ci)
@@ -591,4 +603,76 @@ void preShift(image *image)
 			}
 		}
         }
+}
+
+void grabImage(screen screen,image *image,unsigned int x0,unsigned int y0,unsigned int w,unsigned int h)
+{
+	unsigned int x,y;
+	unsigned short *d;
+        unsigned int n=2*sizeof(unsigned short)*(x0/4)*y0;
+
+	#ifdef MAGIC
+	image->magic=MAGIC;
+	#endif
+
+	image->x=w/4; image->y=h;
+
+	image->mask=myMalloc(n);
+	image->data=myMalloc(n);
+
+	d=image->data;
+
+	for(x=0;x<n;x++) image->mask[x]=255;
+
+	for(y=0;y<y0;y++)
+	{
+		unsigned short *a=ADDRESS(screen,x0,y0+y);
+
+		for(x=0;x<x0;x+=4)
+		{
+			*d++=*a++;
+		}
+	}
+
+	preShift(image);
+}
+
+void colorShift(image *image,unsigned int shift)
+{
+	unsigned int x,y,bit,c;
+	unsigned short new,*data=(unsigned short *)image->data;
+
+	for(y=0;y<image->y;y++)
+	{
+		printf("y=%d\n",y);
+
+		for(x=0;x<image->x;x++)
+		{
+			printf(" x=%d\n",x);
+			new=0;
+
+			for(bit=0;bit<4;bit++)
+			{
+				printf("  bit=%d\n",bit);
+				printf("   data=%d\n",*data);
+
+				// Extract the colour for the given bit
+				c=(((*data)>>(2*bit))&3)
+				  +((((*data)>>(8+2*bit))&2)<<1);
+
+				printf("   c1=%d\n",c);
+				c=(c+shift)&7; // Shift and rotate colour
+				printf("   c2=%d\n",c);
+
+				new|=(c&3)<<(2*bit);
+				if(c&4) new|=4<<(8+2*bit);
+
+				printf("   new=%d\n",new);
+			}
+
+			*data++=new;	// Write the shifted colours back
+		}
+	}
+
+	preShift(image);
 }

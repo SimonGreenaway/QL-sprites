@@ -1,0 +1,31 @@
+	.sect	.text
+	.align	2
+	.extern	_plot
+_plot:
+	move.l d2,-(sp)
+	move.l 12(sp),d1
+	move.l 16(sp),d0
+	lsl.l #6,d0
+	move.l d1,d2
+	lsr.l #2,d2
+	move.l d0,a0
+	add.l d2,a0
+	add.l a0,a0
+	add.l 8(sp),a0
+	moveq #3,d0
+	and.l d0,d1
+	move.l d1,d0
+	lsl.l #3,d0
+	move.l d0,a1
+	add.l d1,a1
+	add.l a1,a1
+	add.l #_colours,a1
+	move.w (a0),d1
+	and.w 16(a1),d1
+	moveq #0,d0
+	move.b 23(sp),d0
+	add.l d0,d0
+	or.w 0(a1,d0.l),d1
+	move.w d1,(a0)
+	move.l (sp)+,d2
+	rts

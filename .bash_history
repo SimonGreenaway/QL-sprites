@@ -48,14 +48,6 @@ make test ; make runner
 make test ; make runner
 make test ; make runner
 make test ; make runner
-make test ; make runner
-make test ; make runner
-make test ; make runner
-make test ; make runner
-make test ; make runner
-make test ; make runner
-make test ; make runner
-make test ; make runner
 make
 make
 make
@@ -498,3 +490,11 @@ which qdos-gcc
 cd /usr/local/bin
 lsd
 ls
+which qdos-ar
+more /usr/local/bin/qdos-ar
+qdos-ar --help
+qdos-ar
+qdos-as
+cd /usr/local/bin
+ls
+make

@@ -160,7 +160,7 @@ int main(int argc,char *argv[])
 	{
 		spriteSetup(&s[i],"test");
 
-		spriteAddImage(&s[i],&lib,0);
+		spriteAddImageFromLibrary(&s[i],&lib,0);
 
 		s[i].active=1;
 		s[i].mask=1;

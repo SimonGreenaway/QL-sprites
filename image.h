@@ -100,7 +100,7 @@ struct sprite
 	unsigned int active;
 
 	unsigned int images;
-	image *image[10];
+	image *image[16];
 
 	int x,y,dx,dy,currentImage;
 	unsigned int mask,draw;
@@ -121,9 +121,13 @@ typedef struct
 } library;
 
 void spriteSetup(sprite *s,char *name);
+void spriteSetupFull(sprite *s,char *name,unsigned int active,unsigned int mask,unsigned int draw);
 void spriteClearImages(sprite *s);
-void spriteAddImage(sprite *s,library *lib,unsigned int i);
+void spriteAddImageFromLibrary(sprite *s,library *lib,unsigned int i);
+void spriteAddImage(sprite *s,image *i);
 void spriteSetImage(sprite *s,unsigned int ci);
+
+void grabImage(screen scr,image *image,unsigned int x,unsigned int y,unsigned int w,unsigned int h);
 
 struct shifter
 {
@@ -140,7 +144,7 @@ void spriteClear(screen scr,screen mask,sprite *sprite);
 
 // Image library handling
 
-void loadLibrary(library *library,char *filename,int shift);
+void loadLibrary(library *library,char *filename,int shift,int verbose);
 int bLoadLibrary(library *library,char *filename,int shift);
 void bSaveLibrary(library *library,char *filename);
 

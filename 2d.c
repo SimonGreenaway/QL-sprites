@@ -72,13 +72,15 @@ const unsigned char shifts[]={6,4,2,0};
 //
 // Can't see a way to speed this up. We need to read the screen, mask it with an AND,OR in the new colour and then write back to the screen.
 
-inline void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
+/*
+void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {
 	unsigned short *address=ADDRESS(screen,x,y);
 	const unsigned short *bitCache=colours[x&3];
 		
 	*address=(*address&bitCache[8])|bitCache[c];
 }
+*/
 
 void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {
@@ -124,8 +126,6 @@ void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned 
 void fillBox(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
 {
         for(;y1<=y2;y1++) line(screen,x1,y1,x2,y1,c);
-
-
 }
 
 void copyBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
@@ -146,7 +146,7 @@ void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,uns
                         plot(screen,x+x1,y+y1,m[x][y]);
 }
 
-inline void hline(screen screen,unsigned int x,unsigned int x2,unsigned int y,unsigned int c)
+void hline(screen screen,unsigned int x,unsigned int x2,unsigned int y,unsigned int c)
 {
 	unsigned long *a;
 
@@ -194,7 +194,7 @@ inline void hline(screen screen,unsigned int x,unsigned int x2,unsigned int y,un
 	}
 }
 
-inline void vline(screen screen,unsigned int x,unsigned int y,unsigned int y2,unsigned int c)
+void vline(screen screen,unsigned int x,unsigned int y,unsigned int y2,unsigned int c)
 {
 	unsigned short col=colours[x&3][c],m=masks[x&3];
 
@@ -408,7 +408,7 @@ unsigned int isqrt(unsigned int s)
 	}
 }
 
-inline void drawCircle(screen screen,int xc,int yc,int x,int y,unsigned int colour)
+void drawCircle(screen screen,int xc,int yc,int x,int y,unsigned int colour)
 {
 	plot(screen,xc+x, yc+y,colour);
 	plot(screen,xc-x, yc+y,colour);
@@ -451,60 +451,63 @@ void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int
         }
 }
 
-long _stack = 8L*1024L; /* size of stack */
+#define FLOODBUFFERSIZE 4096
 
-void floodFill(screen screen,unsigned int x0,unsigned int y0,unsigned int c)
+void floodFill(screen screen,unsigned int x,unsigned int y,unsigned int c)
 {
-	// Set up the ring buffer
-	const int size=4096;
-	unsigned int *todo=myMalloc(sizeof(unsigned int)*size);
-	unsigned int bottom=0,top=0;
-
-	// First point
-	plot(screen,x0,y0,c);
-	todo[top++]=x0; todo[top++]=y0;
-
-	while(top!=bottom)
+	if(unplot(screen,x,y)!=c)
 	{
-		unsigned int x=todo[bottom++];
-		unsigned int y=todo[bottom++];
+		// Set up the ring buffer
+		unsigned char *todo=myMalloc(sizeof(unsigned char)*FLOODBUFFERSIZE);
+		unsigned int bottom=0,top=0;
 
-		if(bottom==size) bottom=0;
+		// First point
+		plot(screen,x,y,c);
+		todo[top++]=x; todo[top++]=y;
 
-		if((y>0)&&(unplot(screen,x,y-1)!=c))
+		while(top!=bottom)
 		{
-			plot(screen,x,y-1,c);
-			todo[top++]=x; todo[top++]=y-1;
+			x=todo[bottom++];
+			y=todo[bottom++];
 
-			if(top==size) top=0;
+			bottom&=FLOODBUFFERSIZE-1;
+
+			if((y>0)&&(unplot(screen,x,y-1)!=c))
+			{
+				plot(screen,x,y-1,c);
+				todo[top++]=x; todo[top++]=y-1;
+	
+				top&=FLOODBUFFERSIZE-1;
+			}
+	
+			if((y<254)&&(unplot(screen,x,y+1)!=c))
+			{
+				plot(screen,x,y+1,c);
+				todo[top++]=x; todo[top++]=y+1;
+	
+				top&=FLOODBUFFERSIZE-1;
+			}
+	
+			if((x>0)&&(unplot(screen,x-1,y)!=c))
+			{
+				plot(screen,x-1,y,c); 
+				todo[top++]=x-1; todo[top++]=y;
+	
+				top&=FLOODBUFFERSIZE-1;
+			}
+	
+			if((x<254)&&(unplot(screen,x+1,y)!=c))
+			{
+				plot(screen,x+1,y,c);
+				todo[top++]=x+1; todo[top++]=y;
+	
+				top&=FLOODBUFFERSIZE-1;
+			}
+
 		}
 
-		if((y<254)&&(unplot(screen,x,y+1)!=c))
-		{
-			plot(screen,x,y+1,c);
-			todo[top++]=x; todo[top++]=y+1;
-
-			if(top==size) top=0;
-		}
-
-		if((x>0)&&(unplot(screen,x-1,y)!=c))
-		{
-			plot(screen,x-1,y,c); 
-			todo[top++]=x-1; todo[top++]=y;
-
-			if(top==size) top=0;
-		}
-
-		if((x<254)&&(unplot(screen,x+1,y)!=c))
-		{
-			plot(screen,x+1,y,c);
-			todo[top++]=x+1; todo[top++]=y;
-
-			if(top==size) top=0;
-		}
+		free(todo); // Release the ring buffer
 	}
-
-	free(todo); // Release the ring buffer
 }
 
 #define MDRAW_STOP           0
