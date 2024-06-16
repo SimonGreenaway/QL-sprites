@@ -31,9 +31,17 @@
 	user@53dd0dca19c6:~$ exit
 	$
 
+	Congratulations, you can now compile C code for the QL!
+
+1.2	Download sprite library
+
+	$ dnf -y install git
+	$ git clone https://github.com/SimonGreenaway/QL-sprites.git
+	$ cd QL-sprites/tutorial
+
 2.	Compiling and running hello_world.c
 
-	make run_hello_world
+	$ make run_hello_world
 
 
 3.	Making a sprite
