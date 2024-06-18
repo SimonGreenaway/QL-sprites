@@ -33,11 +33,24 @@
 
 	Congratulations, you can now compile C code for the QL!
 
+1.3	Install sQLux
+
+	$ wget https://github.com/SinclairQL/sQLux/releases/download/v1.0.7b/sqlux-v1.0.7b.zip
+	$ unzip sqlux-v1.0.7b.zip
+
 1.2	Download sprite library
 
 	$ dnf -y install git
 	$ git clone https://github.com/SimonGreenaway/QL-sprites.git
 	$ cd QL-sprites/tutorial
+
+	Now edit the makefile and make sure the sqlux directory is set properly.
+
+1.3	Download java (for the sprite editor)
+
+	For fedora:
+
+	$ dnf -y install java-latest-openjdk
 
 2.	Compiling and running hello_world.c
 
@@ -46,6 +59,21 @@
 
 3.	Making a sprite
 
+	You may need to edit 'sprite_editor' if your version of java is different.
+
+	Start the sprite editor:
+
+	$ ./sprite_editor
+
+	1. Select a new library and type in a name for the sprite library. All sprites live in libraries.
+
+	2. Select 'New sprite' and type in it's size and name. Sprited must have x pixels as a multiple of 4, but y can be any size.
+
+	3. The editing is pretty WYSIWYG, select the colour - click on the boxes. There are actually 8 colours plus an alpha mask. This allows the background to be seen under a sprite, if required.
+
+	4. Remember to select 'Save' before quitting!
+
+	A .lib file will then have been created. If you 'more' the file you will see it's in a human readable form. This can be converted to binary version to speed up loading (but only within C code). An example sprite library (tutorial.lib) is supplied.
 
 4.	Drawing a sprite
 

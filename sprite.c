@@ -39,12 +39,18 @@ void spriteClearImages(sprite *s)
 
 void spriteAddImage(sprite *s,image *i)
 {
+	if(s->images==MAXIMAGES)
+	{
+		printf("Too many images added to sprite '%s'\n",s->name);
+		exit(1);
+	}
+
         s->image[s->images++]=i;
 }
 
 void spriteAddImageFromLibrary(sprite *s,library *lib,unsigned int i)
 {
-	if(s->images==16)
+	if(s->images==MAXIMAGES)
 	{
 		printf("Too many images added to sprite '%s'\n",s->name);
 		exit(1);
@@ -111,7 +117,7 @@ void spritePlot(screen screen,sprite *sprite)
 	}
 	else if(sprite->y+image->y>255)
 	{
-		printf("image %s %d>y sprite '%s'\n",image->name,sprite->y+image->y,sprite->name);
+		printf("image %s %d-%d>y sprite '%s'\n",image->name,sprite->y,sprite->y+image->y,sprite->name);
 		exit(1);
 	}
 	

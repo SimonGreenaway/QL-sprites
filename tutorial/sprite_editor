@@ -1,0 +1,1 @@
+/usr/lib/jvm/java-22/bin/java -cp  "/home/simon/code/java/QL-Screen-tools/dist/QL.jar"  ql.spriteeditor.SpriteEditor $*

@@ -94,13 +94,15 @@ typedef struct
         unsigned int value,delta;
 } timer;
 
+#define MAXIMAGES 16
+
 struct sprite
 {
 	char name[32];
 	unsigned int active;
 
 	unsigned int images;
-	image *image[16];
+	image *image[MAXIMAGES];
 
 	int x,y,dx,dy,currentImage;
 	unsigned int mask,draw;

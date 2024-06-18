@@ -1,4 +1,6 @@
-SQLUXFLP1=/home/simon/emulators/ql/emulators/sQLux/flp1/
+SQLUX=/home/simon/emulators/ql/emulators/sQLux
+SQLUXFLP1=$(SQLUX)/flp1/
+
 COPTS=-Wall -O3 -fomit-frame-pointer
 
 hello_world:	hello_world.o
