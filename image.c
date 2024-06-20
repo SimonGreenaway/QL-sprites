@@ -36,30 +36,35 @@ void setFontMasking(unsigned int m)
 void printCharAt(screen screen,library *font,unsigned int x,unsigned int y,char c)
 {
         sprite s;
+	char start=font->images[0].name[0];
 
-        if(c-33>=font->n)
+        if((c-start<0)||(c-start>=font->n))
         {
-                printf("Font error: %d>=%d\n",c-33,font->n);
+                printf("Font error: start=%d (%c), c=%d (%c). %d>=%d\n",
+			start,start,c,c,c-start,font->n);
                 exit(1);
         }
 
         s.x=x; s.y=y;
-        s.image[0]=&font->images[c-33];
+        s.image[0]=&font->images[c-start];
         s.currentImage=0;
         s.draw=1;
         s.mask=fontMasking;
 
+	if(fontMasking==2)
+		fillBox(screen,s.x,s.y,s.x+8,s.y+8,0);
+
         spritePlot(screen,&s);
 }
 
-void printAt(screen screen,library *font,unsigned int x,unsigned y,char *s)
+void printAt(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s)
 {
         while(*s!=0)
         {
                 if(*s!=32) printCharAt(screen,font,x,y,*s);
 
                 s++;
-                x+=6;
+                x+=width;
         }
 }
 
