@@ -52,18 +52,18 @@ void spriteAddImageFromLibrary(sprite *s,library *lib,unsigned int i)
 {
 	if(s->images==MAXIMAGES)
 	{
-		printf("Too many images added to sprite '%s'\n",s->name);
+		printf("Too many images (%d) added to sprite '%s'\n",s->images,s->name);
 		exit(1);
 	}
 	else if(i>=lib->n)
 	{
-		printf("Adding invalid image %d to sprite '%s'\n",i,s->name);
+		printf("Adding invalid image %d to sprite '%s' when lib only has %d\n",i,s->name,lib->n);
 		exit(1);
 	}
 	#ifdef MAGIC
 	else if(lib->images[i].magic!=MAGIC)
 	{
-		printf("Adding invalid image to sprites '%s'\n",s->name);
+		printf("Adding invalid image to sprites '%s' invalid MAGIC\n",s->name);
 		exit(1);
 	}
 	#endif
@@ -681,4 +681,19 @@ void colorShift(image *image,unsigned int shift)
 	}
 
 	preShift(image);
+}
+
+inline unsigned int pointHit(unsigned int x,unsigned int y,unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1)
+{
+        return (x>=x0)&&(x<=x1)&&(y>=y0)&&(y<=y1);
+}
+
+inline unsigned hitBox(unsigned int px0,unsigned int py0,unsigned int px1,unsigned int py1,
+                    unsigned int ax0,unsigned int ay0,unsigned int ax1,unsigned int ay1)
+{
+        if(     pointHit(px0,py0,ax0,ay0,ax1,ay1)) return 1;
+        else if(pointHit(px0,py1,ax0,ay0,ax1,ay1)) return 1;
+        else if(pointHit(px1,py1,ax0,ay0,ax1,ay1)) return 1;
+        else if(pointHit(px1,py0,ax0,ay0,ax1,ay1)) return 1;
+        else return 0;
 }

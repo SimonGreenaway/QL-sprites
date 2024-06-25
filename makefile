@@ -1,7 +1,7 @@
 COPTS=-Wall -O3 -fomit-frame-pointer
 
-libsprite.a:	image.o 2d.o system_variables.o frames.o keyboard.o sprite.o plot.o makefile
-		qgcc qdos-ar -rc libsprite.a image.o 2d.o sprite.o system_variables.o frames.o keyboard.o sprite.o  plot.o
+libsprite.a:	image.o 2d.o system_variables.o frames.o keyboard.o sprite.o plot.o random.o makefile
+		qgcc qdos-ar -rc libsprite.a image.o 2d.o sprite.o system_variables.o frames.o keyboard.o sprite.o  plot.o random.o
 
 hello:	libsprite.a	hello.o
 	qgcc qdos-gcc -o hello hello.o frames.o -L/usr/local/share/qdos/lib -lsprite -lm
@@ -14,6 +14,9 @@ runner:	libsprite.a	runner.o frames.o
 
 sprite.o:	sprite.c image.h makefile
 		qgcc qdos-gcc $(COPTS) -o sprite.o -c sprite.c
+
+random.o:	random.c image.h makefile
+		qgcc qdos-gcc $(COPTS) -o random.o -c random.c
 
 runner.o:	runner.c image.h makefile
 		qgcc qdos-gcc $(COPTS) -o runner.o -c runner.c
@@ -49,7 +52,7 @@ system_variables.o:	system_variables.c system_variables.h makefile
 		qgcc qdos-gcc $(COPTS) -o system_variables.o -c system_variables.c
 
 clean:
-	rm -f image.o libsprite.a  system_variables.o libsprite.o test.o test frames.o runner.o 2d.s runner.s sprite.o  2d.o keyboard.o plot.o
+	rm -f image.o libsprite.a  system_variables.o libsprite.o test.o test frames.o runner.o 2d.s runner.s sprite.o  2d.o keyboard.o plot.o random.o
 
 git:	clean
 	git add .

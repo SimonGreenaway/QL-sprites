@@ -154,7 +154,7 @@ int main(int argc,char *argv[])
 
 	init(8);
 
-	loadLibrary(&lib,"test_lib",1);
+	loadLibrary(&lib,"test_lib",1,1);
 
 	for(i=0;i<S;i++)
 	{

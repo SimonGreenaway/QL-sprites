@@ -68,6 +68,50 @@ void printAt(screen screen,library *font,unsigned int width,unsigned int x,unsig
         }
 }
 
+void printAtBlock(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s)
+{
+	char start=font->images[0].name[0];
+	unsigned short *address=ADDRESS(SCREEN,x*8,y*8);
+
+        while(*s!=0)
+        {
+		unsigned int yy;
+
+                if(*s==32)
+		{
+			for(yy=0;yy<8;yy++)
+			{
+				*((unsigned long *)&address[0])=0;
+				*((unsigned long *)&address[64])=0;
+				*((unsigned long *)&address[128])=0;
+				*((unsigned long *)&address[192])=0;
+				*((unsigned long *)&address[256])=0;
+				*((unsigned long *)&address[320])=0;
+				*((unsigned long *)&address[384])=0;
+				*((unsigned long *)&address[448])=0;
+			}
+
+			address-=8*64;
+		}
+		else
+		{
+			unsigned short *d=font->images[*s-start].datashifter[0];
+
+			*((unsigned long *)&address[0])  =*((unsigned long *)&d[0]);
+			*((unsigned long *)&address[64]) =*((unsigned long *)&d[3]);
+			*((unsigned long *)&address[128])=*((unsigned long *)&d[6]);
+			*((unsigned long *)&address[192])=*((unsigned long *)&d[9]);
+			*((unsigned long *)&address[256])=*((unsigned long *)&d[12]);
+			*((unsigned long *)&address[320])=*((unsigned long *)&d[15]);
+			*((unsigned long *)&address[384])=*((unsigned long *)&d[18]);
+			*((unsigned long *)&address[448])=*((unsigned long *)&d[21]);
+		}
+
+                s++;
+		address++;
+        }
+}
+
 void* myMalloc(unsigned int i)
 {
 	void *p=malloc(i);

@@ -23,7 +23,7 @@ void benchmark()
 
 	init(8);
 
-	loadLibrary(&lib,"test_lib",1);
+	loadLibrary(&lib,"test_lib",1,0);
 	copyAllScreen(background,SCREEN);
 
 	for(s=0;s<4;s++)
@@ -239,6 +239,44 @@ void testKey()
 	}
 }
 
+void testText()
+{
+	unsigned int x,y,t;
+	unsigned char c;
+	library font;
+	char s[1];
+
+	init(8);
+
+	loadLibrary(&font,"FLP1_ATARI_LIB",1,1);
+
+	for(c=0;c<font.n;c++)
+	{
+		for(t=1;t<4;t++)
+		{
+			free(font.images[c].datashifter[1]);
+			free(font.images[c].maskshifter[1]);
+		}
+	}
+
+	setFontMasking(2);
+
+	t=getFrames();
+
+	for(c=32;c<128;c++)
+	{
+		s[0]=(char)c;
+
+		for(y=0;y<32;y++)
+			for(x=0;x<32;x++)
+				printAtBlock(SCREEN,&font,8,x,y,s);
+	}
+
+	printf("%d\n",getFrames()-t);
+
+	exit(0);
+}
+
 //////////
 // main //
 //////////
@@ -256,6 +294,8 @@ int main(int argc, char *argv[],char *argp[])
 	// Parse the args
 
 	setSysBase((unsigned char *)0x28000);
+
+	testText();
 
 	//testMode4();
 	//testKey();

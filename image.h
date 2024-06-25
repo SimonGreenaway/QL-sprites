@@ -94,7 +94,7 @@ typedef struct
         unsigned int value,delta;
 } timer;
 
-#define MAXIMAGES 16
+#define MAXIMAGES 24
 
 struct sprite
 {
@@ -161,6 +161,7 @@ unsigned short *screenAddress(screen screen,unsigned int y,unsigned int x);
 void setFontMasking(unsigned int m);
 void printCharAt(screen screen,library *font,unsigned int x,unsigned int y,char c);
 void printAt(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s);
+void printAtBlock(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s);
 int loadScreen(unsigned char *scr,char *dir,char *file);
 
 void framesInit();
@@ -176,3 +177,9 @@ void multiDraw(screen screen,unsigned char *data);
 
 //#define PLOT(screen,x,y,c) { unsigned short *address=ADDRESS((screen),(x),(y)); *address=(*address&masks[(x)&3])|colours[(x)&3][(c)]; }
 
+void fastSrand(int seed);
+inline unsigned int fastRand(void);
+
+inline unsigned int pointHit(unsigned int x,unsigned int y,unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1);
+inline unsigned hitBox(unsigned int px0,unsigned int py0,unsigned int px1,unsigned int py1,
+                    unsigned int ax0,unsigned int ay0,unsigned int ax1,unsigned int ay1);
