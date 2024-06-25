@@ -68,43 +68,67 @@ void printAt(screen screen,library *font,unsigned int width,unsigned int x,unsig
         }
 }
 
-void printAtBlock(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s)
+void printCharAtBlock(screen screen,library *font,unsigned int x,unsigned y,char c)
+{
+        char start=font->images[0].name[0];
+        unsigned long *address=(unsigned long *)ADDRESS(SCREEN,x*8,y*8);
+
+	if(c==' ')
+ 	{
+                *address    =0;
+                address[32] =0;
+                address[64] =0;
+                address[96] =0;
+                address[128]=0;
+                address[160]=0;
+                address[192]=0;
+                address[224]=0;
+        }
+        else
+        {
+                unsigned short *d=(unsigned short *)font->images[c-start].datashifter[0];
+
+                address[0]  =*((unsigned long *)&d[0]);
+                address[32] =*((unsigned long *)&d[3]);
+                address[64] =*((unsigned long *)&d[6]);
+                address[96] =*((unsigned long *)&d[9]);
+                address[128]=*((unsigned long *)&d[12]);
+                address[160]=*((unsigned long *)&d[15]);
+                address[192]=*((unsigned long *)&d[18]);
+                address[224]=*((unsigned long *)&d[21]);
+        }
+}
+
+void printStringAtBlock(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s)
 {
 	char start=font->images[0].name[0];
-	unsigned short *address=ADDRESS(SCREEN,x*8,y*8);
+	unsigned long *address=(unsigned long *)ADDRESS(SCREEN,x*8,y*8);
 
         while(*s!=0)
         {
-		unsigned int yy;
-
                 if(*s==32)
 		{
-			for(yy=0;yy<8;yy++)
-			{
-				*((unsigned long *)&address[0])=0;
-				*((unsigned long *)&address[64])=0;
-				*((unsigned long *)&address[128])=0;
-				*((unsigned long *)&address[192])=0;
-				*((unsigned long *)&address[256])=0;
-				*((unsigned long *)&address[320])=0;
-				*((unsigned long *)&address[384])=0;
-				*((unsigned long *)&address[448])=0;
-			}
-
-			address-=8*64;
+			*address    =0;
+			address[32] =0;
+			address[64] =0;
+			address[96] =0;
+			address[128]=0;
+			address[160]=0;
+			address[192]=0;
+			address[224]=0;
 		}
 		else
 		{
 			unsigned short *d=font->images[*s-start].datashifter[0];
 
-			*((unsigned long *)&address[0])  =*((unsigned long *)&d[0]);
-			*((unsigned long *)&address[64]) =*((unsigned long *)&d[3]);
-			*((unsigned long *)&address[128])=*((unsigned long *)&d[6]);
-			*((unsigned long *)&address[192])=*((unsigned long *)&d[9]);
-			*((unsigned long *)&address[256])=*((unsigned long *)&d[12]);
-			*((unsigned long *)&address[320])=*((unsigned long *)&d[15]);
-			*((unsigned long *)&address[384])=*((unsigned long *)&d[18]);
-			*((unsigned long *)&address[448])=*((unsigned long *)&d[21]);
+			*address    =*((unsigned long *)d);
+			address[32] =*((unsigned long *)&d[3]);
+			address[64] =*((unsigned long *)&d[6]);
+			address[96] =*((unsigned long *)&d[9]);
+			address[128]=*((unsigned long *)&d[12]);
+			address[160]=*((unsigned long *)&d[15]);
+			address[192]=*((unsigned long *)&d[18]);
+			address[224]=*((unsigned long *)&d[21]);
 		}
 
                 s++;

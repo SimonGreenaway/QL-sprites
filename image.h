@@ -161,7 +161,9 @@ unsigned short *screenAddress(screen screen,unsigned int y,unsigned int x);
 void setFontMasking(unsigned int m);
 void printCharAt(screen screen,library *font,unsigned int x,unsigned int y,char c);
 void printAt(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s);
-void printAtBlock(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s);
+
+void printCharAtBlock(screen screen,library *font,unsigned int x,unsigned y,char c);
+void printStringAtBlock(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s);
 int loadScreen(unsigned char *scr,char *dir,char *file);
 
 void framesInit();

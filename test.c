@@ -241,7 +241,7 @@ void testKey()
 
 void testText()
 {
-	unsigned int x,y,t;
+	unsigned int x,y,t,t2;
 	unsigned char c;
 	library font;
 	char s[1];
@@ -269,10 +269,24 @@ void testText()
 
 		for(y=0;y<32;y++)
 			for(x=0;x<32;x++)
-				printAtBlock(SCREEN,&font,8,x,y,s);
+				printStringAtBlock(SCREEN,&font,8,x,y,s);
 	}
 
-	printf("%d\n",getFrames()-t);
+	t=getFrames()-t;
+
+	t2=getFrames();
+
+	for(c=32;c<128;c++)
+	{
+		for(y=0;y<32;y++)
+			for(x=0;x<32;x++)
+				printCharAtBlock(SCREEN,&font,x,y,c);
+	}
+
+	t2=getFrames()-t2;
+
+	printf("%d\n",t);
+	printf("%d\n",t2);
 
 	exit(0);
 }
