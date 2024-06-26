@@ -20,7 +20,7 @@ runner:	libsprite.a	runner.o frames.o
 	$(CC) -o runner runner.o frames.o -lsprite
 
 clean:
-	rm -f image.o libsprite.a  system_variables.o libsprite.o test.o test frames.o runner.o 2d.s runner.s sprite.o  2d.o keyboard.o plot.o random.o
+	rm -f image.o libsprite.a  $(OBJS)
 
 git:	clean
 	git add .
