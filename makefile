@@ -14,13 +14,18 @@ hello:	libsprite.a	hello.o
 	$(CC) -o hello hello.o frames.o -L/usr/local/share/qdos/lib -lsprite -lm
 
 test:	libsprite.a	test.o frames.o
-	$(CC) -o test test.o frames.o -L/usr/local/share/qdos/lib -lsprite -lm
+	$(CC) -o test test.o -L/usr/local/share/qdos/lib -lsprite -lm
 
 runner:	libsprite.a	runner.o frames.o
 	$(CC) -o runner runner.o frames.o -lsprite
 
+converter:	libsprite.a	converter.o
+	#$(CC) -o converter converter.o -L/usr/local/share/qdos/lib -lsprite -lm
+	$(CC) -o converter converter.o $(OBJS) -L/usr/local/share/qdos/lib -lm
+	cp converter /home/simon/emulators/ql/emulators/sQLux/flp1/
+
 clean:
-	rm -f image.o libsprite.a  $(OBJS)
+	rm -f image.o libsprite.a converter.o  $(OBJS) converter test
 
 git:	clean
 	git add .

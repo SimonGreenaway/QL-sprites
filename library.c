@@ -8,8 +8,6 @@
 
 #include "image.h"
 
-void preShift(image *image);
-
 char *readLine(FILE *in,char *buffer)
 {
         do
