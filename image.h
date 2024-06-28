@@ -1,3 +1,5 @@
+#include <qdos.h>
+
 #include "system_variables.h"
 
 // undef MAGIC to disable image checking
@@ -166,6 +168,23 @@ void printAt(screen screen,library *font,unsigned int width,unsigned int x,unsig
 void printCharAtBlock(screen screen,library *font,unsigned int x,unsigned y,char c);
 void printStringAtBlock(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s);
 int loadScreen(unsigned char *scr,char *dir,char *file);
+
+// QDOS text
+
+chanid_t wopen(unsigned int x,unsigned int y,unsigned int width,unsigned int height);
+int wclose(chanid_t chid);
+int wat(chanid_t chid,short x,short y);
+int wcls(chanid_t chid);
+int wcursor(chanid_t chid,int on);
+int wborder(chanid_t chid,unsigned char colour,short width);
+int wclose(chanid_t chid);
+int wputc(chanid_t chid,char c);
+int wfputs(chanid_t chid,char *s);
+void wink(chanid_t chid,unsigned int c);
+void wpaper(chanid_t chid,unsigned int c);
+int wsize(chanid_t chid,short width,short height);
+
+// Time
 
 void framesInit();
 unsigned int getFrames();

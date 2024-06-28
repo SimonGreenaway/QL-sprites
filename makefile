@@ -1,7 +1,7 @@
 CC=qgcc qdos-gcc
 COPTS=-Wall -O3 -fomit-frame-pointer
 
-OBJS=image.o 2d.o system_variables.o frames.o keyboard.o sprite.o plot.o random.o print.o library.o
+OBJS=image.o 2d.o system_variables.o frames.o keyboard.o sprite.o plot.o random.o print.o library.o qdostext.o
 DEPS=image.h
 
 %.o: %.c $(DEPS)
@@ -25,7 +25,7 @@ converter:	libsprite.a	converter.o
 	cp converter /home/simon/emulators/ql/emulators/sQLux/flp1/
 
 clean:
-	rm -f image.o libsprite.a converter.o  $(OBJS) converter test
+	rm -f image.o libsprite.a converter.o runner.o test.o  $(OBJS) converter test
 
 git:	clean
 	git add .
