@@ -7,6 +7,8 @@ DEPS=image.h
 %.o: %.c $(DEPS)
 	$(CC) $(COPTS) -c -o $@ $< $(CFLAGS)
 
+all:	converter test runner
+
 libsprite.a:	$(OBJS) $(DEPS)
 		qgcc qdos-ar -rc libsprite.a $(OBJS)
 
@@ -20,7 +22,6 @@ runner:	libsprite.a	runner.o frames.o
 	$(CC) -o runner runner.o frames.o -lsprite
 
 converter:	libsprite.a	converter.o
-	#$(CC) -o converter converter.o -L/usr/local/share/qdos/lib -lsprite -lm
 	$(CC) -o converter converter.o $(OBJS) -L/usr/local/share/qdos/lib -lm
 	cp converter /home/simon/emulators/ql/emulators/sQLux/flp1/
 
