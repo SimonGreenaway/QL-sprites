@@ -137,7 +137,7 @@ void test()
 
 	cls(SCREEN);
 
-	for(pass=9;pass<TESTS;pass++)
+	for(pass=0;pass<TESTS;pass++)
 	{
 		unsigned int f=getFrames()+SECONDS*50;
 
@@ -261,7 +261,7 @@ void osText()
 
 	wclose(chan);
 
-	exit(0);
+	sleep(5);
 }	
 	
 void testText()
@@ -273,7 +273,10 @@ void testText()
 
 	init(8);
 
-	loadLibrary(&font,"FLP1_ATARI_LIB",1,1);
+	puts("Loading font...");
+
+	bLoadLibrary(&font,"FLP1_ATARI_BLB",1);
+	//loadLibrary(&font,"FLP1_ATARI_LIB",1,1);
 
 	for(c=0;c<font.n;c++)
 	{
@@ -313,7 +316,7 @@ void testText()
 	printf("%d\n",t);
 	printf("%d\n",t2);
 
-	exit(0);
+	sleep(5);
 }
 
 //////////
@@ -330,26 +333,46 @@ int main(int argc, char *argv[],char *argp[])
 
 	printf("Default drive is '%s'\n",drive);
 
-	// Parse the args
 
 	setSysBase((unsigned char *)0x28000);
 
-	osText();
-
-	//testText();
-
-	//testMode4();
-	//testKey();
-	//testVars();
-
-	for(s=1;s<argc;s++)
+	if(argc<2)
 	{
-		if(strcmp(argv[s],"-bm")==0) benchmark();
-		else if(strcmp(argv[s],"-t")==0) test();
-		else
+		char line[16];
+
+		while(1)
 		{
-			printf("Unknown command line argument: %s\n",argv[s]);
-			exit(4);	
+			puts("Test menu\n1) OS text\n2) Direct text\n3) Mode 4\n4) Keys\n5) Benchmark\n6) 2d graphics\n\n?");
+
+			fgets(line,80,stdin);
+
+			s=atoi(line);
+	
+			switch(s)
+			{
+				case 1: osText(); break;
+				case 2: testText(); break;
+				case 3: testMode4(); break;
+				case 4: testKey(); break; 
+				case 5: benchmark(); break;
+				case 6: test(); break;
+				default: puts("?");
+			}
+
+		}
+	}
+	else
+	{
+		// Parse the args
+		for(s=1;s<argc;s++)
+		{
+			if(strcmp(argv[s],"-bm")==0) benchmark();
+			else if(strcmp(argv[s],"-t")==0) test();
+			else
+			{
+				printf("Unknown command line argument: %s\n",argv[s]);
+				exit(4);	
+			}
 		}
 	}
 

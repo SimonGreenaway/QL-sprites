@@ -3,6 +3,6 @@
 30 CLS #8
 40 LRESPR flp1_env_bin
 50 SETENV "DRIVE=FLP1_"
-60 EXEC_W flp1_test,#8;'-t'
+60 EXEC_W flp1_test,#8
 65 REMark EXEC_W flp1_test,#8;'-bm'
 120 CLOSE #8
