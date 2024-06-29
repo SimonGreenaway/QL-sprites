@@ -23,58 +23,70 @@ void benchmark()
 
 	init(8);
 
+	puts("Loading font...");
+
 	loadLibrary(&lib,"test_lib",1,0);
-	copyAllScreen(background,SCREEN);
 
-	for(s=0;s<4;s++)
+	cls(SCREEN);
+
+	puts("Sprites drawn per second:\n");
+
+	while(1)
 	{
-		const int n=10;
+		copyAllScreen(background,SCREEN);
 
-		unsigned long t,c=0,pass;
-		unsigned int x=0,y=0;
-		sprite sprite[8];
-
-		for(c=0;c<8;c++)
+		for(s=0;s<4;s++)
 		{
-			spriteSetup(&sprite[c],"");
-			spriteAddImageFromLibrary(&sprite[c],&lib,s);
-			sprite[c].currentImage=0;
-			sprite[c].x=x++;
+			const int n=10;
 
-			sprite[c].y=y;
-			sprite[c].draw=1;
+			unsigned long t,c=0,pass;
+			unsigned int x=0,y=0;
+			sprite sprite[8];
 
-			y+=sprite[c].image[0]->y;
-			if(y+sprite[c].image[0]->y>255)
+			for(c=0;c<8;c++)
 			{
-				y=0;
-				x+=sprite[c].image[0]->x<<2;
-			}
-		}
-
-		for(pass=0;pass<2;pass++)
-		{
-			for(c=0;c<8;c++) sprite[c].mask=pass;
-
-			t=getFrames()+n*50;
+				spriteSetup(&sprite[c],"");
+				spriteAddImageFromLibrary(&sprite[c],&lib,s);
+				sprite[c].currentImage=0;
+				sprite[c].x=x++;
 	
-			while(t>getFrames())
-			{
-				unsigned int i;
+				sprite[c].y=y;
+				sprite[c].draw=1;
 
-				for(i=0;i<8;i++) spritePlot(SCREEN,&sprite[i]);
-
-				c+=8;
+				y+=sprite[c].image[0]->y;
+				if(y+sprite[c].image[0]->y>255)
+				{
+					y=0;
+					x+=sprite[c].image[0]->x<<2;
+				}
 			}
 
-			copyAllScreen(SCREEN,background);
-
-			if(pass==0)
-				printf("%d x %d\t-> %ld",lib.images[s].x<<2,lib.images[s].y,c);
-			else printf("\tMasked %ld\n",c);
-
-			copyAllScreen(background,SCREEN);
+			for(pass=0;pass<2;pass++)
+			{
+				for(c=0;c<8;c++) sprite[c].mask=pass;
+	
+				t=getFrames()+n*50;
+	
+				while(t>getFrames())
+				{
+					unsigned int i;
+	
+					for(i=0;i<8;i++) spritePlot(SCREEN,&sprite[i]);
+	
+					c+=8;
+				}
+	
+				copyAllScreen(SCREEN,background);
+	
+				if(pass==0)
+					printf("%d x %d\t-> %6.1f",lib.images[s].x<<2,lib.images[s].y,c/(float)n);
+				else printf("\tMasked %6.1f\n",c/(float)n);
+	
+				copyAllScreen(background,SCREEN);
+			}
 		}
+
+		puts("");
 	}
 
 	exit(0);
@@ -342,7 +354,7 @@ int main(int argc, char *argv[],char *argp[])
 
 		while(1)
 		{
-			puts("Test menu\n1) OS text\n2) Direct text\n3) Mode 4\n4) Keys\n5) Benchmark\n6) 2d graphics\n\n?");
+			puts("Test menu\n1) OS text\n2) Direct text\n3) Mode 4\n4) Keys\n5) Sprite drawing benchmark\n6) 2d graphics benchmark\n\n?");
 
 			fgets(line,80,stdin);
 
