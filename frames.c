@@ -48,3 +48,15 @@ void msleep(unsigned int delay)
 
         while(getFrames()<end); // printf("%d %d\n",getFrames(),end);
 }
+
+void mpause(unsigned int delay)
+{
+        unsigned int end=getFrames()+delay;
+
+        while((delay==0)||(getFrames()<end))
+	{
+		int i;
+
+		for(i=0;i<8;i++) if(keyrow(i)) return;
+	}
+}

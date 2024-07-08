@@ -541,7 +541,7 @@ void preShift(image *image)
 
         for(pixelShifts=0;pixelShifts<4;pixelShifts++)
         {
-        	unsigned int y,i,bytes=image->y*image->x/2*6;
+        	unsigned int y,i,bytes=image->y*(6+((image->x-2)/2*4));
 
                 struct shifter shifter1,shifter2,mask,tmp;
 
@@ -598,15 +598,15 @@ void preShift(image *image)
 						*mm++&=tmp.z.w[0];
 					}
 					else *mm++=tmp.z.w[0];
-
-					if((ss-ss0>bytes)||(mm-mm0>bytes))
-					{
-						printf("loadLibrary allocation error: [%d:%ld/%ld]",bytes,ss-ss0,mm-mm0);
-
-						exit(1);
-					}
 				}
 			}
+		}
+
+		if(((unsigned int)ss-(unsigned int)ss0!=bytes)||((unsigned int)mm-(unsigned int)mm0!=bytes))
+		{
+			printf("loadLibrary allocation error on (%dx%d):\nalloc=%d\nused s=%ld\nused m=%ld\n",image->x,image->y,bytes,(unsigned int)ss-(unsigned int)ss0,(unsigned int)mm-(unsigned int)mm0);
+
+			exit(1);
 		}
         }
 }
