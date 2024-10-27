@@ -35,9 +35,9 @@ void framesClose()
 	sms_rpol(&t);
 }
 
-unsigned int getFrames()
+inline unsigned int getFrames()
 {
-	if(frames==INT_MAX) framesInit();
+	//if(frames==INT_MAX) framesInit();
         
 	return frames;
 }
@@ -51,11 +51,21 @@ void msleep(unsigned int delay)
 
 void mpause(unsigned int delay)
 {
+	unsigned int p;
         unsigned int end=getFrames()+delay;
+
+	do
+	{
+		unsigned int i;
+
+		p=0;
+		for(i=0;i<8;i++) if(keyrow(i)) p++;
+	}	
+	while(p);
 
         while((delay==0)||(getFrames()<end))
 	{
-		int i;
+		unsigned int i;
 
 		for(i=0;i<8;i++) if(keyrow(i)) return;
 	}

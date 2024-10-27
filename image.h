@@ -89,6 +89,7 @@ typedef struct
 	unsigned short *data;
 
 	unsigned short *datashifter[4],*maskshifter[4];
+	unsigned short *datamaskshifter[4];
 } image;
 
 typedef struct
@@ -149,7 +150,8 @@ void spriteClear(screen scr,screen mask,sprite *sprite);
 // Image library handling
 
 void preShift(image *image);
-void loadLibrary(library *library,char *filename,int shift,int verbose);
+int superLoad(library *lib,char *bfilename,char *filename,unsigned int verbose);
+int loadLibrary(library *library,char *filename,int shift,int verbose);
 int bLoadLibrary(library *library,char *filename,int shift);
 void bSaveLibrary(library *library,char *filename);
 
@@ -164,6 +166,7 @@ unsigned short *screenAddress(screen screen,unsigned int y,unsigned int x);
 void setFontMasking(unsigned int m);
 void printCharAt(screen screen,library *font,unsigned int x,unsigned int y,char c);
 void printAt(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s);
+void print4(unsigned int x,unsigned int y,unsigned char *s,unsigned int fg,unsigned int bg);
 
 void printCharAtBlock(screen screen,library *font,unsigned int x,unsigned y,char c);
 void printStringAtBlock(screen screen,library *font,unsigned int width,unsigned int x,unsigned y,char *s);
@@ -202,6 +205,7 @@ void multiDraw(screen screen,unsigned char *data);
 
 void fastSrand(int seed);
 inline unsigned int fastRand(void);
+inline unsigned int fastRandInt(int i);
 
 inline unsigned int pointHit(unsigned int x,unsigned int y,unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1);
 inline unsigned hitBox(unsigned int px0,unsigned int py0,unsigned int px1,unsigned int py1,

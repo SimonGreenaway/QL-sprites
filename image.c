@@ -10,17 +10,24 @@
 
 screen SCREEN;
 
-void* myMalloc(unsigned int i)
+unsigned int malloced=0;
+
+void* myMalloc(unsigned int size)
 {
-	void *p=malloc(i);
+	void *p;
+
+	p=malloc(size);
+	malloced+=size;
 
 	if(p==NULL)
 	{
-		printf("Memory allocation error of %d bytes\n",i);
-		exit(3);
+		printf("Memory allocation error of %d bytes returned %ld\n",size,(unsigned long)p);
+		//exit(3);
+		//
+		while(1);
 	}
 
-	bzero(p,i);
+	bzero(p,size);
 
 	return p;
 }

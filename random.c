@@ -16,3 +16,7 @@ inline unsigned int fastRand(void)
         return (g_seed>>16);
 }
 
+inline unsigned int fastRandInt(int i)
+{
+	return (fastRand()*i)/65536;
+}

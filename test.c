@@ -63,18 +63,29 @@ void benchmark()
 
 			for(pass=0;pass<2;pass++)
 			{
+				unsigned long t0;
+
 				for(c=0;c<8;c++) sprite[c].mask=pass;
-	
-				t=getFrames()+n*50;
+
+				t0=getFrames();	
+				while(getFrames()<=t0);
+				t=(t0+1)+n*50;
 	
 				while(t>getFrames())
 				{
-					unsigned int i;
+					spritePlot(SCREEN,&sprite[0]);
+					spritePlot(SCREEN,&sprite[1]);
+					spritePlot(SCREEN,&sprite[2]);
+					spritePlot(SCREEN,&sprite[3]);
+					spritePlot(SCREEN,&sprite[4]);
+					spritePlot(SCREEN,&sprite[5]);
+					spritePlot(SCREEN,&sprite[6]);
+					spritePlot(SCREEN,&sprite[7]);
 	
-					for(i=0;i<8;i++) spritePlot(SCREEN,&sprite[i]);
-	
-					c+=8;
+					c++;
 				}
+
+				c*=8;
 	
 				copyAllScreen(SCREEN,background);
 	
@@ -253,7 +264,6 @@ void testKey()
 
 void osText()
 {
-	int rc;
 	unsigned int f=getFrames()+250;
 	chanid_t chan;
 
@@ -345,7 +355,7 @@ int main(int argc, char *argv[],char *argp[])
 
 	printf("Default drive is '%s'\n",drive);
 
-
+	framesInit();
 	setSysBase((unsigned char *)0x28000);
 
 	if(argc<2)

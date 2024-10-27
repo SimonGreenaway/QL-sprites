@@ -72,15 +72,12 @@ const unsigned char shifts[]={6,4,2,0};
 //
 // Can't see a way to speed this up. We need to read the screen, mask it with an AND,OR in the new colour and then write back to the screen.
 
-/*
-void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
+inline void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {
-	unsigned short *address=ADDRESS(screen,x,y);
-	const unsigned short *bitCache=colours[x&3];
-		
-	*address=(*address&bitCache[8])|bitCache[c];
+        register unsigned short *address=ADDRESS(screen,x,y);
+
+        *address=(*address&masks[x&3])|colours[x&3][c];
 }
-*/
 
 void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {

@@ -101,6 +101,8 @@ void spritePlot(screen screen,sprite *sprite)
 	unsigned short *shifts=image->datashifter[sprite->x&3];	// Pre-shifted sprite pixels
 	unsigned short *masks=image->maskshifter[sprite->x&3];	// Pre-shifted sprite mask 
 
+	unsigned short *shiftmasks=image->datamaskshifter[sprite->x&3];
+
 	// Sanity checks - best to leave in!
 	//
 	#ifdef MAGIC
