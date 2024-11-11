@@ -7,7 +7,7 @@ void print4(unsigned int x,unsigned int y,unsigned char *s,unsigned int fg,unsig
 {
 	unsigned int l=strlen(s);
 	unsigned int cc;
-	unsigned char *p;
+	const unsigned char *p;
 
 	for(cc=0;cc<l;cc++)
 	{
@@ -33,7 +33,6 @@ void print4(unsigned int x,unsigned int y,unsigned char *s,unsigned int fg,unsig
 	}
 }
 
-/*
 int main(int argc,char **argv)
 {
 	char *message="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -47,4 +46,3 @@ int main(int argc,char **argv)
 
 	return 0;
 }
-*/

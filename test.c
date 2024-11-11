@@ -7,6 +7,8 @@
 
 #include "image.h"
 
+char *drive="MDV1_";
+
 void binPrint2(short i)
 {
 	int z;
@@ -135,9 +137,11 @@ void test()
 	unsigned int counts[TESTS],pass;
 	unsigned char *r=myMalloc(RANDS);
 	unsigned int ri=0;
+
 	
 	init(8);
-	framesInit();
+	//framesInit();
+
 
 	//loadLibrary(&l,"test_lib",1); 
 	
@@ -151,9 +155,11 @@ void test()
 
 	for(i=0;i<120;i++)
 	{
-		box(SCREEN,i+4-1,i*2+4-1,200-i+1,i*2+4+1,7);
-		line(SCREEN,i+4,i*2+4,200-i,i*2+4,(i/4)&7);
+		//box(SCREEN,i+4-1,i*2+4-1,200-i+1,i*2+4+1,7);
+		//line(SCREEN,i+4,i*2+4,200-i,i*2+4,(i/4)&7);
 	}
+
+	puts("Hello!"); while(1);
 
 	puts("Creating random numbers...");
 	for(ri=0;ri<RANDS/2;ri++) r[ri]=fastRand()&255;
@@ -291,15 +297,23 @@ void testText()
 	unsigned int x,y,t,t2;
 	unsigned char c;
 	library font;
-	char s[1];
+	char s[1],z[64];
 
 	init(8);
 
 	puts("Loading font...");
 
-	bLoadLibrary(&font,"FLP1_ATARI_BLB",1);
-	//loadLibrary(&font,"FLP1_ATARI_LIB",1,1);
+	sprintf(z,"%sATARI_LIB",drive);
+	
+	if(LoadLibrary(&font,z,1)==0)
+	{
+		printf("Could not load font %s\n",z);
+		exit(1);
+	}
 
+	//loadLibrary(&font,z,1,1);
+	//
+	
 	for(c=0;c<font.n;c++)
 	{
 		for(t=1;t<4;t++)
@@ -344,8 +358,6 @@ void testText()
 //////////
 // main //
 //////////
-
-char *drive="MDV1_";
 
 int main(int argc, char *argv[],char *argp[])
 {

@@ -37,7 +37,7 @@ void *SJGmalloc _LIB_F1_(size_t,   size)
 
     //mpause(250);
 
-    printf("Malloc returning %ld\n",ret+4);
+    printf("Malloc returning %d\n",(unsigned int)ret+4);
 
     return (void *)(ret + 4);
 }
