@@ -33,6 +33,7 @@ void print4(unsigned int x,unsigned int y,unsigned char *s,unsigned int fg,unsig
 	}
 }
 
+/*
 int main(int argc,char **argv)
 {
 	char *message="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -46,3 +47,4 @@ int main(int argc,char **argv)
 
 	return 0;
 }
+*/

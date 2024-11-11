@@ -105,24 +105,6 @@ void benchmark()
 	exit(0);
 }
 
-static unsigned int g_seed;
-
-// Used to seed the generator.           
-
-void fastSrand(int seed)
-{
-        g_seed = seed;
-}
-
-// Compute a pseudorandom integer.
-// Output value in range [0, 32767]
-
-inline unsigned int fastRand(void)
-{
-        g_seed = (214013*g_seed+2531011);
-        return (g_seed>>16);
-}
-
 #define SECONDS 10
 #define RANDS 32768
 #define TESTS 10
@@ -290,7 +272,33 @@ void osText()
 	wclose(chan);
 
 	sleep(5);
-}	
+}
+
+void test4Text()
+{
+	int x,y;
+	char z[2];
+	
+	z[1]='\0';
+
+	init(8);
+        cls(SCREEN);
+
+	fastSrand(0);
+
+	for(y=0;y<256-8;y+=6)
+	{
+		for(x=0;x<256-4;x+=4)
+		{
+			z[0]=32+fastRandInt(96);
+
+			print4(x,y,z,7,0);
+		}
+	}
+
+	sleep(10);
+	cls(SCREEN);
+}
 	
 void testText()
 {
@@ -305,7 +313,7 @@ void testText()
 
 	sprintf(z,"%sATARI_LIB",drive);
 	
-	if(LoadLibrary(&font,z,1)==0)
+	if(loadLibrary(&font,z,1,0)==0)
 	{
 		printf("Could not load font %s\n",z);
 		exit(1);
@@ -376,7 +384,7 @@ int main(int argc, char *argv[],char *argp[])
 
 		while(1)
 		{
-			puts("Test menu\n1) OS text\n2) Direct text\n3) Mode 4\n4) Keys\n5) Sprite drawing benchmark\n6) 2d graphics benchmark\n\n?");
+			puts("Test menu\n1) OS text\n2) Direct text\n3) Small text\n4) Mode 5\n5) Keys\n6) Sprite drawing benchmark\n7) 2d graphics benchmark\n\n?");
 
 			fgets(line,80,stdin);
 
@@ -386,10 +394,11 @@ int main(int argc, char *argv[],char *argp[])
 			{
 				case 1: osText(); break;
 				case 2: testText(); break;
-				case 3: testMode4(); break;
-				case 4: testKey(); break; 
-				case 5: benchmark(); break;
-				case 6: test(); break;
+				case 3: test4Text(); break;
+				case 4: testMode4(); break;
+				case 5: testKey(); break; 
+				case 6: benchmark(); break;
+				case 7: test(); break;
 				default: puts("?");
 			}
 
