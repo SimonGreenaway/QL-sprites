@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
 #include <qdos.h>
@@ -46,13 +45,12 @@ unsigned short peek(screen screen,unsigned int y,unsigned int x)
                 case 3: return data&0x0203;
                 case 2: return data&0x080C;
                 case 1: return data&0x2030;
-                case 0: return data&0x80C0;
+                default: return data&0x80C0;
         }
-
-	return 0; // IMPOSSIBLE!
 }
 
 const unsigned short masks[]={0x3F3F,0xCFCF,0xF3F3,0xFCFC};
+const unsigned short imasks[]={~0x3F3F,~0xCFCF,~0xF3F3,~0xFCFC};
 
 const unsigned short colours[4][9]=
 		{
@@ -79,6 +77,8 @@ inline void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
         *address=(*address&masks[x&3])|colours[x&3][c];
 }
 
+// Work in progress...
+
 void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c)
 {
 	const unsigned short masks[]={0x7F7F,0xBFBF,0xDFDF,0xEFEF,0xF7F7,0xFBFB,0xFDFD,0xFEFE};
@@ -103,7 +103,7 @@ void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c)
 
 unsigned int unplot(screen screen,unsigned short x,unsigned short y)
 {
-	unsigned short d=(*ADDRESS(screen,x,y)&~masks[x&3])>>shifts[x&3];
+	unsigned short d=(*ADDRESS(screen,x,y)&imasks[x&3])>>shifts[x&3];
 
 	return (d&3)+(d>256?4:0);
 }
@@ -405,7 +405,29 @@ unsigned int isqrt(unsigned int s)
 	}
 }
 
-void drawCircle(screen screen,int xc,int yc,int x,int y,unsigned int colour)
+unsigned int isqrts(unsigned short s)
+{
+	// Zero yields zero
+	// One yields one
+	if (s <= 1) return s;
+	else
+	{
+    		// Initial estimate (must be too high)
+		unsigned short x0 = s / 2;
+
+		// Update
+		unsigned short x1 = (x0 + s / x0) / 2;
+
+		while (x1 < x0)	// Bound check
+		{
+			x0 = x1;
+			x1 = (x0 + s / x0) / 2;
+		}		
+		return x0;
+	}
+}
+
+void inline drawCircle(screen screen,int xc,int yc,int x,int y,unsigned int colour)
 {
 	plot(screen,xc+x, yc+y,colour);
 	plot(screen,xc-x, yc+y,colour);
@@ -438,13 +460,14 @@ void circle(screen screen,unsigned int xc,unsigned int yc,int r,unsigned int col
 
 void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int colour)
 {
-        int y,height;
+        short y;
 
         for(y=-r;y<r;y++)
         {       
-                height=isqrt(r*r-y*y);
+                unsigned short height=isqrts(r*r-y*y);
 
-		line(screen,ox-height,y+oy,ox+height,y+oy,colour);
+		hline(screen,ox-height,ox+height,y+oy,colour);
+
         }
 }
 
