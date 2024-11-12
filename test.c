@@ -7,8 +7,9 @@
 
 #include "image.h"
 
-char *drive="MDV1_";
+char *drive="MDV1_"; // Default drive to load files from
 
+// Print i as binary
 void binPrint2(short i)
 {
 	int z;
@@ -17,13 +18,15 @@ void binPrint2(short i)
 		putchar(i&(1<<z)?'1':'0');
 }
 
+// Sprite benchmark
+//
 void benchmark()
 {
 	unsigned int s;
-	screen background=createScreen();
+	screen background=createScreen(); // Create a 32k screen for storing the background data
 	library lib;
 
-	init(8);
+	init(8);	// Initiate the graphics with colour mode 8
 
 	puts("Loading font...");
 
@@ -35,9 +38,9 @@ void benchmark()
 
 	while(1)
 	{
-		copyAllScreen(background,SCREEN);
+		copyAllScreen(background,SCREEN); // Copy what is on the display to the background buffer so we can draw sprites masked onto background
 
-		for(s=0;s<4;s++)
+		for(s=0;s<4;s++) // 4 sprite sizes 8,16,24 and 32 bits square
 		{
 			const int n=10;
 
@@ -47,14 +50,15 @@ void benchmark()
 
 			for(c=0;c<8;c++)
 			{
-				spriteSetup(&sprite[c],"");
-				spriteAddImageFromLibrary(&sprite[c],&lib,s);
-				sprite[c].currentImage=0;
-				sprite[c].x=x++;
+				spriteSetup(&sprite[c],""); // Initiate the sprite
+				spriteAddImageFromLibrary(&sprite[c],&lib,s); // Add an image to the sprite
+				sprite[c].currentImage=0; // Set the default image
+				sprite[c].x=x++;	// Set the xposition
 	
-				sprite[c].y=y;
-				sprite[c].draw=1;
+				sprite[c].y=y;		// Set the y position
+				sprite[c].draw=1;	// draw=1 to display data
 
+				// Work out the next sprite's position
 				y+=sprite[c].image[0]->y;
 				if(y+sprite[c].image[0]->y>255)
 				{
@@ -63,19 +67,21 @@ void benchmark()
 				}
 			}
 
-			for(pass=0;pass<2;pass++)
+			for(pass=0;pass<2;pass++) // Draw sprites with unmasked then masked
 			{
 				unsigned long t0;
 
-				for(c=0;c<8;c++) sprite[c].mask=pass;
+				for(c=0;c<8;c++) sprite[c].mask=pass; // Set the mask mode
 
+				// Wait for frame to end (50hz interrupt counter)
 				t0=getFrames();	
 				while(getFrames()<=t0);
 				t=(t0+1)+n*50;
 	
 				while(t>getFrames())
 				{
-					spritePlot(SCREEN,&sprite[0]);
+					// Draw each of the 8 sprites repeatedly
+					spritePlot(SCREEN,&sprite[0]); 
 					spritePlot(SCREEN,&sprite[1]);
 					spritePlot(SCREEN,&sprite[2]);
 					spritePlot(SCREEN,&sprite[3]);
@@ -89,13 +95,13 @@ void benchmark()
 
 				c*=8;
 	
-				copyAllScreen(SCREEN,background);
+				copyAllScreen(SCREEN,background); // Copy the saved bg back to the screen
 	
 				if(pass==0)
 					printf("%d x %d\t-> %6.1f",lib.images[s].x<<2,lib.images[s].y,c/(float)n);
 				else printf("\tMasked %6.1f\n",c/(float)n);
 	
-				copyAllScreen(background,SCREEN);
+				copyAllScreen(background,SCREEN); // And save, with the newly printed stuff above
 			}
 		}
 
@@ -104,6 +110,9 @@ void benchmark()
 
 	exit(0);
 }
+
+// Run the 2d tests
+// Doesn't quite work at the moment!
 
 #define SECONDS 10
 #define RANDS 32768
@@ -141,7 +150,7 @@ void test()
 		//line(SCREEN,i+4,i*2+4,200-i,i*2+4,(i/4)&7);
 	}
 
-	puts("Hello!"); while(1);
+	//puts("Hello!"); while(1);
 
 	puts("Creating random numbers...");
 	for(ri=0;ri<RANDS/2;ri++) r[ri]=fastRand()&255;
@@ -221,33 +230,21 @@ void test()
 	}
 }
 
-void testMode4()
-{
-	unsigned int i;
-
-	init(4);
-
-	while(1)
-	{
-		for(i=0;i<8;i++)
-		{
-			plot4(SCREEN,i,0,3);
-			plot4(SCREEN,i,i,3); sleep(1);
-		}
-
-		while(1);
-	}
-}
-
 void testKey()
 {
+	puts("ESC to quit...\n");
+
 	while(1)
 	{
 		unsigned char c=scanKey();
 
 		if(c==8) printf("DEL");
+		else if(c==27) return;
 		else if(c!=0) putchar(c);
 	}
+
+	putchar('\n');
+	putchar('\n');
 }
 
 void osText()
@@ -270,14 +267,13 @@ void osText()
 	}
 
 	wclose(chan);
-
-	sleep(5);
 }
 
 void test4Text()
 {
 	int x,y;
 	char z[2];
+	unsigned int t;
 	
 	z[1]='\0';
 
@@ -286,7 +282,9 @@ void test4Text()
 
 	fastSrand(0);
 
-	for(y=0;y<256-8;y+=6)
+	t=getFrames()+50*10;
+
+	while(getFrames()<=t) for(y=0;y<256-8;y+=6)
 	{
 		for(x=0;x<256-4;x+=4)
 		{
@@ -296,7 +294,6 @@ void test4Text()
 		}
 	}
 
-	sleep(10);
 	cls(SCREEN);
 }
 	
@@ -384,7 +381,7 @@ int main(int argc, char *argv[],char *argp[])
 
 		while(1)
 		{
-			puts("Test menu\n1) OS text\n2) Direct text\n3) Small text\n4) Mode 5\n5) Keys\n6) Sprite drawing benchmark\n7) 2d graphics benchmark\n\n?");
+			puts("\nTest menu\n1) OS text\n2) Direct text\n3) Small text\n4) Keys\n5) Sprite drawing benchmark\n6) 2d graphics benchmark\n\n?");
 
 			fgets(line,80,stdin);
 
@@ -395,10 +392,9 @@ int main(int argc, char *argv[],char *argp[])
 				case 1: osText(); break;
 				case 2: testText(); break;
 				case 3: test4Text(); break;
-				case 4: testMode4(); break;
-				case 5: testKey(); break; 
-				case 6: benchmark(); break;
-				case 7: test(); break;
+				case 4: testKey(); break; 
+				case 5: benchmark(); break;
+				case 6: test(); break;
 				default: puts("?");
 			}
 
