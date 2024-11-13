@@ -54,7 +54,8 @@ extern const unsigned short colours[4][9];
 
 
 void fill(screen screen,unsigned int xmin,unsigned int xmax,unsigned char c);
-void plot(screen screen,unsigned int x,unsigned int y,unsigned char c);
+void plot(screen screen,unsigned short x,unsigned short y,unsigned char c);
+void ploti(screen screen,unsigned int x,unsigned int y,unsigned char c);
 void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c);
 unsigned int unplot(screen screen,unsigned short x,unsigned short y);
 void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);
@@ -65,12 +66,12 @@ void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,uns
 void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
 void triangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
 void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned int y2,unsigned int c);
-void hline(screen screen,unsigned int x,unsigned int x2,unsigned int y,unsigned int c);
+void hline(screen screen,int x,int x2,unsigned int y,unsigned int c);
 void vline(screen screen,unsigned int x,unsigned int y,unsigned int y2,unsigned int c);
 
 void circle(screen screen,unsigned int x,unsigned int y,int radius,unsigned int colour);
 void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int colour);
-void floodFill(screen screen,unsigned int x,unsigned int y,unsigned int c);
+void floodFill(screen screen,unsigned short x,unsigned short y,unsigned short c);
 
 //
 

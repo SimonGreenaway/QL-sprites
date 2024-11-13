@@ -57,7 +57,7 @@ const unsigned short colours[4][9]=
 			{0,1<<6,2<<6,3<<6,512<<6,513<<6,514<<6,515<<6,0x3F3F},
 			{0,1<<4,2<<4,3<<4,512<<4,513<<4,514<<4,515<<4,0xCFCF},
 			{0,1<<2,2<<2,3<<2,512<<2,513<<2,514<<2,515<<2,0xF3F3},
-			{0,1,   2,   3,   512,   513,   514,   515,0xFCFC}
+			{0,1,   2,   3,   512,   513,   514,   515,   0xFCFC}
 		};
 
 const unsigned char shifts[]={6,4,2,0};
@@ -70,13 +70,19 @@ const unsigned char shifts[]={6,4,2,0};
 //
 // Can't see a way to speed this up. We need to read the screen, mask it with an AND,OR in the new colour and then write back to the screen.
 
-inline void plot(screen screen,unsigned int x,unsigned int y,unsigned char c)
+inline void plot(screen screen,unsigned short x,unsigned short y,unsigned char c)
 {
         register unsigned short *address=ADDRESS(screen,x,y);
 
-        *address=(*address&masks[x&3])|colours[x&3][c];
+	*address=(*address&colours[x&3][8])|colours[x&3][c];
 }
 
+inline void ploti(screen screen,unsigned int x,unsigned int y,unsigned char c)
+{
+        register unsigned short *address=ADDRESS(screen,x,y);
+
+	*address=(*address&colours[x&3][8])|colours[x&3][c];
+}
 // Work in progress...
 
 void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c)
@@ -112,9 +118,9 @@ unsigned int unplot(screen screen,unsigned short x,unsigned short y)
 
 void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
 {
-	line(SCREEN,x1,y1,x2,y1,c);
+	hline(SCREEN,x1,x2,y1,c);
 	line(SCREEN,x2,y1,x2,y2,c);
-	line(SCREEN,x2,y2,x1,y2,c);
+	hline(SCREEN,x1,x2,y2,c);
 	line(SCREEN,x1,y2,x1,y1,c);
 }
 
@@ -122,7 +128,7 @@ void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned 
 
 void fillBox(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
 {
-        for(;y1<=y2;y1++) line(screen,x1,y1,x2,y1,c);
+        for(;y1<=y2;y1++) hline(screen,x1,x2,y1,c);
 }
 
 void copyBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
@@ -136,18 +142,19 @@ void copyBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,uns
 
 void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
 {
-        unsigned int x,y;
+        unsigned short x,y;
 
         for(x=0;x<=x2;x++)
                 for(y=0;y<=y2;y++)
                         plot(screen,x+x1,y+y1,m[x][y]);
 }
 
-void hline(screen screen,unsigned int x,unsigned int x2,unsigned int y,unsigned int c)
+void hline(screen screen,int x,int x2,unsigned int y,unsigned int c)
 {
 	unsigned long *a;
 
 	// Make sure x2>x
+	
 	if(x>x2) SWAP(x,x2);
 
 	switch(x&3) // 0-3 bits before word break
@@ -169,6 +176,8 @@ void hline(screen screen,unsigned int x,unsigned int x2,unsigned int y,unsigned 
 	if(x2&1)
 	{
 		*ADDRESS(screen,x2,y)=lineColourw[c];
+
+
 		x2-=4;
 	}
 
@@ -187,7 +196,8 @@ void hline(screen screen,unsigned int x,unsigned int x2,unsigned int y,unsigned 
 	{
 		unsigned int i;
 
-		for(i=(x2-x)/8+1;i;i--) *a++=lineColourl[c];
+		for(i=(x2-x)/8+1;i;i--)
+			*a++=lineColourl[c];
 	}
 }
 
@@ -263,7 +273,7 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 
                         for(i=0;i!=endVal;i+=incrementVal)
                         {
-                                plot(screen,x+(j>>16),y+i,c);
+                                ploti(screen,x+(j>>16),y+i,c);
                                 j+=decInc;
                         }
                 }
@@ -273,12 +283,12 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 
                         for(i=0;i!=endVal;i+=incrementVal)
                         {
-                                plot(screen,x+i,y+(j>>16),c);
+                                ploti(screen,x+i,y+(j>>16),c);
                                 j+=decInc;
                         }
                 }
 
-		plot(screen,x2,y2,c);
+		ploti(screen,x2,y2,c);
         }
 }
 
@@ -473,29 +483,30 @@ void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int
 
 #define FLOODBUFFERSIZE 4096
 
-void floodFill(screen screen,unsigned int x,unsigned int y,unsigned int c)
+void floodFill(screen screen,unsigned short x,unsigned short y,unsigned short c)
 {
 	if(unplot(screen,x,y)!=c)
 	{
 		// Set up the ring buffer
-		unsigned char *todo=myMalloc(sizeof(unsigned char)*FLOODBUFFERSIZE);
+		unsigned char *todox=myMalloc(sizeof(unsigned char)*FLOODBUFFERSIZE);
+		unsigned char *todoy=myMalloc(sizeof(unsigned char)*FLOODBUFFERSIZE);
 		unsigned int bottom=0,top=0;
 
 		// First point
 		plot(screen,x,y,c);
-		todo[top++]=x; todo[top++]=y;
+		todox[top]=x; todoy[top++]=y;
 
 		while(top!=bottom)
 		{
-			x=todo[bottom++];
-			y=todo[bottom++];
+			x=todox[bottom];
+			y=todoy[bottom++];
 
 			bottom&=FLOODBUFFERSIZE-1;
 
 			if((y>0)&&(unplot(screen,x,y-1)!=c))
 			{
 				plot(screen,x,y-1,c);
-				todo[top++]=x; todo[top++]=y-1;
+				todox[top]=x; todoy[top++]=y-1;
 	
 				top&=FLOODBUFFERSIZE-1;
 			}
@@ -503,7 +514,7 @@ void floodFill(screen screen,unsigned int x,unsigned int y,unsigned int c)
 			if((y<254)&&(unplot(screen,x,y+1)!=c))
 			{
 				plot(screen,x,y+1,c);
-				todo[top++]=x; todo[top++]=y+1;
+				todox[top]=x; todoy[top++]=y+1;
 	
 				top&=FLOODBUFFERSIZE-1;
 			}
@@ -511,7 +522,7 @@ void floodFill(screen screen,unsigned int x,unsigned int y,unsigned int c)
 			if((x>0)&&(unplot(screen,x-1,y)!=c))
 			{
 				plot(screen,x-1,y,c); 
-				todo[top++]=x-1; todo[top++]=y;
+				todox[top]=x-1; todoy[top++]=y;
 	
 				top&=FLOODBUFFERSIZE-1;
 			}
@@ -519,14 +530,15 @@ void floodFill(screen screen,unsigned int x,unsigned int y,unsigned int c)
 			if((x<254)&&(unplot(screen,x+1,y)!=c))
 			{
 				plot(screen,x+1,y,c);
-				todo[top++]=x+1; todo[top++]=y;
+				todox[top]=x+1; todoy[top++]=y;
 	
 				top&=FLOODBUFFERSIZE-1;
 			}
-
 		}
 
-		free(todo); // Release the ring buffer
+		 // Release the ring buffer
+		free(todox);
+		free(todoy);
 	}
 }
 
