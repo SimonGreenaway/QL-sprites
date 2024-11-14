@@ -50,7 +50,6 @@ unsigned short peek(screen screen,unsigned int y,unsigned int x)
 }
 
 const unsigned short masks[]={0x3F3F,0xCFCF,0xF3F3,0xFCFC};
-const unsigned short imasks[]={(unsigned short)~0x3F3F,(unsigned short)~0xCFCF,(unsigned short)~0xF3F3,(unsigned short)~0xFCFC};
 
 const unsigned short colours[4][9]=
 		{
@@ -109,12 +108,12 @@ void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c)
 
 inline unsigned short unplot_(screen screen,unsigned short x,unsigned short y)
 {
-	return (*ADDRESS(screen,x,y)&imasks[x&3])>>shifts[x&3];
+	return ((*ADDRESS(screen,x,y))>>shifts[x&3])*0x0303;
 }
 
 inline unsigned int unplot(screen screen,unsigned short x,unsigned short y)
 {
-	unsigned short d=(*ADDRESS(screen,x,y)&imasks[x&3])>>shifts[x&3];
+	unsigned short d=((*ADDRESS(screen,x,y)>>shifts[x&3])&0x0303);
 
 	return (d&3)+(d>256?4:0);
 }
@@ -504,7 +503,7 @@ void floodFill(screen screen,unsigned short x,unsigned short y,unsigned short c)
 			if(y>0)
 			{
         			register unsigned short *address=ADDRESS(screen,x,(y-1));
-				short ccc=(*address&imasks[x&3])>>shifts[x&3];
+				short ccc=((*address)>>shifts[x&3])&0x0303;
 
 				if(ccc!=c2)
 				{
@@ -516,7 +515,7 @@ void floodFill(screen screen,unsigned short x,unsigned short y,unsigned short c)
 			if(y<254)
 			{
         			register unsigned short *address=ADDRESS(screen,x,(y+1));
-				short ccc=(*address&imasks[x&3])>>shifts[x&3];
+				short ccc=((*address)>>shifts[x&3])&0x0303;
 
 				if(ccc!=c2)
 				{
@@ -528,7 +527,7 @@ void floodFill(screen screen,unsigned short x,unsigned short y,unsigned short c)
 			if(x>0)
 			{
         			register unsigned short *address=ADDRESS(screen,(x-1),y);
-				short ccc=(*address&imasks[(x-1)&3])>>shifts[(x-1)&3];
+				short ccc=((*address)>>shifts[(x-1)&3])&0x0303;
 
 				if(ccc!=c2)
 				{
@@ -540,7 +539,7 @@ void floodFill(screen screen,unsigned short x,unsigned short y,unsigned short c)
 			if(x<254)
 			{
         			register unsigned short *address=ADDRESS(screen,(x+1),y);
-				short ccc=(*address&imasks[(x+1)&3])>>shifts[(x+1)&3];
+				short ccc=((*address)>>shifts[(x+1)&3])&0x0303;
 
 				if(ccc!=c2)
 				{

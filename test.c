@@ -150,8 +150,6 @@ void test()
 		//line(SCREEN,i+4,i*2+4,200-i,i*2+4,(i/4)&7);
 	}
 
-	//puts("Hello!"); while(1);
-
 	puts("Creating random numbers...");
 	for(ri=0;ri<RANDS/2;ri++) r[ri]=fastRand()&255;
 
@@ -161,7 +159,7 @@ void test()
 	{
 		unsigned int f=getFrames()+SECONDS*50;
 
-		if(pass!=9) continue;
+		//if(pass!=9) continue;
 
 		counts[pass]=0;
 		ri=0;
