@@ -123,166 +123,252 @@ LC0:
 	.align 2
 	.extern	 _hline
 _hline:
-	subq.w #8,sp
-	movem.l a6/a5/a4/a3/a2/d7/d6/d5/d4/d3,-(sp)
-	move.l 56(sp),d5
-	move.l 60(sp),d4
-	move.l 68(sp),a3
-	cmp.l d5,d4
+	movem.l a2/d7/d6/d5/d4/d3,-(sp)
+	move.l 28(sp),d6
+	move.l 32(sp),d4
+	move.l 36(sp),d3
+	move.l 40(sp),d7
+	move.l 44(sp),d5
+	cmp.l d4,d3
 	bge L59
-	eor.l d4,d5
-	eor.l d5,d4
-	eor.l d4,d5
+	move.l d4,d0
+	move.l d3,d4
+	move.l d0,d3
 L59:
-	move.l d5,d3
-	moveq.l #3,d0
-	and.l d0,d3
-	move.l d4,a4
-	move.l a4,d1
-	and.l d0,d1
-	move.l d1,a4
-	move.l 64(sp),a6
-	move.l a6,d0
-	lsl.l #7,d0
-	move.l d0,a6
-	tst.l d3
-	beq L61
-	sub.l a2,a2
-	moveq.l #0,d7
-	moveq.l #0,d6
-	.align 2
-L63:
-	move.w d5,d1
-	addq.l #1,d5
-	move.l a2,d0
-	move.w 66(sp),d0
-	move.l d0,a2
-	lsl.l #7,d0
-	move.l 52(sp),a1
-	add.l d0,a1
-	move.w d1,d0
-	lsr.w #2,d0
-	move.w d0,d6
-	move.l d6,a0
-	add.l d6,a0
-	and.w #3,d1
-	mulu.w #18,d1
-	move.w 0(a0,a1.l),d2
-	lea _colours+16,a5
-	and.w 0(a5,d1.l),d2
-	move.w a3,d0
-	move.b d0,d7
-	move.l d7,d0
-	add.l d7,d0
-	add.l d1,d0
-	lea _colours,a5
-	or.w 0(a5,d0.l),d2
-	move.w d2,0(a0,a1.l)
-	subq.l #1,d3
-	bne L63
-L61:
-	moveq.l #0,d3
-	move.l d5,40(sp)
-	moveq.l #1,d0
-	and.l d0,40(sp)
-	cmp.l d3,a4
-	bls L67
-	sub.l a2,a2
-	lea _colours+16,a4
-	moveq.l #0,d7
-	moveq.l #0,d6
-	.align 2
-L69:
-	move.w d4,d1
-	subq.l #1,d4
-	move.l a2,d0
-	move.w 66(sp),d0
-	move.l d0,a2
-	lsl.l #7,d0
-	move.l 52(sp),a1
-	add.l d0,a1
-	move.w d1,d0
-	lsr.w #2,d0
-	move.w d0,d6
-	move.l d6,a0
-	add.l d6,a0
-	and.w #3,d1
-	mulu.w #18,d1
-	move.w 0(a0,a1.l),d2
-	and.w 0(a4,d1.l),d2
-	move.w a3,d0
-	move.b d0,d7
-	move.l d7,d0
-	add.l d7,d0
-	add.l d1,d0
-	lea _colours,a5
-	or.w 0(a5,d0.l),d2
-	move.w d2,0(a0,a1.l)
-	addq.l #1,d3
 	move.l d4,d0
 	moveq.l #3,d1
 	and.l d1,d0
-	cmp.l d3,d0
-	bhi L69
-L67:
-	btst #0,d4
-	beq L72
-	move.l d4,d0
-	bge L73
-	addq.l #3,d0
+	moveq.l #2,d1
+	cmp.l d0,d1
+	beq L63
+	blt L69
+	moveq.l #1,d1
+	cmp.l d0,d1
+	beq L61
+	bra L60
+	.align 2
+L69:
+	moveq.l #3,d1
+	cmp.l d0,d1
+	beq L65
+	bra L60
+	.align 2
+L61:
+	move.w d4,d1
+	addq.l #1,d4
+	clr.l d0
+	move.w d7,d0
+	lsl.l #7,d0
+	move.l d6,a2
+	add.l d0,a2
+	move.w d1,d0
+	lsr.w #2,d0
+	and.l #16383,d0
+	move.l d0,a1
+	add.l d0,a1
+	and.w #3,d1
+	mulu.w #18,d1
+	lea _colours+16,a0
+	move.w 0(a1,a2.l),d2
+	and.w 0(a0,d1.l),d2
+	clr.l d0
+	move.b d5,d0
+	add.l d0,d0
+	add.l d1,d0
+	or.w -16(a0,d0.l),d2
+	move.w d2,0(a1,a2.l)
+L63:
+	move.w d4,d1
+	addq.l #1,d4
+	clr.l d0
+	move.w d7,d0
+	lsl.l #7,d0
+	move.l d6,a2
+	add.l d0,a2
+	move.w d1,d0
+	lsr.w #2,d0
+	and.l #16383,d0
+	move.l d0,a1
+	add.l d0,a1
+	and.w #3,d1
+	mulu.w #18,d1
+	lea _colours+16,a0
+	move.w 0(a1,a2.l),d2
+	and.w 0(a0,d1.l),d2
+	clr.l d0
+	move.b d5,d0
+	add.l d0,d0
+	add.l d1,d0
+	or.w -16(a0,d0.l),d2
+	move.w d2,0(a1,a2.l)
+L65:
+	move.w d4,d1
+	addq.l #1,d4
+	clr.l d0
+	move.w d7,d0
+	lsl.l #7,d0
+	move.l d6,a2
+	add.l d0,a2
+	move.w d1,d0
+	lsr.w #2,d0
+	and.l #16383,d0
+	move.l d0,a1
+	add.l d0,a1
+	and.w #3,d1
+	mulu.w #18,d1
+	lea _colours+16,a0
+	move.w 0(a1,a2.l),d2
+	and.w 0(a0,d1.l),d2
+	clr.l d0
+	move.b d5,d0
+	add.l d0,d0
+	add.l d1,d0
+	or.w -16(a0,d0.l),d2
+	move.w d2,0(a1,a2.l)
+L60:
+	move.l d3,d0
+	moveq.l #3,d1
+	and.l d1,d0
+	moveq.l #1,d1
+	cmp.l d0,d1
+	beq L73
+	blt L79
+	tst.l d0
+	beq L75
+	bra L70
+	.align 2
+L79:
+	moveq.l #2,d1
+	cmp.l d0,d1
+	bne L70
+	move.w d3,d1
+	subq.l #1,d3
+	clr.l d0
+	move.w d7,d0
+	lsl.l #7,d0
+	move.l d6,a2
+	add.l d0,a2
+	move.w d1,d0
+	lsr.w #2,d0
+	and.l #16383,d0
+	move.l d0,a1
+	add.l d0,a1
+	and.w #3,d1
+	mulu.w #18,d1
+	lea _colours+16,a0
+	move.w 0(a1,a2.l),d2
+	and.w 0(a0,d1.l),d2
+	clr.l d0
+	move.b d5,d0
+	add.l d0,d0
+	add.l d1,d0
+	or.w -16(a0,d0.l),d2
+	move.w d2,0(a1,a2.l)
 L73:
+	move.w d3,d1
+	subq.l #1,d3
+	clr.l d0
+	move.w d7,d0
+	lsl.l #7,d0
+	move.l d6,a2
+	add.l d0,a2
+	move.w d1,d0
+	lsr.w #2,d0
+	and.l #16383,d0
+	move.l d0,a1
+	add.l d0,a1
+	and.w #3,d1
+	mulu.w #18,d1
+	lea _colours+16,a0
+	move.w 0(a1,a2.l),d2
+	and.w 0(a0,d1.l),d2
+	clr.l d0
+	move.b d5,d0
+	add.l d0,d0
+	add.l d1,d0
+	or.w -16(a0,d0.l),d2
+	move.w d2,0(a1,a2.l)
+L75:
+	move.w d3,d1
+	subq.l #1,d3
+	clr.l d0
+	move.w d7,d0
+	lsl.l #7,d0
+	move.l d6,a2
+	add.l d0,a2
+	move.w d1,d0
+	lsr.w #2,d0
+	and.l #16383,d0
+	move.l d0,a1
+	add.l d0,a1
+	and.w #3,d1
+	mulu.w #18,d1
+	lea _colours+16,a0
+	move.w 0(a1,a2.l),d2
+	and.w 0(a0,d1.l),d2
+	clr.l d0
+	move.b d5,d0
+	add.l d0,d0
+	add.l d1,d0
+	or.w -16(a0,d0.l),d2
+	move.w d2,0(a1,a2.l)
+L70:
+	move.l d7,d1
+	lsl.l #7,d1
+	btst #0,d3
+	beq L80
+	move.l d3,d0
+	bge L81
+	addq.l #3,d0
+L81:
 	asr.l #2,d0
 	move.l d0,a2
 	add.l d0,a2
-	move.l 52(sp),a1
-	add.l a6,a1
-	move.l a3,d0
-	add.l a3,d0
+	move.l d1,a1
+	add.l d6,a1
+	move.l d5,d0
+	add.l d5,d0
 	lea _lineColourw,a0
 	move.w 0(a0,d0.l),0(a1,a2.l)
-	subq.l #4,d4
-L72:
-	move.l 52(sp),d1
-	add.l a6,d1
-	move.l d5,d0
-	bge L74
+	subq.l #4,d3
+L80:
+	add.l d6,d1
+	move.l d4,d0
+	bge L82
 	addq.l #3,d0
-L74:
+L82:
 	asr.l #2,d0
 	add.l d0,d0
 	move.l d1,a1
 	add.l d0,a1
-	tst.l 40(sp)
-	beq L75
-	move.l a3,d0
-	add.l a3,d0
+	btst #0,d4
+	beq L83
+	move.l d5,d0
+	add.l d5,d0
 	lea _lineColourw,a0
 	move.w 0(a0,d0.l),(a1)+
-	addq.l #4,d5
-L75:
-	cmp.l d4,d5
-	bge L76
-	move.l d4,d0
-	sub.l d5,d0
-	bpl L77
+	addq.l #4,d4
+L83:
+	cmp.l d3,d4
+	bge L84
+	move.l d3,d0
+	sub.l d4,d0
+	bpl L85
 	addq.l #7,d0
-L77:
+L85:
 	asr.l #3,d0
 	addq.l #1,d0
-	beq L76
-	move.l a3,d1
-	lsl.l #2,d1
-	move.l d1,a3
+	beq L84
+	lsl.l #2,d5
 	lea _lineColourl,a0
-	move.l 0(a3,a0.l),d1
+	move.l 0(a0,d5.l),d1
 	.align 2
-L81:
+L89:
 	move.l d1,(a1)+
 	subq.l #1,d0
-	bne L81
-L76:
-	movem.l (sp)+,d3/d4/d5/d6/d7/a2/a3/a4/a5/a6
-	addq.w #8,sp
+	bne L89
+L84:
+	movem.l (sp)+,d3/d4/d5/d6/d7/a2
 	rts
 	.align 2
 	.extern	 _line
@@ -294,15 +380,15 @@ _line:
 	move.l 76(sp),a4
 	move.l 80(sp),a6
 	cmp.l a2,a6
-	bne L97
+	bne L105
 	move.l a4,d0
 	sub.l d4,d0
-	bpl L98
+	bpl L106
 	neg.l d0
-L98:
+L106:
 	moveq.l #7,d1
 	cmp.l d0,d1
-	bge L97
+	bge L105
 	move.l 84(sp),-(sp)
 	move.l a2,-(sp)
 	move.l a4,-(sp)
@@ -310,11 +396,11 @@ L98:
 	move.l 80(sp),-(sp)
 	bsr _hline
 	lea 20(sp),sp
-	bra L99
+	bra L107
 	.align 2
-L97:
+L105:
 	cmp.l d4,a4
-	bne L100
+	bne L108
 	move.l 84(sp),d2
 	add.l d2,d2
 	move.l d4,d1
@@ -331,7 +417,7 @@ L97:
 	lea _masks,a0
 	move.w 0(a0,d1.l),d3
 	cmp.l a6,a2
-	bcc L101
+	bcc L109
 	move.l a2,d0
 	lsl.l #7,d0
 	add.l 64(sp),d0
@@ -342,19 +428,19 @@ L97:
 	add.l d1,a1
 	move.l a6,d1
 	sub.l a2,d1
-	beq L99
+	beq L107
 	.align 2
-L104:
+L112:
 	move.w (a1),d0
 	and.w d3,d0
 	or.w d2,d0
 	move.w d0,(a1)
 	lea 128(a1),a1
 	subq.l #1,d1
-	bne L104
-	bra L99
+	bne L112
+	bra L107
 	.align 2
-L101:
+L109:
 	move.l a6,d0
 	lsl.l #7,d0
 	add.l 64(sp),d0
@@ -365,66 +451,65 @@ L101:
 	add.l d1,a1
 	move.l a2,d1
 	sub.l a6,d1
-	beq L99
+	beq L107
 	.align 2
-L110:
+L118:
 	move.w (a1),d0
 	and.w d3,d0
 	or.w d2,d0
 	move.w d0,(a1)
 	lea 128(a1),a1
 	subq.l #1,d1
-	bne L110
-	bra L99
+	bne L118
+	bra L107
 	.align 2
-L100:
+L108:
 	moveq.l #0,d5
 	moveq.l #1,d1
 	move.l d1,52(sp)
 	move.l a6,d2
 	sub.l a2,d2
-	move.l a4,d0
-	sub.l d4,d0
+	move.l a4,d1
+	sub.l d4,d1
 	sub.l a5,a5
 	move.l d2,d3
-	bge L116
+	bge L124
 	neg.l d3
-L116:
+L124:
+	move.l d1,d0
+	bge L125
+	neg.l d0
+L125:
+	cmp.l d3,d0
+	bge L123
+	move.l d2,d0
+	move.l d1,d2
 	move.l d0,d1
-	bge L117
-	neg.l d1
-L117:
-	cmp.l d3,d1
-	bge L115
-	eor.l d0,d2
-	eor.l d2,d0
-	eor.l d0,d2
 	moveq.l #1,d5
-L115:
-	move.l d0,a3
+L123:
+	move.l d1,a3
 	cmp.w #0,a3
-	bge L118
+	bge L126
 	moveq.l #-1,d0
 	move.l d0,52(sp)
-	move.l a3,d0
-	neg.l d0
-L118:
-	tst.l d0
-	beq L119
+	neg.l d1
+L126:
+	tst.l d1
+	beq L127
 	swap d2
 	clr.w d2
-	move.l d0,-(sp)
+	move.l d1,-(sp)
 	move.l d2,-(sp)
 	bsr .GXldiv
 	addq.l #8,sp
 	move.l d0,48(sp)
-	bra L120
+	bra L128
 	.align 2
-L119:
+L127:
 	clr.l 48(sp)
-L120:
+L128:
 	tst.l d5
-	beq L121
+	beq L129
 	moveq.l #0,d7
 	move.l a4,d6
 	moveq.l #3,d1
@@ -437,7 +522,7 @@ L120:
 	move.l d1,44(sp)
 	lea _colours+16,a6
 	cmp.l d7,a3
-	beq L128
+	beq L136
 	moveq.l #0,d3
 	move.l a2,d0
 	lsl.l #7,d0
@@ -447,7 +532,7 @@ L120:
 	move.l 52(sp),d5
 	lsl.l #7,d5
 	.align 2
-L125:
+L133:
 	move.l a5,d2
 	swap d2
 	ext.l d2
@@ -476,10 +561,10 @@ L125:
 	add.l d5,a1
 	add.l 52(sp),d7
 	cmp.l d7,a3
-	bne L125
-	bra L128
+	bne L133
+	bra L136
 	.align 2
-L121:
+L129:
 	moveq.l #0,d5
 	move.l a4,d6
 	moveq.l #3,d0
@@ -492,12 +577,12 @@ L121:
 	move.l d0,44(sp)
 	lea _colours+16,a6
 	cmp.l d5,a3
-	beq L128
+	beq L136
 	moveq.l #0,d3
 	moveq.l #-16,d7
 	add.l a6,d7
 	.align 2
-L132:
+L140:
 	move.l a5,d0
 	swap d0
 	ext.l d0
@@ -530,8 +615,8 @@ L132:
 	add.l 48(sp),a5
 	add.l 52(sp),d5
 	cmp.l d5,a3
-	bne L132
-L128:
+	bne L140
+L136:
 	move.l 64(sp),a1
 	add.l 44(sp),a1
 	move.l 40(sp),a0
@@ -548,319 +633,371 @@ L128:
 	add.l d1,d0
 	or.w -16(a6,d0.l),d2
 	move.w d2,0(a0,a1.l)
-L99:
+L107:
 	movem.l (sp)+,d3/d4/d5/d6/d7/a2/a3/a4/a5/a6
 	lea 20(sp),sp
 	rts
 	.align 2
 	.extern	 _fillTriangle
 _fillTriangle:
-	subq.w #8,sp
+	lea -16(sp),sp
 	movem.l a6/a5/a4/a3/a2/d7/d6/d5/d4/d3,-(sp)
-	move.l 56(sp),d6
-	move.l 60(sp),d7
-	move.l 64(sp),a3
-	move.l 68(sp),a4
-	move.l 72(sp),a5
-	move.l 76(sp),a6
-	cmp.l d7,a4
-	bge L153
-	move.l a3,d0
-	eor.l d0,d6
-	move.l a3,d1
-	eor.l d6,d1
-	move.l d1,a3
-	eor.l d1,d6
-	move.l a4,d0
-	eor.l d0,d7
-	move.l a4,d1
-	eor.l d7,d1
-	move.l d1,a4
-	eor.l d1,d7
-L153:
-	cmp.l d7,a6
-	bge L154
-	move.l a5,d0
-	eor.l d0,d6
-	move.l a5,d1
-	eor.l d6,d1
-	move.l d1,a5
-	eor.l d1,d6
-	move.l a6,d0
-	eor.l d0,d7
-	move.l a6,d1
-	eor.l d7,d1
-	move.l d1,a6
-	eor.l d1,d7
-L154:
-	cmp.l a4,a6
-	bge L155
-	move.l a5,d0
-	move.l a3,d1
-	eor.l d1,d0
-	move.l d0,a3
-	move.l a5,d1
-	eor.l d1,d0
-	move.l d0,a5
-	move.l a3,d1
-	eor.l d1,d0
-	move.l d0,a3
-	move.l a6,d0
-	move.l a4,d1
-	eor.l d1,d0
-	move.l d0,a4
-	move.l a6,d1
-	eor.l d1,d0
-	move.l d0,a6
-	move.l a4,d1
-	eor.l d1,d0
-	move.l d0,a4
-L155:
-	cmp.l a4,a6
-	bne L156
-	move.l d6,d5
-	move.l a3,d0
-	move.l a5,d4
-	move.l d7,d6
-	move.l a4,d7
-	cmp.l d7,d6
-	beq L165
+	move.w 66(sp),d0
+	move.w d0,d4
+	swap d4
+	move.w 70(sp),d4
+	move.w 74(sp),d1
+	move.w d1,d7
+	swap d7
+	move.w 78(sp),d7
+	move.w 82(sp),a0
+	move.w a0,d6
+	swap d6
+	move.w 86(sp),d6
+	cmp.w d4,d7
+	bge L163
+	move.l d4,d0
+	swap d0
+	ext.l d0
+	move.l d7,d1
+	clr.w d1
+	and.l #65535,d4
+	or.l d1,d4
+	swap d0
+	clr.w d0
+	and.l #65535,d7
+	or.l d0,d7
+	move.w d4,a0
+	move.w d7,d4
+	move.w a0,d7
+L163:
+	cmp.w d4,d6
+	bge L164
+	move.l d4,d0
+	swap d0
+	ext.l d0
+	move.l d6,d1
+	clr.w d1
+	and.l #65535,d4
+	or.l d1,d4
+	swap d0
+	clr.w d0
+	and.l #65535,d6
+	or.l d0,d6
+	move.w d4,a0
+	move.w d6,d4
+	move.w a0,d6
+L164:
+	cmp.w d7,d6
+	bge L165
+	move.l d7,d0
+	swap d0
+	ext.l d0
+	move.l d6,d1
+	clr.w d1
+	and.l #65535,d7
+	or.l d1,d7
+	swap d0
+	clr.w d0
+	and.l #65535,d6
+	or.l d0,d6
+	move.w d7,a0
+	move.w d6,d7
+	move.w a0,d6
+L165:
+	cmp.w d7,d6
+	bne L166
+	move.l d4,d5
+	swap d5
+	ext.l d5
+	move.l d7,d0
+	swap d0
+	ext.l d0
+	move.w d7,a2
+	move.l d6,d3
+	swap d3
+	ext.l d3
+	move.w d6,a4
+	move.w d4,a3
+	cmp.l a2,a3
+	beq L175
 	sub.l d5,d0
 	lsl.l #8,d0
-	move.l d7,d3
-	sub.l d6,d3
-	move.l d3,-(sp)
+	move.l a2,d1
+	sub.l a3,d1
+	move.l d1,-(sp)
 	move.l d0,-(sp)
 	bsr .GXldiv
 	addq.l #8,sp
-	move.l d0,a3
-	sub.l d5,d4
-	lsl.l #8,d4
+	move.l d0,d7
+	sub.l d5,d3
+	lsl.l #8,d3
+	sub.l a3,a4
+	move.l a4,-(sp)
 	move.l d3,-(sp)
-	move.l d4,-(sp)
 	bsr .GXldiv
 	addq.l #8,sp
-	move.l d0,a2
+	move.l d0,d6
 	move.l d5,d3
 	lsl.l #8,d3
 	move.l d3,d4
-	cmp.l d6,d7
-	blt L165
+	cmp.l a3,a2
+	blt L175
 	.align 2
-L161:
-	move.l 80(sp),-(sp)
-	move.l d6,-(sp)
+L171:
+	move.l 88(sp),-(sp)
+	move.l a3,-(sp)
 	move.l d3,d0
 	lsr.l #8,d0
 	move.l d0,-(sp)
-	move.l d6,-(sp)
+	move.l a3,-(sp)
 	move.l d4,d0
 	lsr.l #8,d0
 	move.l d0,-(sp)
-	move.l 72(sp),-(sp)
+	move.l 80(sp),-(sp)
 	bsr _line
-	add.l a3,d4
-	add.l a2,d3
+	add.l d7,d4
+	add.l d6,d3
 	lea 24(sp),sp
-	addq.l #1,d6
-	cmp.l d6,d7
-	bge L161
-	bra L165
+	addq.l #1,a3
+	cmp.l a3,a2
+	bge L171
+	bra L175
 	.align 2
-L156:
-	cmp.l d7,a4
-	bne L166
-	move.l a3,d5
-	move.l a5,d4
-	move.l d7,a3
-	move.l a6,a2
-	move.l d4,d0
-	sub.l d6,d0
+L166:
+	cmp.w d4,d7
+	bne L176
+	move.w d4,a5
+	move.w d7,a2
+	move.l d6,d3
+	swap d3
+	ext.l d3
+	move.w d6,a4
+	move.l a4,d5
+	swap d4
+	ext.l d4
+	move.l d3,d0
+	sub.l d4,d0
 	lsl.l #8,d0
-	move.l a2,d3
-	sub.l a3,d3
-	move.l d3,-(sp)
+	move.l d5,a0
+	sub.l a5,a0
+	move.l a0,-(sp)
+	move.l d0,-(sp)
+	bsr .GXldiv
+	addq.l #8,sp
+	move.l d0,a3
+	swap d7
+	ext.l d7
+	move.l d3,d0
+	sub.l d7,d0
+	lsl.l #8,d0
+	move.l d5,d1
+	sub.l a2,d1
+	move.l d1,-(sp)
 	move.l d0,-(sp)
 	bsr .GXldiv
 	addq.l #8,sp
 	move.l d0,d6
-	move.l d4,d0
-	sub.l d5,d0
-	lsl.l #8,d0
-	move.l d3,-(sp)
-	move.l d0,-(sp)
-	bsr .GXldiv
-	addq.l #8,sp
-	move.l d0,d5
-	lsl.l #8,d4
-	move.l d4,d3
-	cmp.l a2,a3
-	bge L165
+	lsl.l #8,d3
+	move.l d3,d4
+	cmp.w #0,a3
+	blt L177
+	tst.l d6
+	bge L178
+L177:
+	pea 33
+	bsr _putchar
+	addq.l #4,sp
+L178:
+	cmp.l a4,a5
+	bge L175
 	.align 2
-L169:
-	move.l 80(sp),-(sp)
-	move.l a2,-(sp)
-	move.l d4,d0
-	bge L170
-	add.l #255,d0
-L170:
-	asr.l #8,d0
-	move.l d0,-(sp)
-	move.l a2,-(sp)
+L181:
+	move.l 88(sp),-(sp)
+	move.l d5,-(sp)
 	move.l d3,d0
-	bge L171
+	bge L182
 	add.l #255,d0
-L171:
+L182:
 	asr.l #8,d0
 	move.l d0,-(sp)
-	move.l 72(sp),-(sp)
+	move.l d5,-(sp)
+	move.l d4,d0
+	bge L183
+	add.l #255,d0
+L183:
+	asr.l #8,d0
+	move.l d0,-(sp)
+	move.l 80(sp),-(sp)
 	bsr _line
+	sub.l a3,d4
 	sub.l d6,d3
-	sub.l d5,d4
 	lea 24(sp),sp
-	subq.l #1,a2
-	cmp.l a2,a3
-	blt L169
-	bra L165
+	subq.l #1,d5
+	cmp.l d5,a5
+	blt L181
+	bra L175
 	.align 2
-L166:
+L176:
+	move.l d4,a5
+	move.l a5,d0
+	swap d0
+	ext.l d0
+	move.l d0,a5
 	lea .GYsfltosf,a2
-	move.l d6,-(sp)
+	move.l a5,-(sp)
 	jsr (a2)
 	addq.l #4,sp
-	move.l d0,d4
-	move.l a4,d0
-	sub.l d7,d0
-	move.l d0,-(sp)
+	move.l d0,d5
+	move.w d7,a0
+	move.l a0,44(sp)
+	move.w d4,a3
+	move.l a0,a6
+	sub.l a3,a6
+	move.l a6,-(sp)
 	jsr (a2)
 	addq.l #4,sp
 	move.l d0,d3
-	move.l a6,d1
-	sub.l d7,d1
-	move.l d1,-(sp)
+	move.w d6,a4
+	move.l a4,d0
+	sub.l a3,d0
+	move.l d0,-(sp)
 	jsr (a2)
 	move.l d0,(sp)
 	move.l d3,-(sp)
 	bsr .GYsfdiv
 	addq.l #8,sp
 	move.l d0,d3
-	move.l a5,d0
-	sub.l d6,d0
-	move.l d0,-(sp)
+	move.l d6,d4
+	swap d4
+	ext.l d4
+	move.l d4,d1
+	sub.l a5,d1
+	move.l d1,-(sp)
 	jsr (a2)
 	move.l d0,(sp)
 	move.l d3,-(sp)
 	bsr .GYsfmul
 	addq.w #4,sp
 	move.l d0,(sp)
-	move.l d4,-(sp)
+	move.l d5,-(sp)
 	bsr .GYsfadd
 	addq.w #4,sp
 	move.l d0,(sp)
 	bsr .GYsftol
 	addq.l #4,sp
+	move.l d0,48(sp)
+	move.l d7,d0
+	swap d0
+	ext.l d0
+	move.w d0,d2
+	ext.l d2
 	move.l d0,40(sp)
-	move.l d6,d5
-	move.l a3,d0
-	move.l d7,d4
-	move.l a4,d6
-	cmp.l d6,d4
-	beq L177
-	sub.l d5,d0
-	lsl.l #8,d0
-	move.l d6,d3
-	sub.l d4,d3
-	move.l d3,-(sp)
-	move.l d0,-(sp)
+	move.l 44(sp),a2
+	cmp.l a2,a3
+	beq L189
+	sub.l a5,d2
+	lsl.l #8,d2
+	move.l a6,-(sp)
+	move.l d2,-(sp)
 	bsr .GXldiv
 	addq.l #8,sp
-	move.l d0,a2
-	move.l 40(sp),d0
-	sub.l d5,d0
+	move.l d0,d3
+	move.l 48(sp),d0
+	sub.l a5,d0
 	lsl.l #8,d0
-	move.l d3,-(sp)
+	move.l a6,-(sp)
 	move.l d0,-(sp)
 	bsr .GXldiv
 	addq.l #8,sp
 	move.l d0,d7
-	move.l d5,d3
-	lsl.l #8,d3
-	move.l d3,d5
-	cmp.l d4,d6
-	blt L177
+	move.l a5,d5
+	lsl.l #8,d5
+	move.l d5,d6
+	cmp.l a3,a2
+	blt L189
 	.align 2
-L180:
-	move.l 80(sp),-(sp)
-	move.l d4,-(sp)
-	move.l d3,d0
-	lsr.l #8,d0
-	move.l d0,-(sp)
-	move.l d4,-(sp)
+L192:
+	move.l 88(sp),-(sp)
+	move.l a3,-(sp)
 	move.l d5,d0
 	lsr.l #8,d0
 	move.l d0,-(sp)
-	move.l 72(sp),-(sp)
-	bsr _line
-	add.l a2,d5
-	add.l d7,d3
-	lea 24(sp),sp
-	addq.l #1,d4
-	cmp.l d4,d6
-	bge L180
-L177:
-	move.l a5,d4
-	move.l a4,d6
-	move.l a6,d5
-	move.l d4,d0
-	sub.l a3,d0
-	lsl.l #8,d0
-	move.l d5,d3
-	sub.l d6,d3
-	move.l d3,-(sp)
+	move.l a3,-(sp)
+	move.l d6,d0
+	lsr.l #8,d0
 	move.l d0,-(sp)
-	bsr .GXldiv
-	addq.l #8,sp
-	move.l d0,a2
+	move.l 80(sp),-(sp)
+	bsr _line
+	add.l d3,d6
+	add.l d7,d5
+	lea 24(sp),sp
+	addq.l #1,a3
+	cmp.l 44(sp),a3
+	ble L192
+L189:
+	ext.l d4
+	move.l a4,d5
 	move.l d4,d0
 	sub.l 40(sp),d0
 	lsl.l #8,d0
+	move.l d5,d3
+	sub.l a2,d3
 	move.l d3,-(sp)
 	move.l d0,-(sp)
 	bsr .GXldiv
 	addq.l #8,sp
 	move.l d0,d7
-	lsl.l #8,d4
-	move.l d4,d3
-	cmp.l d5,d6
-	bge L165
-	.align 2
-L186:
-	move.l 80(sp),-(sp)
-	move.l d5,-(sp)
 	move.l d4,d0
-	bge L187
-	add.l #255,d0
-L187:
-	asr.l #8,d0
+	sub.l 48(sp),d0
+	lsl.l #8,d0
+	move.l d3,-(sp)
 	move.l d0,-(sp)
+	bsr .GXldiv
+	addq.l #8,sp
+	move.l d0,d6
+	move.l d4,d3
+	lsl.l #8,d3
+	move.l d3,d4
+	tst.l d7
+	blt L196
+	tst.l d6
+	bge L197
+L196:
+	pea 33
+	bsr _putchar
+	addq.l #4,sp
+L197:
+	cmp.l a4,a2
+	bge L175
+	.align 2
+L200:
+	move.l 88(sp),-(sp)
 	move.l d5,-(sp)
 	move.l d3,d0
-	bge L188
+	bge L201
 	add.l #255,d0
-L188:
+L201:
 	asr.l #8,d0
 	move.l d0,-(sp)
-	move.l 72(sp),-(sp)
+	move.l d5,-(sp)
+	move.l d4,d0
+	bge L202
+	add.l #255,d0
+L202:
+	asr.l #8,d0
+	move.l d0,-(sp)
+	move.l 80(sp),-(sp)
 	bsr _line
-	sub.l a2,d3
 	sub.l d7,d4
+	sub.l d6,d3
 	lea 24(sp),sp
 	subq.l #1,d5
-	cmp.l d5,d6
-	blt L186
-L165:
+	cmp.l d5,a2
+	blt L200
+L175:
 	movem.l (sp)+,d3/d4/d5/d6/d7/a2/a3/a4/a5/a6
-	addq.w #8,sp
+	lea 16(sp),sp
 	rts
 	.align 2
 	.extern	 _circle
@@ -960,7 +1097,7 @@ _circle:
 	move.w d0,(a0)
 	moveq.l #1,d7
 	tst.l d6
-	blt L227
+	blt L241
 	clr.l 48(sp)
 	move.l a2,a4
 	clr.l 44(sp)
@@ -968,20 +1105,20 @@ _circle:
 	move.w #4,a0
 	move.l a0,40(sp)
 	.align 2
-L228:
+L242:
 	cmp.w #0,a5
-	ble L229
+	ble L243
 	subq.l #1,d6
 	move.l d7,d0
 	sub.l d6,d0
 	lsl.l #2,d0
 	lea 10(a5,d0.l),a5
-	bra L230
+	bra L244
 	.align 2
-L229:
+L243:
 	move.l 40(sp),d0
 	lea 6(a5,d0.l),a5
-L230:
+L244:
 	move.w 66(sp),d2
 	add.w d7,d2
 	move.w 70(sp),d0
@@ -1090,8 +1227,8 @@ L230:
 	addq.l #4,40(sp)
 	addq.l #1,d7
 	cmp.l d6,d0
-	ble L228
-L227:
+	ble L242
+L241:
 	movem.l (sp)+,d3/d4/d5/d6/d7/a2/a3/a4/a5/a6
 	lea 16(sp),sp
 	rts
@@ -1131,13 +1268,13 @@ _floodFill:
 	moveq.l #3,d1
 	and.l d0,d1
 	cmp.w #256,d0
-	bls L256
+	bls L270
 	addq.l #4,d1
-L256:
+L270:
 	clr.l d0
 	move.w d6,d0
 	cmp.l d1,d0
-	beq L255
+	beq L269
 	pea 4096
 	lea _myMalloc,a2
 	jsr (a2)
@@ -1170,13 +1307,13 @@ L256:
 	sub.l a3,a3
 	clr.l 52(sp)
 	.align 2
-L261:
+L275:
 	move.b 0(a6,d7.l),d4
 	move.b 0(a5,d7.l),d3
 	addq.l #1,d7
 	and.l #4095,d7
 	tst.w d3
-	beq L262
+	beq L276
 	subq.w #1,d3
 	move.w d3,62(sp)
 	addq.w #1,d3
@@ -1208,13 +1345,13 @@ L261:
 	moveq.l #3,d1
 	and.l d0,d1
 	cmp.w #256,d0
-	bls L263
+	bls L277
 	addq.l #4,d1
-L263:
+L277:
 	clr.l d0
 	move.w d6,d0
 	cmp.l d1,d0
-	beq L262
+	beq L276
 	move.w d2,d0
 	mulu.w #18,d0
 	move.w 0(a0,a2.l),d2
@@ -1233,9 +1370,9 @@ L263:
 	move.b d2,0(a5,d5.l)
 	addq.l #1,d5
 	and.l #4095,d5
-L262:
+L276:
 	cmp.w #253,d3
-	bhi L266
+	bhi L280
 	addq.w #1,d3
 	clr.l d1
 	move.w d3,d1
@@ -1269,13 +1406,13 @@ L262:
 	moveq.l #3,d1
 	and.l d0,d1
 	cmp.w #256,d0
-	bls L267
+	bls L281
 	addq.l #4,d1
-L267:
+L281:
 	clr.l d0
 	move.w d6,d0
 	cmp.l d1,d0
-	beq L266
+	beq L280
 	move.w d2,d0
 	mulu.w #18,d0
 	move.w 0(a0,a2.l),d2
@@ -1293,9 +1430,9 @@ L267:
 	move.b d0,0(a5,d5.l)
 	addq.l #1,d5
 	and.l #4095,d5
-L266:
+L280:
 	tst.w d4
-	beq L270
+	beq L284
 	move.w d4,d2
 	subq.w #1,d2
 	clr.l d1
@@ -1326,13 +1463,13 @@ L266:
 	moveq.l #3,d1
 	and.l d0,d1
 	cmp.w #256,d0
-	bls L271
+	bls L285
 	addq.l #4,d1
-L271:
+L285:
 	clr.l d0
 	move.w d6,d0
 	cmp.l d1,d0
-	beq L270
+	beq L284
 	move.w 42(sp),d0
 	mulu.w #18,d0
 	move.w 0(a0,a2.l),d2
@@ -1350,9 +1487,9 @@ L271:
 	move.b d3,0(a5,d5.l)
 	addq.l #1,d5
 	and.l #4095,d5
-L270:
+L284:
 	cmp.w #253,d4
-	bhi L259
+	bhi L273
 	move.w d4,d2
 	addq.w #1,d2
 	clr.l d1
@@ -1383,13 +1520,13 @@ L270:
 	moveq.l #3,d1
 	and.l d0,d1
 	cmp.w #256,d0
-	bls L275
+	bls L289
 	addq.l #4,d1
-L275:
+L289:
 	clr.l d0
 	move.w d6,d0
 	cmp.l d1,d0
-	beq L259
+	beq L273
 	move.w 42(sp),d0
 	mulu.w #18,d0
 	move.w 0(a0,a2.l),d2
@@ -1407,15 +1544,15 @@ L275:
 	move.b d3,0(a5,d5.l)
 	addq.l #1,d5
 	and.l #4095,d5
-L259:
+L273:
 	cmp.l d5,d7
-	bne L261
+	bne L275
 	move.l a6,-(sp)
 	bsr _free
 	move.l a5,-(sp)
 	bsr _free
 	addq.l #8,sp
-L255:
+L269:
 	movem.l (sp)+,d3/d4/d5/d6/d7/a2/a3/a4/a5/a6
 	lea 28(sp),sp
 	rts
@@ -1427,28 +1564,28 @@ _multiDraw:
 	move.l 52(sp),a6
 	move.l 56(sp),a3
 	.align 2
-L282:
+L296:
 	moveq.l #0,d0
 	move.b (a3)+,d0
 	moveq.l #8,d1
 	cmp.l d0,d1
-	bcs L282
+	bcs L296
 	add.l d0,d0
-	move.w L315(pc,d0.l),d0
+	move.w L329(pc,d0.l),d0
 	jmp 2(pc,d0.w)
 	.align 2
-L315:
-	.data2 L279-L315
-	.data2 L285-L315
-	.data2 L287-L315
-	.data2 L288-L315
-	.data2 L290-L315
-	.data2 L297-L315
-	.data2 L299-L315
-	.data2 L300-L315
-	.data2 L301-L315
+L329:
+	.data2 L293-L329
+	.data2 L299-L329
+	.data2 L301-L329
+	.data2 L302-L329
+	.data2 L304-L329
+	.data2 L311-L329
+	.data2 L313-L329
+	.data2 L314-L329
+	.data2 L315-L329
 	.align 2
-L285:
+L299:
 	clr.w d1
 	move.b (a3),d1
 	clr.l d2
@@ -1473,9 +1610,9 @@ L285:
 	add.l d1,d2
 	or.w -16(a0,d2.l),d0
 	move.w d0,0(a1,a2.l)
-	bra L282
+	bra L296
 	.align 2
-L287:
+L301:
 	moveq.l #0,d0
 	move.b (a3)+,d0
 	move.l d0,-(sp)
@@ -1491,9 +1628,9 @@ L287:
 	moveq.l #0,d0
 	move.b (a3)+,d0
 	move.l d0,-(sp)
-	bra L318
+	bra L332
 	.align 2
-L288:
+L302:
 	moveq.l #0,d3
 	move.b (a3)+,d3
 	addq.l #4,a3
@@ -1525,9 +1662,9 @@ L288:
 	move.l _SCREEN,-(sp)
 	bsr _line
 	lea 44(sp),sp
-	bra L282
+	bra L296
 	.align 2
-L290:
+L304:
 	moveq.l #0,d0
 	move.b (a3)+,d0
 	move.l d0,d3
@@ -1537,7 +1674,7 @@ L290:
 	move.l d3,d4
 	addq.l #4,a3
 	.align 2
-L293:
+L307:
 	move.l d4,-(sp)
 	move.l d3,-(sp)
 	move.l a2,-(sp)
@@ -1547,10 +1684,10 @@ L293:
 	lea 20(sp),sp
 	addq.l #1,d3
 	cmp.l d3,d5
-	bcc L293
-	bra L282
+	bcc L307
+	bra L296
 	.align 2
-L297:
+L311:
 	moveq.l #0,d3
 	move.b (a3)+,d3
 	addq.l #6,a3
@@ -1574,13 +1711,13 @@ L297:
 	move.l d3,-(sp)
 	move.l d3,-(sp)
 	move.l d3,-(sp)
-L318:
+L332:
 	move.l a6,-(sp)
 	bsr _line
 	lea 24(sp),sp
-	bra L282
+	bra L296
 	.align 2
-L299:
+L313:
 	moveq.l #0,d0
 	move.b (a3)+,d0
 	move.l d0,-(sp)
@@ -1605,9 +1742,9 @@ L299:
 	move.l a6,-(sp)
 	bsr _fillTriangle
 	lea 32(sp),sp
-	bra L282
+	bra L296
 	.align 2
-L300:
+L314:
 	moveq.l #0,d0
 	move.b (a3)+,d0
 	move.l d0,-(sp)
@@ -1623,9 +1760,9 @@ L300:
 	move.l a6,-(sp)
 	bsr _circle
 	lea 20(sp),sp
-	bra L282
+	bra L296
 	.align 2
-L301:
+L315:
 	sub.l a4,a4
 	move.l a4,d0
 	move.b (a3)+,d0
@@ -1636,7 +1773,7 @@ L301:
 	neg.w d3
 	move.w d3,a0
 	cmp.l a0,a4
-	ble L282
+	ble L296
 	move.l a4,-(sp)
 	move.l a4,-(sp)
 	bsr .GXlmul
@@ -1645,21 +1782,21 @@ L301:
 	moveq.l #0,d7
 	moveq.l #0,d6
 	.align 2
-L304:
+L318:
 	move.w d3,d0
 	muls.w d0,d0
 	move.w a5,d4
 	sub.w d0,d4
 	cmp.w #1,d4
-	bhi L305
+	bhi L319
 	move.w d4,d7
 	move.l d7,d0
 	move.w d3,a0
 	move.w d3,a2
 	addq.w #1,a2
-	bra L306
+	bra L320
 	.align 2
-L305:
+L319:
 	move.w d4,d2
 	lsr.w #1,d2
 	move.w d2,d6
@@ -1669,19 +1806,19 @@ L305:
 	and.l #0xFFFF,d0
 	add.l d6,d0
 	move.l d0,d0
-	bpl L319
+	bpl L333
 	addq.l #1,d0
-L319:
+L333:
 	lsr.l #1,d0
 	move.w d3,a0
 	move.w d3,a2
 	addq.w #1,a2
 	cmp.w d0,d2
-	bls L310
+	bls L324
 	moveq.l #0,d5
 	moveq.l #0,d3
 	.align 2
-L309:
+L323:
 	move.w d0,d2
 	move.w d2,d5
 	move.w d4,d0
@@ -1691,16 +1828,16 @@ L309:
 	move.l d5,d0
 	add.l d3,d0
 	move.l d0,d0
-	bpl L320
+	bpl L334
 	addq.l #1,d0
-L320:
+L334:
 	lsr.l #1,d0
 	cmp.w d0,d2
-	bhi L309
-L310:
+	bhi L323
+L324:
 	clr.l d0
 	move.w d2,d0
-L306:
+L320:
 	move.l 40(sp),-(sp)
 	pea 0(a4,a0.l)
 	and.l #0xFFFF,d0
@@ -1714,10 +1851,10 @@ L306:
 	move.w a2,d3
 	move.w d3,a0
 	cmp.l a0,a4
-	bgt L304
-	bra L282
+	bgt L318
+	bra L296
 	.align 2
-L279:
+L293:
 	movem.l (sp)+,d3/d4/d5/d6/d7/a2/a3/a4/a5/a6
 	addq.w #8,sp
 	rts
@@ -2156,7 +2293,7 @@ _vline:
 	lea _masks,a0
 	move.w 0(a0,d1.l),d2
 	cmp.l a1,d4
-	bcc L84
+	bcc L92
 	move.l d4,d0
 	lsl.l #7,d0
 	add.l d6,d0
@@ -2167,9 +2304,9 @@ _vline:
 	add.l d1,a0
 	sub.l d4,a1
 	cmp.w #0,a1
-	beq L90
+	beq L98
 	.align 2
-L88:
+L96:
 	move.w (a0),d0
 	and.w d2,d0
 	or.w d5,d0
@@ -2177,10 +2314,10 @@ L88:
 	lea 128(a0),a0
 	subq.l #1,a1
 	cmp.w #0,a1
-	bne L88
-	bra L90
+	bne L96
+	bra L98
 	.align 2
-L84:
+L92:
 	move.l a1,d0
 	lsl.l #7,d0
 	add.l d6,d0
@@ -2190,17 +2327,17 @@ L84:
 	move.l d0,a0
 	add.l d1,a0
 	sub.l a1,d4
-	beq L90
+	beq L98
 	.align 2
-L94:
+L102:
 	move.w (a0),d0
 	and.w d2,d0
 	or.w d5,d0
 	move.w d0,(a0)
 	lea 128(a0),a0
 	subq.l #1,d4
-	bne L94
-L90:
+	bne L102
+L98:
 	movem.l (sp)+,d3/d4/d5/d6
 	rts
 	.align 2
@@ -2214,7 +2351,7 @@ _fillCircle:
 	neg.w d3
 	move.w d3,a0
 	cmp.l a0,a3
-	ble L243
+	ble L257
 	move.l a3,-(sp)
 	move.l a3,-(sp)
 	bsr .GXlmul
@@ -2223,13 +2360,13 @@ _fillCircle:
 	sub.l a2,a2
 	moveq.l #0,d7
 	.align 2
-L245:
+L259:
 	move.w d3,d0
 	muls.w d0,d0
 	move.w a5,d5
 	sub.w d0,d5
 	cmp.w #1,d5
-	bhi L246
+	bhi L260
 	move.l a2,d0
 	move.w d5,d0
 	move.l d0,a2
@@ -2237,9 +2374,9 @@ L245:
 	lea _hline,a1
 	move.w d3,d6
 	addq.w #1,d6
-	bra L247
+	bra L261
 	.align 2
-L246:
+L260:
 	move.w d5,d2
 	lsr.w #1,d2
 	move.w d2,d7
@@ -2249,20 +2386,20 @@ L246:
 	and.l #0xFFFF,d0
 	add.l d7,d0
 	move.l d0,d0
-	bpl L321
+	bpl L335
 	addq.l #1,d0
-L321:
+L335:
 	lsr.l #1,d0
 	move.w d3,a0
 	lea _hline,a1
 	move.w d3,d6
 	addq.w #1,d6
 	cmp.w d0,d2
-	bls L252
+	bls L266
 	moveq.l #0,d4
 	moveq.l #0,d3
 	.align 2
-L251:
+L265:
 	move.w d0,d2
 	move.w d2,d4
 	move.w d5,d0
@@ -2272,16 +2409,16 @@ L251:
 	move.l d4,d0
 	add.l d3,d0
 	move.l d0,d0
-	bpl L322
+	bpl L336
 	addq.l #1,d0
-L322:
+L336:
 	lsr.l #1,d0
 	cmp.w d0,d2
-	bhi L251
-L252:
+	bhi L265
+L266:
 	clr.l d0
 	move.w d2,d0
-L247:
+L261:
 	move.l a6,-(sp)
 	move.l 56(sp),d1
 	pea 0(a0,d1.l)
@@ -2296,8 +2433,8 @@ L247:
 	move.w d6,d3
 	move.w d3,a0
 	cmp.l a0,a3
-	bgt L245
-L243:
+	bgt L259
+L257:
 	movem.l (sp)+,d3/d4/d5/d6/d7/a2/a3/a4/a5/a6
 	rts
 	.align 2
@@ -2393,7 +2530,7 @@ _fillBottomFlatTriangle:
 	move.l 60(sp),d3
 	move.l 68(sp),a4
 	cmp.l d7,d4
-	beq L136
+	beq L144
 	sub.l d6,d0
 	lsl.l #8,d0
 	lea .GXldiv,a2
@@ -2417,9 +2554,9 @@ _fillBottomFlatTriangle:
 	lsl.l #8,d3
 	move.l d3,a2
 	cmp.l d4,d7
-	blt L136
+	blt L144
 	.align 2
-L142:
+L150:
 	move.l a4,-(sp)
 	move.l d4,-(sp)
 	move.l d3,d0
@@ -2436,8 +2573,8 @@ L142:
 	lea 24(sp),sp
 	addq.l #1,d4
 	cmp.l d4,d7
-	bge L142
-L136:
+	bge L150
+L144:
 	movem.l (sp)+,d3/d4/d5/d6/d7/a2/a3/a4/a5
 	rts
 	.align 2
@@ -2445,7 +2582,7 @@ L136:
 _fillTopFlatTriangle:
 	movem.l a5/a4/a3/a2/d7/d6/d5/d4/d3,-(sp)
 	move.l 40(sp),a5
-	move.l 48(sp),d7
+	move.l 48(sp),a3
 	move.l 52(sp),d4
 	move.l 56(sp),d5
 	move.l 60(sp),d3
@@ -2456,12 +2593,12 @@ _fillTopFlatTriangle:
 	lsl.l #8,d0
 	lea .GXldiv,a2
 	move.l d6,d1
-	sub.l d7,d1
+	sub.l a3,d1
 	move.l d1,-(sp)
 	move.l d0,-(sp)
 	jsr (a2)
 	addq.l #8,sp
-	move.l d0,a3
+	move.l d0,d7
 	move.l d3,d0
 	sub.l d4,d0
 	lsl.l #8,d0
@@ -2474,34 +2611,41 @@ _fillTopFlatTriangle:
 	move.l d0,d5
 	lsl.l #8,d3
 	move.l d3,d4
-	cmp.l d6,d7
-	bge L146
+	tst.l d7
+	blt L154
+	tst.l d5
+	bge L338
+L154:
+	pea 33
+	bsr _putchar
+	addq.l #4,sp
+	bra L338
 	.align 2
-L148:
+L158:
 	move.l a4,-(sp)
 	move.l d6,-(sp)
 	move.l d3,d0
-	bge L149
+	bge L159
 	add.l #255,d0
-L149:
+L159:
 	asr.l #8,d0
 	move.l d0,-(sp)
 	move.l d6,-(sp)
 	move.l d4,d0
-	bge L150
+	bge L160
 	add.l #255,d0
-L150:
+L160:
 	asr.l #8,d0
 	move.l d0,-(sp)
 	move.l a5,-(sp)
 	bsr _line
-	sub.l a3,d4
+	sub.l d7,d4
 	sub.l d5,d3
 	lea 24(sp),sp
 	subq.l #1,d6
-	cmp.l d6,d7
-	blt L148
-L146:
+L338:
+	cmp.l d6,a3
+	blt L158
 	movem.l (sp)+,d3/d4/d5/d6/d7/a2/a3/a4/a5
 	rts
 	.align 2
@@ -2511,19 +2655,19 @@ _isqrt:
 	move.l 16(sp),d4
 	moveq.l #1,d0
 	cmp.l d4,d0
-	bcs L194
+	bcs L208
 	move.l d4,d0
-	bra L324
+	bra L339
 	.align 2
-L194:
+L208:
 	move.l d4,d3
 	lsr.l #1,d3
 	lea .GXuldiv,a2
-	bra L325
+	bra L340
 	.align 2
-L198:
+L212:
 	move.l d0,d3
-L325:
+L340:
 	move.l d3,-(sp)
 	move.l d4,-(sp)
 	jsr (a2)
@@ -2531,9 +2675,9 @@ L325:
 	add.l d3,d0
 	lsr.l #1,d0
 	cmp.l d0,d3
-	bhi L198
+	bhi L212
 	move.l d3,d0
-L324:
+L339:
 	movem.l (sp)+,d3/d4/a2
 	rts
 	.align 2
@@ -2542,12 +2686,12 @@ _isqrts:
 	movem.l d5/d4/d3,-(sp)
 	move.w 16(sp),d5
 	cmp.w #1,d5
-	bhi L201
+	bhi L215
 	clr.l d0
 	move.w d5,d0
-	bra L326
+	bra L341
 	.align 2
-L201:
+L215:
 	move.w d5,d3
 	lsr.w #1,d3
 	move.l d3,d0
@@ -2559,11 +2703,11 @@ L201:
 	add.l d1,d0
 	lsr.l #1,d0
 	cmp.w d0,d3
-	bls L204
+	bls L218
 	moveq.l #0,d4
 	moveq.l #0,d2
 	.align 2
-L205:
+L219:
 	move.w d0,d3
 	move.w d3,d4
 	move.w d5,d0
@@ -2573,16 +2717,16 @@ L205:
 	move.l d4,d0
 	add.l d2,d0
 	move.l d0,d0
-	bpl L327
+	bpl L342
 	addq.l #1,d0
-L327:
+L342:
 	lsr.l #1,d0
 	cmp.w d0,d3
-	bhi L205
-L204:
+	bhi L219
+L218:
 	clr.l d0
 	move.w d3,d0
-L326:
+L341:
 	movem.l (sp)+,d3/d4/d5
 	rts
 	.align 2

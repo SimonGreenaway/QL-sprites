@@ -161,7 +161,7 @@ void test()
 	{
 		unsigned int f=getFrames()+SECONDS*50;
 
-		if(pass!=7) continue;
+		if(pass!=9) continue;
 
 		counts[pass]=0;
 		ri=0;

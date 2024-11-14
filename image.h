@@ -14,7 +14,10 @@
 
 #define ADDRESS(screen,x,y) (((unsigned short *)screen)+y*64+x/4)
 #define ADDRESS4(screen,x,y) (((unsigned short *)screen)+y*64+x/8)
-#define SWAP(a,b) { (a)^=(b); (b)^=(a); (a)^=(b);  }
+//#define SWAP(a,b) { (a)^=(b); (b)^=(a); (a)^=(b);  }
+#define SWAP(a,b) { unsigned int zzzz=a; a=b; b=zzzz;  }
+
+
 
 typedef void * screen;
 
@@ -63,7 +66,7 @@ void fillBox(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsig
 void copyBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);
 void drawBox(screen screen,unsigned char **m,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c);
 
-void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
+void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned char c);
 void triangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c);
 void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned int y2,unsigned int c);
 void hline(screen screen,int x,int x2,unsigned int y,unsigned int c);

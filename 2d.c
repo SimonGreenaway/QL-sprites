@@ -50,7 +50,7 @@ unsigned short peek(screen screen,unsigned int y,unsigned int x)
 }
 
 const unsigned short masks[]={0x3F3F,0xCFCF,0xF3F3,0xFCFC};
-const unsigned short imasks[]={~0x3F3F,~0xCFCF,~0xF3F3,~0xFCFC};
+const unsigned short imasks[]={(unsigned short)~0x3F3F,(unsigned short)~0xCFCF,(unsigned short)~0xF3F3,(unsigned short)~0xFCFC};
 
 const unsigned short colours[4][9]=
 		{
@@ -107,7 +107,12 @@ void plot4(screen screen,unsigned int x,unsigned int y,unsigned char c)
 
 // Return colour at the given screen location
 
-unsigned int unplot(screen screen,unsigned short x,unsigned short y)
+inline unsigned short unplot_(screen screen,unsigned short x,unsigned short y)
+{
+	return (*ADDRESS(screen,x,y)&imasks[x&3])>>shifts[x&3];
+}
+
+inline unsigned int unplot(screen screen,unsigned short x,unsigned short y)
 {
 	unsigned short d=(*ADDRESS(screen,x,y)&imasks[x&3])>>shifts[x&3];
 
@@ -269,21 +274,21 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 
                 if(yLonger)
                 {
-	                register unsigned int i;
+			endVal+=y;
 
-                        for(i=0;i!=endVal;i+=incrementVal)
+                        for(;y!=endVal;y+=incrementVal)
                         {
-                                ploti(screen,x+(j>>16),y+i,c);
+                                ploti(screen,x+(j>>16),y,c);
                                 j+=decInc;
                         }
                 }
                 else
                 {
-	                register unsigned int i;
+	                endVal+=x;
 
-                        for(i=0;i!=endVal;i+=incrementVal)
+                        for(;x!=endVal;x+=incrementVal)
                         {
-                                ploti(screen,x+i,y+(j>>16),c);
+                                ploti(screen,x,y+(j>>16),c);
                                 j+=decInc;
                         }
                 }
@@ -297,16 +302,14 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 
 struct vertice
 {
-        int x,y;
+        short x,y;
 };
 
 #define TRI 256
 
-void fillBottomFlatTriangle(screen screen,int x1,int y1,int x2,int y2,int x3,int y3,unsigned int c)
+void fillBottomFlatTriangle(screen screen,short x1,short y1,short x2,short y2,short x3,short y3,unsigned char c)
 {
-	if(y2==y1) return;
-	
-	if(1)
+	if(y2!=y1)
 	{
 	        unsigned int invslope1 = ((x2 - x1)*TRI) / (y2 - y1);
 	        int invslope2 = ((x3 - x1)*TRI) / (y3 - y1);
@@ -316,20 +319,20 @@ void fillBottomFlatTriangle(screen screen,int x1,int y1,int x2,int y2,int x3,int
 	
 	        for(;y1<=y2;y1++)
 	        {
-	                line(screen,curx1/TRI, y1,curx2/TRI, y1,c);
+	                line(screen,curx1/TRI,y1,curx2/TRI, y1,c);
 	                curx1 += invslope1;
 	                curx2 += invslope2;
 	        }
 	}
 }
 
-void fillTopFlatTriangle(screen screen,int x1,int y1,int x2,int y2,int x3,int y3,unsigned int c)
+void fillTopFlatTriangle(screen screen,short x1,short y1,short x2,short y2,short x3,short y3,unsigned char c)
 {
-        int invslope1 = ((x3 - x1)*TRI) / (y3 - y1);
-        int invslope2 = ((x3 - x2)*TRI) / (y3 - y2);
+        short invslope1 = ((x3 - x1)*TRI) / (y3 - y1);
+        short invslope2 = ((x3 - x2)*TRI) / (y3 - y2);
 
-        int curx1 = x3*TRI;
-        int curx2 = curx1;
+        unsigned short curx1 = x3*TRI;
+        unsigned short curx2 = curx1;
 
         for(;y3>y1;y3--)
         {
@@ -339,16 +342,11 @@ void fillTopFlatTriangle(screen screen,int x1,int y1,int x2,int y2,int x3,int y3
         }
 }
 
-void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned int c)
+void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int x3,unsigned int y3,unsigned char c)
 {
-        struct vertice vt1,vt2,vt3;
-
-        vt1.x=x1; vt1.y=y1;
-        vt2.x=x2; vt2.y=y2;
-        vt3.x=x3; vt3.y=y3;
+        struct vertice vt1={x1,y1},vt2={x2,y2},vt3={x3,y3};
 
         /* at first sort the three vertices by y-coordinate ascending so v1 is the topmost vertice */
-
 
         if (vt1.y > vt2.y) 
         {
@@ -378,7 +376,7 @@ void fillTriangle(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,
         }
         else /* general case - split the triangle in a topflat and bottom-flat one */
         {
-                int x4= (int)(vt1.x + ((float)(vt2.y - vt1.y) / (float)(vt3.y - vt1.y)) * (vt3.x - vt1.x));
+		int x4=vt1.x+(((vt2.y-vt1.y)*(vt3.x-vt1.x))/(vt3.y-vt1.y));
 
                 fillBottomFlatTriangle(screen,vt1.x,vt1.y,vt2.x,vt2.y,x4,vt2.y,c);
                 fillTopFlatTriangle(screen, vt2.x,vt2.y, x4,vt2.y, vt3.x,vt3.y,c);
@@ -485,60 +483,75 @@ void fillCircle(screen screen,unsigned int ox,unsigned int oy,int r,unsigned int
 
 void floodFill(screen screen,unsigned short x,unsigned short y,unsigned short c)
 {
-	if(unplot(screen,x,y)!=c)
+	short c2=(c>3)?((c&3)+512):c;
+
+	if(unplot_(screen,x,y)!=c2)
 	{
 		// Set up the ring buffer
-		unsigned char *todox=myMalloc(sizeof(unsigned char)*FLOODBUFFERSIZE);
-		unsigned char *todoy=myMalloc(sizeof(unsigned char)*FLOODBUFFERSIZE);
-		unsigned int bottom=0,top=0;
+		struct vertice *todo=myMalloc(sizeof(struct vertice)*FLOODBUFFERSIZE);
+		int index=0;
 
 		// First point
 		plot(screen,x,y,c);
-		todox[top]=x; todoy[top++]=y;
 
-		while(top!=bottom)
+		todo[index].x=x; todo[index].y=y;
+
+		while(index>=0)
 		{
-			x=todox[bottom];
-			y=todoy[bottom++];
+			x=todo[index].x;
+			y=todo[index--].y;
 
-			bottom&=FLOODBUFFERSIZE-1;
+			if(y>0)
+			{
+        			register unsigned short *address=ADDRESS(screen,x,(y-1));
+				short ccc=(*address&imasks[x&3])>>shifts[x&3];
 
-			if((y>0)&&(unplot(screen,x,y-1)!=c))
-			{
-				plot(screen,x,y-1,c);
-				todox[top]=x; todoy[top++]=y-1;
-	
-				top&=FLOODBUFFERSIZE-1;
+				if(ccc!=c2)
+				{
+	        			*address=(*address&colours[x&3][8])|colours[x&3][c];
+					todo[++index].x=x; todo[index].y=y-1;
+				}
 			}
 	
-			if((y<254)&&(unplot(screen,x,y+1)!=c))
+			if(y<254)
 			{
-				plot(screen,x,y+1,c);
-				todox[top]=x; todoy[top++]=y+1;
-	
-				top&=FLOODBUFFERSIZE-1;
+        			register unsigned short *address=ADDRESS(screen,x,(y+1));
+				short ccc=(*address&imasks[x&3])>>shifts[x&3];
+
+				if(ccc!=c2)
+				{
+	        			*address=(*address&colours[x&3][8])|colours[x&3][c];
+					todo[++index].x=x; todo[index].y=y+1;
+				}
 			}
 	
-			if((x>0)&&(unplot(screen,x-1,y)!=c))
+			if(x>0)
 			{
-				plot(screen,x-1,y,c); 
-				todox[top]=x-1; todoy[top++]=y;
-	
-				top&=FLOODBUFFERSIZE-1;
+        			register unsigned short *address=ADDRESS(screen,(x-1),y);
+				short ccc=(*address&imasks[(x-1)&3])>>shifts[(x-1)&3];
+
+				if(ccc!=c2)
+				{
+	        			*address=(*address&colours[(x-1)&3][8])|colours[(x-1)&3][c];
+					todo[++index].x=x-1; todo[index].y=y;
+				}
 			}
 	
-			if((x<254)&&(unplot(screen,x+1,y)!=c))
+			if(x<254)
 			{
-				plot(screen,x+1,y,c);
-				todox[top]=x+1; todoy[top++]=y;
-	
-				top&=FLOODBUFFERSIZE-1;
+        			register unsigned short *address=ADDRESS(screen,(x+1),y);
+				short ccc=(*address&imasks[(x+1)&3])>>shifts[(x+1)&3];
+
+				if(ccc!=c2)
+				{
+	        			*address=(*address&colours[(x+1)&3][8])|colours[(x+1)&3][c];
+					todo[++index].x=x+1; todo[index].y=y;
+				}
 			}
 		}
 
-		 // Release the ring buffer
-		free(todox);
-		free(todoy);
+		// Release the ring buffer
+		free(todo);
 	}
 }
 
