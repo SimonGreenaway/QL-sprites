@@ -123,9 +123,9 @@ inline unsigned int unplot(screen screen,unsigned short x,unsigned short y)
 void box(screen screen,unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2,unsigned int c)
 {
 	hline(SCREEN,x1,x2,y1,c);
-	line(SCREEN,x2,y1,x2,y2,c);
+	vline(SCREEN,x2,y1,y2,c);
 	hline(SCREEN,x1,x2,y2,c);
-	line(SCREEN,x1,y2,x1,y1,c);
+	hline(SCREEN,x1,y2,y1,c);
 }
 
 // Fill a box with colour. Could be optimised by writing all the y pixels at once....
@@ -249,11 +249,11 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 	}
         else
         {
-        	int yLonger=0;
+        	unsigned char yLonger=0;
 	        int incrementVal=1,endVal;
 	        int shortLen=y2-y;
 	        int longLen=x2-x;
-	        int decInc,j=0;
+	        unsigned int decInc;
 
                 if(abs(shortLen)>abs(longLen))
                 {
@@ -273,16 +273,21 @@ void line(screen screen,unsigned int x,unsigned int y,unsigned int x2,unsigned i
 
                 if(yLonger)
                 {
+			register int j=0;
+
 			endVal+=y;
 
                         for(;y!=endVal;y+=incrementVal)
                         {
+
                                 ploti(screen,x+(j>>16),y,c);
                                 j+=decInc;
                         }
                 }
                 else
                 {
+			register int j=0;
+
 	                endVal+=x;
 
                         for(;x!=endVal;x+=incrementVal)
@@ -416,20 +421,21 @@ unsigned int isqrts(unsigned short s)
 {
 	// Zero yields zero
 	// One yields one
-	if (s <= 1) return s;
+	if(s<=1) return s;
 	else
 	{
     		// Initial estimate (must be too high)
-		unsigned short x0 = s / 2;
+		unsigned short x0=s/2;
 
 		// Update
-		unsigned short x1 = (x0 + s / x0) / 2;
+		unsigned short x1=(x0+s/x0)/2;
 
-		while (x1 < x0)	// Bound check
+		while(x1<x0)	// Bound check
 		{
-			x0 = x1;
-			x1 = (x0 + s / x0) / 2;
-		}		
+			x0=x1;
+			x1=(x0+s/x0)/2;
+		}
+
 		return x0;
 	}
 }

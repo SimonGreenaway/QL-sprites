@@ -29,10 +29,10 @@ DEPS=image.h font_4x6.h
 %.o: %.c $(DEPS)
 	$(CC) $(COPTS) -o $@ $< $(CFLAGS)
 
+all:	converter test runner # font
+
 2d.S: 2d.c $(DEPS)
 	$(CC) $(COPTS) -S  -o 2d.S 2d.c $(CFLAGS)
-
-all:	converter test runner # font
 
 libsprite.a:	$(OBJS) $(DEPS)
 		$(LIB) -rc libsprite.a $(OBJS)

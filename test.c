@@ -118,7 +118,7 @@ void benchmark()
 #define RANDS 32768
 #define TESTS 10
 
-void test()
+void test(int test)
 {
 	const char *tests[TESTS]={"plot","line","tri","fil tri","box","fill box","circle","fill cir","unplot","flood"};
 
@@ -129,12 +129,7 @@ void test()
 	unsigned char *r=myMalloc(RANDS);
 	unsigned int ri=0;
 
-	
 	init(8);
-	//framesInit();
-
-
-	//loadLibrary(&l,"test_lib",1); 
 	
 	w.width=w.height=512;
 	w.x_origin=w.y_origin=0;
@@ -144,11 +139,7 @@ void test()
 
 	cls(SCREEN); fastSrand(0);
 
-	for(i=0;i<120;i++)
-	{
-		//box(SCREEN,i+4-1,i*2+4-1,200-i+1,i*2+4+1,7);
-		//line(SCREEN,i+4,i*2+4,200-i,i*2+4,(i/4)&7);
-	}
+	for(i=0;i<TESTS;i++) counts[i]=0;
 
 	puts("Creating random numbers...");
 	for(ri=0;ri<RANDS/2;ri++) r[ri]=fastRand()&255;
@@ -159,7 +150,7 @@ void test()
 	{
 		unsigned int f=getFrames()+SECONDS*50;
 
-		//if(pass!=9) continue;
+		if((test!=-1)&&(test!=pass)) continue;
 
 		counts[pass]=0;
 		ri=0;
@@ -217,9 +208,12 @@ void test()
 
 	for(i=0;i<TESTS;i++)
 	{
-		if(i==9)
-			printf("%8s %8.1f p/s\n",tests[i],counts[i]/(double)50);
-		else printf("%8s %8.1f p/s\n",tests[i],counts[i]/(double)SECONDS);
+		if(counts[i]>0)
+		{
+			if(i==9)
+				printf("%8s %8.1f p/s\n",tests[i],counts[i]/(double)50);
+			else printf("%8s %8.1f p/s\n",tests[i],counts[i]/(double)SECONDS);
+		}
 	}
 
 	while(1)
@@ -366,7 +360,7 @@ void testText()
 
 int main(int argc, char *argv[],char *argp[])
 {
-	unsigned int s;
+	int s;
 
 	if(getenv("DRIVE")!=NULL) strcpy(drive,getenv("DRIVE"));
 
@@ -374,6 +368,8 @@ int main(int argc, char *argv[],char *argp[])
 
 	framesInit();
 	setSysBase((unsigned char *)0x28000);
+
+	printf("%d\n",argc);
 
 	if(argc<2)
 	{
@@ -394,10 +390,9 @@ int main(int argc, char *argv[],char *argp[])
 				case 3: test4Text(); break;
 				case 4: testKey(); break; 
 				case 5: benchmark(); break;
-				case 6: test(); break;
+				case 6: test(-1); break;
 				default: puts("?");
 			}
-
 		}
 	}
 	else
@@ -406,11 +401,11 @@ int main(int argc, char *argv[],char *argp[])
 		for(s=1;s<argc;s++)
 		{
 			if(strcmp(argv[s],"-bm")==0) benchmark();
-			else if(strcmp(argv[s],"-t")==0) test();
 			else
 			{
-				printf("Unknown command line argument: %s\n",argv[s]);
-				exit(4);	
+				int t=atoi(argv[s]);
+
+				test(t==0?-1:t);
 			}
 		}
 	}
